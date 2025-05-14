@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="navbar">
-        <img src={satoshiFund} alt="logo" className='logo' />
+        <img src={satoshiFund} alt="logo" id='logo' />
         <button className='login-btn'>Login</button>
       </header>
 
