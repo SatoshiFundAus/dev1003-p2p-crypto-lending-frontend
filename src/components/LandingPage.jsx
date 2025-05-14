@@ -1,0 +1,42 @@
+import styles from './LandingPage.module.css';
+import satoshiFund from '../assets/satoshiFund.png';
+
+function LandingPage() {
+    return (
+        <div className={styles.landingPage}>
+            <header className={styles.navbar}>
+                <img src={satoshiFund} alt="Satoshi Fund Logo" className={styles.logo} />
+                <button className={styles.loginBtn}>Login</button>
+            </header>
+
+            <main className={styles.mainContent}>
+                <div className={styles.heroText}>
+                    <h1>Borrow or Lend Bitcoin Securely. Instantly.</h1>
+                    <p>A decentralized peer-to-peer platform empowering users to lend or borrow Bitcoin without banks</p>
+                </div>
+
+                <div className={styles.buttonGroup}>
+                    <button className={`${styles.btn} ${styles.primary}`}>Borrow BTC</button>
+                    <button className={`${styles.btn} ${styles.primary}`}>Lend BTC</button>
+                </div>
+
+                <div className={styles.instructions}>
+                    <div className={styles.instructionSteps}>
+                        <h2>Step 1. Register an Account</h2>
+                        <p>Sign in securely. No banks. No third parties</p>
+                    </div>
+                    <div className={styles.instructionSteps}>
+                        <h2>Step 2. Choose a Loan</h2>
+                        <p>Borrowers submit loan requests. Lenders review and fund directly</p>
+                    </div>
+                    <div className={styles.instructionSteps}>
+                        <h2>Step 3. Get Started</h2>
+                        <p>Repayment and interest are enforced via blockchain technology</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    )
+}
+
+export default LandingPage;
