@@ -1,7 +1,21 @@
 import styles from './LandingPage.module.css';
 import satoshiFund from '../assets/satoshiFund.png';
+import Card from './Card';
+
 
 function LandingPage() {
+
+    const cardDescription1 =
+        `Sign in securely. No banks. No third parties`;
+
+    const cardDescription2 =
+        `Borrowers submit loan requests. Lenders review 
+        and fund directly`;
+
+    const cardDescription3 =
+        `Repayment and interest are enforced via blockchain 
+        technology`;
+
     return (
         <div className={styles.landingPage}>
             <header className={styles.navbar}>
@@ -21,6 +35,12 @@ function LandingPage() {
                 </div>
 
                 <div className={styles.instructions}>
+                    <Card className={styles.instructionSteps} cardName={"Step 1. Register an Account"} description={cardDescription1} />
+                    <Card className={styles.instructionSteps} cardName={"Step 2. Choose a Loan"} description={cardDescription2} />
+                    <Card className={styles.instructionSteps} cardName={"Step 3. Get Started"} description={cardDescription3} />
+                </div>
+
+                {/* <div className={styles.instructions}>
                     <div className={styles.instructionSteps}>
                         <h2>Step 1. Register an Account</h2>
                         <p>Sign in securely. No banks. No third parties</p>
@@ -33,7 +53,7 @@ function LandingPage() {
                         <h2>Step 3. Get Started</h2>
                         <p>Repayment and interest are enforced via blockchain technology</p>
                     </div>
-                </div>
+                </div> */}
             </main>
         </div>
     )
