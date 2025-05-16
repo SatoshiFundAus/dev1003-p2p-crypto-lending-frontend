@@ -1,6 +1,7 @@
 import styles from './LandingPage.module.css';
 import satoshiFund from '../assets/satoshiFund.png';
 import Card from './Card';
+import BTCPrice from './BitcoinLivePrice';
 
 
 function LandingPage() {
@@ -20,6 +21,7 @@ function LandingPage() {
         <div className={styles.landingPage}>
             <header className={styles.navbar}>
                 <img src={satoshiFund} alt="Satoshi Fund Logo" className={styles.logo} />
+                <BTCPrice />
                 <button className={styles.loginBtn}>Login</button>
             </header>
 
