@@ -39,21 +39,6 @@ function LandingPage() {
                     <Card className={styles.instructionSteps} cardName={"Step 2. Choose a Loan"} description={cardDescription2} />
                     <Card className={styles.instructionSteps} cardName={"Step 3. Get Started"} description={cardDescription3} />
                 </div>
-
-                {/* <div className={styles.instructions}>
-                    <div className={styles.instructionSteps}>
-                        <h2>Step 1. Register an Account</h2>
-                        <p>Sign in securely. No banks. No third parties</p>
-                    </div>
-                    <div className={styles.instructionSteps}>
-                        <h2>Step 2. Choose a Loan</h2>
-                        <p>Borrowers submit loan requests. Lenders review and fund directly</p>
-                    </div>
-                    <div className={styles.instructionSteps}>
-                        <h2>Step 3. Get Started</h2>
-                        <p>Repayment and interest are enforced via blockchain technology</p>
-                    </div>
-                </div> */}
             </main>
         </div>
     )

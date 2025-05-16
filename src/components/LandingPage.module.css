@@ -35,6 +35,10 @@
     font-size: 1.2rem;
 }
 
+.loginBtn:hover {
+    background-color: gold;
+}
+
 /* Main hero section */
 .mainContent {
     flex: 1;
@@ -43,6 +47,7 @@
     align-items: center;
     text-align: center;
     padding: 0 1rem;
+    margin-top: -10vh;
 }
 
 .heroText h1 {
@@ -78,6 +83,10 @@
     font-weight: bold;
 }
 
+.btn:hover {
+    background-color: gold;
+}
+
 .primary {
     background-color: #f7931a;
     color: white;
@@ -89,24 +98,41 @@
 }
 
 .instructions {
-    display: flex;
-    justify-content: center;
-    gap: 2vw;
-    padding: 2rem 1rem;
-    text-align: center;
-    flex-wrap: wrap;
-    margin-top: 2vh;  
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2vw;
+  padding: 2rem 4vw;
+  text-align: center;
+  flex-wrap: nowrap; /* Forces cards to stay in a row */
+}
+
+.card {
+  width: 280px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+}
+
+.card h1 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.card p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .instructionSteps {
-    flex: 1;
-    min-width: 200px;
-    max-width: 20vw;
-    border: 2px solid #333;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 0.85rem;
-    background-color: #f9f9f9;
-    color: #333;
+  margin: 1rem;
 }
