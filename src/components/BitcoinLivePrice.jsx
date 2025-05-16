@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import './BitcoinLivePrice.css'
 
 
 function BTCPrice() {
@@ -36,18 +37,20 @@ function BTCPrice() {
     }, []);
 
     return (
-        <div style={{ textAlign: 'center', margin: '1rem 0' }}>
+        <div className="btc-price-container">
             {error ? (
-                <span style={{ color: 'red' }}>{error}</span>
+                <span className="btc-error">{error}</span>
             ) : btcPrice ? (
                 <>
-                    <p>
-                        Live price in USD updated at {lastUpdated}, refreshing every minute:
+                    <p className="btc-label">
+                        Live price in USD updated at {lastUpdated}
                     </p>
-                    <h2 style={{ color: '#f7931a' }}>${btcPrice}</h2>
+                    <div className="btc-digital-display">
+                        ${btcPrice}
+                    </div>
                 </>
             ) : (
-                <p>Loading Bitcoin price...</p>
+                <p className="btc-loading">Loading Bitcoin price...</p>
             )}
         </div>
     );
