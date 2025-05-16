@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/borrow" element={<App />} />
+          <Route path="/login" element={<App />} />
           <Route path="/lend" element={<App />} />
         </Routes>
       </BrowserRouter>
