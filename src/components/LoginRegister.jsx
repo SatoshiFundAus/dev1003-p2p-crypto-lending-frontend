@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from './LoginRegisterPage.module.css'
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -32,31 +33,35 @@ function Login() {
 
 
     return (
-        <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: 'auto' }}>
-            <h2>Login</h2>
-            {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+            <h2 className={styles.heading}>Log In</h2>
+            {error && <div className={styles.error}>{error}</div>}
 
-            <label htmlFor="email">Email:</label>
+            <label className={styles.label} htmlFor="email">Email:</label>
             <input
+                className={styles.input}
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                style={{ width: '100%', padding: '8px', marginBottom: '1rem' }}
             />
 
-            <label htmlFor="password">Password:</label>
+            <label className={styles.label} htmlFor="password">Password:</label>
             <input
+                className={styles.input}
                 type="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{ width: '100%', padding: '8px', marginBottom: '1rem' }}
             />
 
-            <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
+            <button
+                type="submit"
+                className={styles.button}
+                disabled={loading}
+            >
                 {loading ? 'Logging in...' : 'Login'}
             </button>
         </form>
