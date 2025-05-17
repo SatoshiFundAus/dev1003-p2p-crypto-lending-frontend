@@ -8,7 +8,7 @@ import LoginRegister from './LoginRegister';
 import { useNavigate } from 'react-router-dom';
 
 
-function LoginRegisterPage() {
+function LoginRegisterPage(props) {
 
     const navigate = useNavigate()
     const CloseIcon = () => (
@@ -36,7 +36,7 @@ function LoginRegisterPage() {
             </button>
 
             <div className={styles.cardWrapper}>
-                <LoginRegister />
+                <LoginRegister name={props.name}/>
             </div>
 
 

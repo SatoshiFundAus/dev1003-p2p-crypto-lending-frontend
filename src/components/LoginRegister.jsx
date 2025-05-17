@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from './LoginRegisterPage.module.css'
 
-function Login() {
+function Login(props) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -34,7 +34,7 @@ function Login() {
 
     return (
         <form onSubmit={handleSubmit} className={styles.formContainer}>
-            <h2 className={styles.heading}>Log In</h2>
+            <h2 className={styles.heading}>{props.name}</h2>
             {error && <div className={styles.error}>{error}</div>}
 
             <label className={styles.label} htmlFor="email">Email:</label>
@@ -62,7 +62,7 @@ function Login() {
                 className={styles.button}
                 disabled={loading}
             >
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? 'Working...' : `${props.name}`}
             </button>
         </form>
     );
