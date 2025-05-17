@@ -7,7 +7,6 @@
     align-items: stretch;
 }
 
-/* Navbar layout */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -16,15 +15,11 @@
     position: relative;
 }
 
-/* Logo on top left */
 .logo {
     height: 150px;
     position: relative;
-    right: -20px;
-    /* slight offset */
 }
 
-/* Login button top right */
 .loginBtn {
     padding: 1rem 2rem;
     background-color: #f7931a;

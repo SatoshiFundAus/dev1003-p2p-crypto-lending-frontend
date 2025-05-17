@@ -1,6 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import LandingPage from './components/LandingPage';
+import LoginRegisterPage from './components/LoginRegisterPage';
+import Login from './components/LoginRegister';
+import Header from './components/Header';
 
 
 function App() {
@@ -10,7 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<App />} />
+          <Route path="/login" element={<LoginRegisterPage />} />
           <Route path="/lend" element={<App />} />
         </Routes>
       </BrowserRouter>

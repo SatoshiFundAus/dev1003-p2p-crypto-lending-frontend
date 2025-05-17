@@ -1,11 +1,13 @@
 import styles from './LandingPage.module.css';
-import satoshiFund from '../assets/satoshiFund.png';
 import Card from './Card';
-import BTCPrice from './BitcoinLivePrice';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 
 function LandingPage() {
+
+    const navigate = useNavigate()
 
     const cardDescription1 =
         `Sign in securely. No banks. No third parties`;
@@ -21,11 +23,17 @@ function LandingPage() {
     return (
         <>
             <div className={styles.landingPage}>
-                <header className={styles.navbar}>
+                <Header />
+                {/* <header className={styles.navbar}>
                     <img src={satoshiFund} alt="Satoshi Fund Logo" className={styles.logo} />
                     <BTCPrice />
-                    <button className={styles.loginBtn}>Login</button>
-                </header>
+                    <button
+                        className={styles.loginBtn}
+                        onClick={() => navigate('/login')}
+                    >
+                        Login
+                    </button>
+                </header> */}
 
                 <main className={styles.mainContent}>
                     <div className={styles.heroText}>
