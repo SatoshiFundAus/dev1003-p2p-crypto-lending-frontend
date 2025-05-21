@@ -41,9 +41,10 @@ function BTCPrice() {
             {error ? (
                 <span className="btc-error">{error}</span>
             ) : btcPrice ? (
-                <>
+                <>  
+                    <h3>BTC Live Price</h3>
                     <p className="btc-label">
-                        Live price in USD updated at {lastUpdated}
+                        Last updated at {lastUpdated}
                     </p>
                     <div className="btc-digital-display">
                         ${btcPrice}
