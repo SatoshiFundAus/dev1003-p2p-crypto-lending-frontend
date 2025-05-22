@@ -1,176 +1,51 @@
 .dashboard {
     min-height: 100vh;
-    background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
-    color: white;
-    padding: 0;
-    margin: 0;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Animated background effect */
-.dashboard::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 10% 10%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 90% 90%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
-    animation: gradientShift 15s ease infinite;
-    z-index: 0;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
-}
-
-.header {
-    background: rgba(28, 30, 38, 0.8);
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(247, 147, 26, 0.1);
-    backdrop-filter: blur(10px);
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.logoContainer {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: transform 0.3s ease;
-    background: #1a1c23;
-    padding: 0.75rem 1.2rem;
-    border-radius: 8px;
-    border: 1px solid rgba(247, 147, 26, 0.1);
-}
-
-.logoContainer:hover {
-    transform: scale(1.02);
-    border-color: rgba(247, 147, 26, 0.2);
-}
-
-.btcSymbol {
-    color: #f7931a;
-    font-size: 1.8rem;
-    font-weight: 600;
-    line-height: 1;
-}
-
-.logoText {
-    color: #ffffff;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.userInfo {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50px;
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-}
-
-.userInfo:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-}
-
-.userEmail {
+    background: #1c1e26;
     color: #fff;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.userAvatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(247, 147, 26, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.userAvatar:hover {
-    border-color: #f7931a;
-    transform: rotate(360deg);
 }
 
 .mainContent {
-    max-width: 1400px;
+    width: 85%;
+    max-width: 2000px;
     margin: 3rem auto;
     padding: 0 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-    position: relative;
-    z-index: 1;
 }
 
 .statsSection {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
 .loanCard {
-    background: rgba(28, 30, 38, 0.7);
-    border-radius: 24px;
-    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
     backdrop-filter: blur(10px);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(247, 147, 26, 0.1);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
+    border: 1px solid rgba(247, 147, 26, 0.1);
+    transition: transform 0.3s ease;
 }
 
 .loanCard:hover {
     transform: translateY(-5px);
-    box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(247, 147, 26, 0.2);
 }
 
 .loanCard h2 {
     color: #f7931a;
-    margin: 0 0 1.5rem 0;
-    font-size: 1.8rem;
-    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
 }
 
 .loanStats {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .statusLine {
     margin-bottom: 1rem;
+    font-size: 1.1rem;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
@@ -182,78 +57,89 @@
 .expired { color: #9E9E9E; }
 
 .returnRate, .collateralValue {
-    color: #fff;
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
     font-size: 1.1rem;
-}
-
-.collateralSection {
-    background: rgba(28, 30, 38, 0.7);
-    border-radius: 24px;
-    padding: 2.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(247, 147, 26, 0.1);
-    text-align: center;
-}
-
-.collateralSection h2 {
-    color: #f7931a;
-    margin: 0 0 1rem 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-}
-
-.btcAmount {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+    color: #bbb;
 }
 
 .actionButton {
     width: 100%;
-    padding: 1.2rem;
-    font-size: 1.2rem;
-    border-radius: 16px;
+    padding: 1rem;
     border: none;
-    background: #0066ff;
-    color: white;
+    border-radius: 8px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.4s ease;
-    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
 }
 
-.actionButton:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 20px rgba(0, 102, 255, 0.4);
-    background: #0052cc;
+.fundLoan {
+    background: #f7931a;
+    color: #fff;
 }
 
-.actionButton:active {
-    transform: translateY(-1px);
+.requestLoan {
+    background: rgba(247, 147, 26, 0.1);
+    color: #f7931a;
+    border: 2px solid #f7931a;
+}
+
+.fundLoan:hover, .requestLoan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+}
+
+.collateralSection {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 3rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(247, 147, 26, 0.1);
+}
+
+.collateralSection h2 {
+    color: #f7931a;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.btcAmount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 1200px) {
+    .statsSection {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
     .mainContent {
+        margin: 1rem auto;
         padding: 0 1rem;
     }
 
     .statsSection {
-        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .loanCard, .collateralSection {
+        padding: 1.5rem;
     }
 
     .btcAmount {
         font-size: 2rem;
-    }
-
-    .loanCard {
-        padding: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .statusLine {
-        font-size: 0.9rem;
+        font-size: 1rem;
+    }
+
+    .returnRate, .collateralValue {
+        font-size: 1rem;
     }
 } 

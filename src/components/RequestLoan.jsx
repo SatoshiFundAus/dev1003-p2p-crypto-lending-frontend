@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './RequestLoan.module.css';
-import Header from './Header';
+import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
 const RequestLoan = () => {
@@ -14,6 +14,7 @@ const RequestLoan = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,11 @@ const RequestLoan = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
+        if (token) {
+          const tokenData = JSON.parse(atob(token.split('.')[1]));
+          setUserEmail(tokenData.email);
+        }
+
         const [termsRes, cryptoRes] = await Promise.all([
           fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
             headers: {
@@ -99,7 +105,7 @@ const RequestLoan = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <h1 className={styles.title}>Request a Loan</h1>

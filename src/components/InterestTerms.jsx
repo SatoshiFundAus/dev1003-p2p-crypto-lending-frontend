@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import styles from './InterestTerms.module.css';
-import Header from './Header';
+import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
 const InterestTerms = () => {
   const [interestTerms, setInterestTerms] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
-    const fetchInterestTerms = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
+        if (token) {
+          const tokenData = JSON.parse(atob(token.split('.')[1]));
+          setUserEmail(tokenData.email);
+        }
+
         const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
           headers: {
             'Content-Type': 'application/json',
@@ -33,13 +39,13 @@ const InterestTerms = () => {
       }
     };
 
-    fetchInterestTerms();
+    fetchData();
   }, []);
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <Header />
+        <DashboardHeader userEmail={userEmail} />
         <div className={styles.loading}>Loading interest terms...</div>
         <Footer />
       </div>
@@ -49,7 +55,7 @@ const InterestTerms = () => {
   if (error) {
     return (
       <div className={styles.container}>
-        <Header />
+        <DashboardHeader userEmail={userEmail} />
         <div className={styles.error}>Error: {error}</div>
         <Footer />
       </div>
@@ -58,7 +64,7 @@ const InterestTerms = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.title}>Loan Terms</h1>

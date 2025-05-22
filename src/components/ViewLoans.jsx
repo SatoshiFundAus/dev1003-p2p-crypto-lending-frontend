@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
-import Header from './Header';
+import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
 const ViewLoans = () => {
@@ -9,6 +9,7 @@ const ViewLoans = () => {
   const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +17,11 @@ const ViewLoans = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
+        if (token) {
+          const tokenData = JSON.parse(atob(token.split('.')[1]));
+          setUserEmail(tokenData.email);
+        }
+        
         const [loansRes, termsRes, cryptoRes] = await Promise.all([
           fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
             headers: {
@@ -70,7 +76,7 @@ const ViewLoans = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.title}>Browse Loans</h1>

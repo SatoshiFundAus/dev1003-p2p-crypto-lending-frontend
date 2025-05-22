@@ -1,1 +1,95 @@
- 
+.container {
+    min-height: 100vh;
+    background: #1c1e26;
+    color: #fff;
+}
+
+.main {
+    width: 85%;
+    max-width: 2000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+}
+
+.content {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(247, 147, 26, 0.1);
+}
+
+.title {
+    color: #f7931a;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.loansTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.loansTable th,
+.loansTable td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(247, 147, 26, 0.1);
+}
+
+.loansTable th {
+    color: #f7931a;
+    font-weight: 600;
+}
+
+.loansTable tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.learnMoreBtn {
+    background: rgba(247, 147, 26, 0.1);
+    color: #f7931a;
+    border: 1px solid #f7931a;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.learnMoreBtn:hover {
+    background: #f7931a;
+    color: #fff;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #f7931a;
+}
+
+.error {
+    color: #f44336;
+    text-align: center;
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .content {
+        padding: 1rem;
+    }
+
+    .loansTable th,
+    .loansTable td {
+        padding: 0.5rem;
+    }
+} 
