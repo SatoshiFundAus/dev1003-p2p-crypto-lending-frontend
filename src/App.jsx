@@ -9,6 +9,7 @@ import RequestLoan from './components/RequestLoan';
 import Dashboard from './components/Dashboard';
 import ViewLoans from './components/ViewLoans';
 import LoanDetails from './components/LoanDetails';
+import Cryptocurrencies from './components/Cryptocurrencies';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/request-loan" element={<RequestLoan />} />
           <Route path="/view-loans" element={<ViewLoans />} />
           <Route path="/view-loans/:loanId" element={<LoanDetails />} />
+          <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
         </Routes>
       </BrowserRouter>
     </div>
