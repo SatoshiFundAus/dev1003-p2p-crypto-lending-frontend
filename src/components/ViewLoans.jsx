@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
-import Header from './Header';
+import { default as DashboardHeader } from './DashboardHeader';
 import Footer from './Footer';
 
 const columns = [
@@ -33,10 +33,13 @@ function maskEmail(email) {
 
 const ViewLoans = () => {
   const [loans, setLoans] = useState([]);
+  const [interestTerms, setInterestTerms] = useState([]);
+  const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortBy, setSortBy] = useState('user');
-  const [sortDir, setSortDir] = useState('asc');
+  const [userEmail, setUserEmail] = useState('');
+  const [sortBy, setSortBy] = useState('expiry'); // Default sort by expiry date
+  const [sortDir, setSortDir] = useState('asc'); // Default sort direction
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,20 +47,62 @@ const ViewLoans = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const loansRes = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          credentials: 'include',
-          mode: 'cors',
-        });
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        setUserEmail(tokenData.email);
+        
+        const [loansRes, termsRes, cryptoRes] = await Promise.all([
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include',
+            mode: 'cors',
+          }),
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include',
+            mode: 'cors',
+          }),
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include',
+            mode: 'cors',
+          })
+        ]);
+
         if (!loansRes.ok) throw new Error('Failed to fetch loans');
-        const loans = await loansRes.json();
-        setLoans(loans);
+        if (!termsRes.ok) throw new Error('Failed to fetch terms');
+        if (!cryptoRes.ok) throw new Error('Failed to fetch cryptocurrencies');
+
+        const [loansData, termsData, cryptoData] = await Promise.all([
+          loansRes.json(),
+          termsRes.json(),
+          cryptoRes.json()
+        ]);
+
+        setLoans(loansData);
+        setInterestTerms(termsData);
+        setCryptos(cryptoData);
       } catch (err) {
         setError(err.message || 'Error loading data');
+        if (err.message === 'No token found') {
+          // Redirect to login if no token
+          window.location.href = '/login';
+        }
       } finally {
         setLoading(false);
       }
@@ -124,7 +169,7 @@ const ViewLoans = () => {
 
   return (
     <div className={styles.container}>
-      <Header />
+      <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.title}>Browse Loans</h1>
