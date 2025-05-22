@@ -24,9 +24,9 @@ function Login(props) {
         const isRegistration = props.name === "Register";
         const endpoint = `https://dev1003-p2p-crypto-lending-backend.onrender.com/${isRegistration ? 'register' : 'login'}`;
 
-    
-
         try {
+            console.log('Sending request with data:', { ...userData, password: '***' });
+            
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -40,11 +40,10 @@ function Login(props) {
 
             console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Response data:', data);
+            console.log('Full response data:', { ...data, token: data.token ? 'exists' : 'missing' });
 
             if (response.ok) {
                 if (isRegistration) {
-                    // Show registration success toast
                     toast.success('Account Successfully Registered', {
                         position: "top-right",
                         autoClose: 3000,
@@ -53,34 +52,65 @@ function Login(props) {
                         pauseOnHover: true,
                         draggable: true,
                     });
-                    // Redirect to login after a short delay
                     setTimeout(() => {
                         navigate('/login');
                     }, 2000);
                 } else {
                     // Handle login success
                     if (data.token) {
+                        console.log('Processing login data:', {
+                            email: data.email,
+                            isAdmin: data.isAdmin,
+                            hasToken: Boolean(data.token)
+                        });
+
+                        // Store user data in localStorage
                         localStorage.setItem('token', data.token);
+                        localStorage.setItem('userEmail', data.email);
+                        localStorage.setItem('isAdmin', data.isAdmin);
+
+                        // Verify stored data
+                        console.log('Stored data verification:', {
+                            storedEmail: localStorage.getItem('userEmail'),
+                            storedIsAdmin: localStorage.getItem('isAdmin'),
+                            hasStoredToken: Boolean(localStorage.getItem('token'))
+                        });
+
+                        toast.success('Login Successful', {
+                            position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                        });
+
+                        // Redirect based on user role
+                        const isAdminUser = data.isAdmin === true;
+                        console.log('Navigation decision:', {
+                            isAdmin: isAdminUser,
+                            destination: isAdminUser ? '/admin-dashboard' : '/dashboard'
+                        });
+
+                        setTimeout(() => {
+                            navigate(isAdminUser ? '/admin-dashboard' : '/dashboard');
+                        }, 1000);
+                    } else {
+                        throw new Error('No token received from server');
                     }
-                    toast.success('Login Successful', {
-                        position: "top-right",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });
-                    setTimeout(() => {
-                        navigate('/dashboard');
-                    }, 1000);
                 }
             } else {
-                setError(data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`);
-                console.error(`${isRegistration ? 'Registration' : 'Login'} failed:`, data);
+                const errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
+                console.error('Error response:', {
+                    status: response.status,
+                    error: errorMessage,
+                    data: data
+                });
+                setError(errorMessage);
             }
         } catch (err) {
-            console.error(`${isRegistration ? 'Registration' : 'Login'} error:`, err);
-            setError(`${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`)
+            console.error('Request error:', err);
+            setError(`${isRegistration ? 'Registration' : 'Login'} failed. ${err.message}`);
         } finally {
             setLoading(false);
         }
