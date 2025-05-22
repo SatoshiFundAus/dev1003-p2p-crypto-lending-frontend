@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
-import Header from './Header';
+import dashboardStyles from './Dashboard.module.css';
 import Footer from './Footer';
+import Logo from './Logo';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'user', label: 'User' },
@@ -37,6 +39,21 @@ const ViewLoans = () => {
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState('user');
   const [sortDir, setSortDir] = useState('asc');
+  const [userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Extract user email from JWT token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        setUserEmail(tokenData.email);
+      } catch (e) {
+        setUserEmail('');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,11 +139,43 @@ const ViewLoans = () => {
     return <span className={styles.sortArrow}>{sortDir === 'asc' ? '▲' : '▼'}</span>;
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
   return (
     <div className={styles.container}>
-      <Header />
+      <header className={dashboardStyles.header}>
+        <Logo />
+        <div className={dashboardStyles.userInfo}>
+          <div className={dashboardStyles.userEmail}>{userEmail}</div>
+          <div className={dashboardStyles.userAvatar} onClick={handleLogout} title="Click to logout">
+            <i className="fas fa-user-circle"></i>
+          </div>
+        </div>
+      </header>
       <main className={styles.main}>
         <div className={styles.content}>
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#f7931a',
+              fontWeight: 600,
+              fontSize: '1.05rem',
+              cursor: 'pointer',
+              padding: 0,
+              marginBottom: '1.2rem',
+              textDecoration: 'underline',
+              display: 'block',
+              textAlign: 'left',
+            }}
+            aria-label="Return to Dashboard"
+          >
+            &larr; Return to Dashboard
+          </button>
           <h1 className={styles.title}>Browse Loans</h1>
           {loading ? (
             <div className={styles.loading}>Loading...</div>

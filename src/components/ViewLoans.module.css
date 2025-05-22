@@ -18,7 +18,7 @@
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0.25rem 2rem 2rem 2rem;
 }
 
 .title {
@@ -77,7 +77,7 @@
 }
 
 .learnMoreBtn {
-  background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -86,13 +86,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: box-shadow 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px rgba(33, 203, 243, 0.15);
+  box-shadow: 0 2px 8px rgba(247, 147, 26, 0.15);
 }
 
 .learnMoreBtn:hover {
-  background: linear-gradient(135deg, #21cbf3 0%, #2196f3 100%);
+  background: linear-gradient(135deg, #ff9f43 0%, #f7931a 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(33, 203, 243, 0.25);
+  box-shadow: 0 4px 16px rgba(247, 147, 26, 0.25);
 }
 
 .loading {
