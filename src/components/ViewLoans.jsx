@@ -207,7 +207,7 @@ const ViewLoans = () => {
                       <td>{row.amount}</td>
                       <td>{row.term}</td>
                       <td>{row.expiry}</td>
-                      <td><button className={styles.learnMoreBtn}>Learn More</button></td>
+                      <td><button className={styles.learnMoreBtn} onClick={() => navigate(`/view-loans/${row.id}`)}>Learn More</button></td>
                     </tr>
                   ))}
                 </tbody>
