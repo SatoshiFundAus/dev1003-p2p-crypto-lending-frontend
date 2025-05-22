@@ -129,7 +129,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: 0.5rem;
 }
 
@@ -170,7 +170,7 @@
 @media (max-width: 900px) {
   .formContent {
     flex-direction: column;
-    gap: 2rem;
+    gap: 2.5rem;
     align-items: stretch;
   }
   .collateralBox {
@@ -190,5 +190,36 @@
   }
   .main {
     padding: 1rem 0;
+  }
+  .formFields label {
+    font-size: 1rem;
+  }
+  .formFields input,
+  .formFields select {
+    font-size: 0.98rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .formFields {
+    gap: 1.2rem;
+  }
+  .submitBtn {
+    width: 100%;
+    font-size: 1.05rem;
+    padding: 1rem 0.5rem;
+  }
+  .collateralBox {
+    padding: 1.2rem 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .collateralBox h2 {
+    font-size: 1.08rem;
+  }
+  .collateralAmount {
+    font-size: 1.1rem;
+  }
+  .collateralDesc {
+    font-size: 0.95rem;
   }
 } 
