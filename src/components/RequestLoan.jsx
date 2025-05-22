@@ -57,7 +57,6 @@ const RequestLoan = () => {
         setInterestTerms(terms);
         setCryptos(cryptos);
         if (terms.length > 0) setSelectedTerm(terms[0]._id);
-        if (cryptos.length > 0 && !selectedCrypto) setSelectedCrypto(cryptos[0]._id);
       } catch (err) {
         setError(err.message || 'Error loading data');
       } finally {
@@ -66,6 +65,12 @@ const RequestLoan = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!selectedCrypto && cryptos.length > 0) {
+      setSelectedCrypto(cryptos[0]._id);
+    }
+  }, [cryptos, selectedCrypto]);
 
   const selectedCryptoObj = cryptos.find(c => c._id === selectedCrypto);
   const selectedCryptoSymbol = selectedCryptoObj ? selectedCryptoObj.symbol : '';
