@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './LoginRegisterPage.module.css'
@@ -8,21 +9,26 @@ function Login(props) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
-        const loginData = {
+        const userData = {
             email: email.trim(),
             password: password.trim()
         };
 
-        console.log('Sending login data:', loginData);
+        const isRegistration = props.name === "Register";
+        const endpoint = `https://dev1003-p2p-crypto-lending-backend.onrender.com/${isRegistration ? 'register' : 'login'}`;
+
+        console.log('Sending request to:', endpoint);
+        console.log('With data:', userData);
 
         try {
-            const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/login', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -30,7 +36,7 @@ function Login(props) {
                 },
                 credentials: 'include',
                 mode: 'cors',
-                body: JSON.stringify(loginData)
+                body: JSON.stringify(userData)
             });
 
             console.log('Response status:', response.status);
@@ -38,30 +44,44 @@ function Login(props) {
             console.log('Response data:', data);
 
             if (response.ok) {
-                // Store the token in localStorage
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
+                if (isRegistration) {
+                    // Show registration success toast
+                    toast.success('Account Successfully Registered', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    });
+                    // Redirect to login after a short delay
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 2000);
+                } else {
+                    // Handle login success
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                    }
+                    toast.success('Login Successful', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    });
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
                 }
-                // Show success toast
-                toast.success('Login Successful', {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
-                // Redirect to dashboard or home page after a short delay
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 1000);
             } else {
-                setError(data.message || 'Login failed. Please check your credentials.');
-                console.error('Login failed:', data);
+                setError(data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`);
+                console.error(`${isRegistration ? 'Registration' : 'Login'} failed:`, data);
             }
         } catch (err) {
-            console.error('Login error:', err);
-            setError('Login failed. Please try again.')
+            console.error(`${isRegistration ? 'Registration' : 'Login'} error:`, err);
+            setError(`${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`)
         } finally {
             setLoading(false);
         }
@@ -101,6 +121,14 @@ function Login(props) {
                 >
                     {loading ? 'Working...' : `${props.name}`}
                 </button>
+
+                <div className={styles.registerLink}>
+                    {props.name === "Log In" ? (
+                        <>Not already a user? <Link to="/register">Register here</Link></>
+                    ) : (
+                        <>Already registered? <Link to="/login">Login here</Link></>
+                    )}
+                </div>
             </form>
         </>
     );

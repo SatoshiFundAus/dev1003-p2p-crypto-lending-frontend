@@ -354,3 +354,23 @@
     opacity: 0.6;
   }
 }
+
+.registerLink {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.registerLink a {
+    color: #f7931a;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.registerLink a:hover {
+    color: #ff9f43;
+    text-decoration: underline;
+}
