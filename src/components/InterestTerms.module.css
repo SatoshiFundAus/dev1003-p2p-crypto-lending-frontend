@@ -1,0 +1,153 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #ffffff;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.termsContainer {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
+}
+
+.termsContent {
+  color: #ffffff;
+}
+
+.termsData {
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff6b6b;
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .termsContainer {
+    padding: 1rem;
+  }
+}
+
+/* Animation for loading state */
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s infinite;
+}
+
+.termsTable {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem auto;
+  border-collapse: collapse;
+  background: rgba(20, 20, 20, 0.95);
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.15);
+}
+.termsTable th, .termsTable td {
+  border: 2px solid #fff;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 1.25rem;
+}
+.termsTable th {
+  background: rgba(255,255,255,0.08);
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.termsTable td {
+  background: rgba(255,255,255,0.03);
+}
+
+.note {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .termsTable th, .termsTable td {
+    padding: 0.75rem 0.5rem;
+    font-size: 1.1rem;
+  }
+  .termsTable {
+    max-width: 100%;
+  }
+  .title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .termsTable th, .termsTable td {
+    padding: 0.5rem 0.2rem;
+    font-size: 1rem;
+  }
+  .termsTable {
+    max-width: 100%;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+} 
