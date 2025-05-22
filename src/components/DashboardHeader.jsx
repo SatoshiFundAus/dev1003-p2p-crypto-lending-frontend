@@ -12,7 +12,9 @@ const DashboardHeader = ({ userEmail }) => {
 
     return (
         <header className={styles.header}>
-            <Logo />
+            <div style={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')} title="Go to Dashboard">
+                <Logo />
+            </div>
             <div className={styles.userInfo}>
                 <div className={styles.userEmail}>{userEmail}</div>
                 <div className={styles.userAvatar} onClick={handleLogout} title="Click to logout">
