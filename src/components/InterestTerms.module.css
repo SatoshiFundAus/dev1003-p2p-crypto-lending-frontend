@@ -34,7 +34,7 @@
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(247, 147, 26, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 2rem;
 }
@@ -103,12 +103,13 @@
   border-collapse: collapse;
   background: rgba(20, 20, 20, 0.95);
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.15);
+  border: none;
 }
 .termsTable th, .termsTable td {
-  border: 2px solid #fff;
   padding: 1rem 2rem;
   text-align: center;
   font-size: 1.25rem;
+  border: none;
 }
 .termsTable th {
   background: rgba(255,255,255,0.08);
