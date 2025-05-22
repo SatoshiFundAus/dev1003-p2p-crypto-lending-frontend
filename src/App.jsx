@@ -5,6 +5,7 @@ import LoginRegisterPage from './components/LoginRegisterPage';
 import Login from './components/LoginRegister';
 import Header from './components/Header';
 import InterestTerms from './components/InterestTerms';
+import RequestLoan from './components/RequestLoan';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/register" element={<LoginRegisterPage name="Register" />} />
           <Route path="/lend" element={<App />} />
           <Route path="/interest-terms" element={<InterestTerms />} />
+          <Route path="/request-loan" element={<RequestLoan />} />
         </Routes>
       </BrowserRouter>
     </div>
