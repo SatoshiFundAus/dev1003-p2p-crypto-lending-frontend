@@ -24,8 +24,7 @@ function Login(props) {
         const isRegistration = props.name === "Register";
         const endpoint = `https://dev1003-p2p-crypto-lending-backend.onrender.com/${isRegistration ? 'register' : 'login'}`;
 
-        console.log('Sending request to:', endpoint);
-        console.log('With data:', userData);
+    
 
         try {
             const response = await fetch(endpoint, {
