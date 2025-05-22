@@ -11,7 +11,16 @@ const InterestTerms = () => {
   useEffect(() => {
     const fetchInterestTerms = async () => {
       try {
-        const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms');
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          credentials: 'include',
+          mode: 'cors',
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch interest terms');
         }
