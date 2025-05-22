@@ -8,15 +8,15 @@ function LandingPage() {
     const navigate = useNavigate()
 
     const cardDescription1 =
-        `Sign in securely. No banks. No third parties`;
+        `Sign in securely. No banks. No third parties.`;
 
     const cardDescription2 =
         `Borrowers submit loan requests. Lenders review 
-        and fund directly`;
+        and fund directly.`;
 
     const cardDescription3 =
         `Repayment and interest are enforced via blockchain 
-        technology`;
+        technology.`;
 
     return (
         <>
@@ -46,8 +46,8 @@ function LandingPage() {
 
                 <main className={styles.mainContent}>
                     <div className={styles.heroText}>
-                        <h1>Borrow or Lend Bitcoin Securely. Instantly.</h1>
-                        <p>A decentralized peer-to-peer platform empowering users to lend or borrow Bitcoin without banks</p>
+                        <h1>Borrow or Lend Bitcoin. Securely. Instantly.</h1>
+                        <p>A decentralized peer-to-peer platform empowering users to lend or borrow Bitcoin without banks.</p>
                     </div>
 
                     <div className={styles.buttonGroup}>
@@ -56,9 +56,9 @@ function LandingPage() {
                     </div>
 
                     <div className={styles.instructions}>
-                        <Card className={styles.instructionSteps} cardName={"Step 1. Register an Account"} description={cardDescription1} />
-                        <Card className={styles.instructionSteps} cardName={"Step 2. Choose a Loan"} description={cardDescription2} />
-                        <Card className={styles.instructionSteps} cardName={"Step 3. Get Started"} description={cardDescription3} />
+                        <Card className={styles.instructionSteps} cardName={"Step 1: Register Account"} description={cardDescription1} />
+                        <Card className={styles.instructionSteps} cardName={"Step 2: Choose Loan"} description={cardDescription2} />
+                        <Card className={styles.instructionSteps} cardName={"Step 3: Get Started"} description={cardDescription3} />
                     </div>
                 </main>
             </div>
