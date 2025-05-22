@@ -1,79 +1,122 @@
 .container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: #fff;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background effect */
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 10%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
+    animation: gradientShift 15s ease infinite;
+    z-index: 0;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
 }
 
 .main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem 0;
+    width: 85%;
+    max-width: 2000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 .content {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0.25rem 2rem 2rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(247, 147, 26, 0.1);
+    border: 1px solid rgba(247, 147, 26, 0.1);
+    transition: all 0.3s ease;
+}
+
+.content:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(247, 147, 26, 0.2);
 }
 
 .title {
-  font-size: 2.2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    color: #f7931a;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
 }
 
 .tableWrapper {
-  width: 100%;
-  overflow-x: auto;
-  background: rgba(255,255,255,0.04);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-  padding: 1.2rem 0.7rem;
+    overflow-x: auto;
+    margin-top: 2rem;
+    border-radius: 16px;
+    background: rgba(28, 30, 38, 0.7);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .loansTable {
-  width: 100%;
-  border-collapse: collapse;
-  background: rgba(20, 20, 20, 0.95);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
 }
 
-.loansTable th, .loansTable td {
-  border: none;
-  padding: 0.7rem 0.7rem;
-  text-align: center;
-  font-size: 1rem;
+.loansTable th,
+.loansTable td {
+    padding: 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(247, 147, 26, 0.1);
 }
 
 .loansTable th {
-  background: rgba(255,255,255,0.08);
-  font-weight: bold;
-  font-size: 1.05rem;
-  user-select: none;
-  position: relative;
+    background: rgba(247, 147, 26, 0.1);
+    color: #f7931a;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+}
+
+.loansTable tr:last-child td {
+    border-bottom: none;
+}
+
+.loansTable tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
 }
 
 .sortable {
-  transition: background 0.2s;
+    cursor: pointer;
+    user-select: none;
 }
+
 .sortable:hover {
-  background: rgba(33, 203, 243, 0.12);
+    background: rgba(247, 147, 26, 0.15) !important;
 }
 
 .sortArrow {
-  display: inline-block;
-  width: 1.1em;
-  text-align: left;
-}
-
-.loansTable td {
-  background: rgba(255,255,255,0.03);
+    margin-left: 0.5rem;
+    opacity: 0.7;
 }
 
 .learnMoreBtn {
@@ -96,52 +139,47 @@
 }
 
 .loading {
-  color: #fff;
-  text-align: center;
-  font-size: 1.2rem;
-  padding: 2rem 0;
+    text-align: center;
+    padding: 3rem;
+    color: #f7931a;
+    font-size: 1.2rem;
+    animation: pulse 1.5s infinite;
 }
 
 .error {
-  color: #ff4d4d;
-  background: rgba(255, 77, 77, 0.08);
-  border: 1px solid rgba(255, 77, 77, 0.2);
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  text-align: center;
+    color: #f44336;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 1px solid rgba(244, 67, 54, 0.2);
 }
 
-@media (max-width: 900px) {
-  .content {
-    padding: 1rem;
-  }
-  .tableWrapper {
-    padding: 1rem 0.5rem;
-  }
-  .loansTable th, .loansTable td {
-    padding: 0.5rem 0.3rem;
-    font-size: 0.97rem;
-  }
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
-@media (max-width: 600px) {
-  .content {
-    padding: 0.5rem;
-  }
-  .title {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-  }
-  .tableWrapper {
-    padding: 0.5rem 0.2rem;
-  }
-  .loansTable th, .loansTable td {
-    padding: 0.35rem 0.1rem;
-    font-size: 0.93rem;
-  }
-  .learnMoreBtn {
-    font-size: 0.93rem;
-    padding: 0.4rem 0.6rem;
-  }
+@media (max-width: 768px) {
+    .main {
+        width: 95%;
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .content {
+        padding: 1.5rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .loansTable th,
+    .loansTable td {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
 } 
