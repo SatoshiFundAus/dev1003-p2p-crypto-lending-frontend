@@ -222,4 +222,18 @@
   .collateralDesc {
     font-size: 0.95rem;
   }
+}
+
+.returnNav {
+  background: none;
+  border: none;
+  color: #f7931a;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.2rem;
+  text-decoration: underline;
+  display: block;
+  text-align: left;
 } 

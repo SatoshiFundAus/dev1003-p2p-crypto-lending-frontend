@@ -5,6 +5,7 @@ import Footer from './Footer';
 
 const RequestLoan = () => {
   const [amount, setAmount] = useState('');
+  const [amountInputFocused, setAmountInputFocused] = useState(false);
   const [interestTerms, setInterestTerms] = useState([]);
   const [selectedTerm, setSelectedTerm] = useState('');
   const [cryptos, setCryptos] = useState([]);
@@ -15,6 +16,7 @@ const RequestLoan = () => {
   const [submitError, setSubmitError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,6 +27,8 @@ const RequestLoan = () => {
         if (token) {
           const tokenData = JSON.parse(atob(token.split('.')[1]));
           setUserEmail(tokenData.email);
+          setUserId(tokenData.sub || tokenData.id || tokenData._id || tokenData.userId || '');
+          console.log('Decoded JWT:', tokenData);
         }
         const [termsRes, cryptoRes] = await Promise.all([
           fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
@@ -53,7 +57,6 @@ const RequestLoan = () => {
         setInterestTerms(terms);
         setCryptos(cryptos);
         if (terms.length > 0) setSelectedTerm(terms[0]._id);
-        if (cryptos.length > 0) setSelectedCrypto(cryptos[0]._id);
       } catch (err) {
         setError(err.message || 'Error loading data');
       } finally {
@@ -63,6 +66,12 @@ const RequestLoan = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!selectedCrypto && cryptos.length > 0) {
+      setSelectedCrypto(cryptos[0]._id);
+    }
+  }, [cryptos, selectedCrypto]);
+
   const selectedCryptoObj = cryptos.find(c => c._id === selectedCrypto);
   const selectedCryptoSymbol = selectedCryptoObj ? selectedCryptoObj.symbol : '';
 
@@ -71,16 +80,27 @@ const RequestLoan = () => {
     setSubmitting(true);
     setSubmitError(null);
     setSuccess(false);
+    let cryptoToUse = selectedCrypto;
+    if (!cryptoToUse && cryptos.length > 0) {
+      cryptoToUse = cryptos[0]._id;
+      setSelectedCrypto(cryptoToUse);
+    }
+    console.log('SelectedCrypto:', selectedCrypto, 'cryptoToUse:', cryptoToUse, 'cryptos:', cryptos);
     try {
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
       if (!userId) throw new Error('User not logged in');
+      // Find selected crypto symbol
+      const selectedCryptoObj = cryptos.find(c => c._id === cryptoToUse);
+      const selectedCryptoSymbol = selectedCryptoObj ? selectedCryptoObj.symbol : '';
+      // Find selected term loan length
+      const selectedTermObj = interestTerms.find(t => t._id === selectedTerm);
+      const selectedTermLoanLength = selectedTermObj ? selectedTermObj.loan_length : '';
       const payload = {
-        borrower_id: userId,
         request_amount: parseFloat(amount),
-        interest_term: selectedTerm,
-        cryptocurrency: selectedCrypto
+        loan_term: Number(selectedTermLoanLength),
+        cryptocurrency_symbol: selectedCryptoSymbol
       };
+      console.log('Submitting loan request payload:', payload);
       const res = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
         method: 'POST',
         headers: {
@@ -92,7 +112,11 @@ const RequestLoan = () => {
         mode: 'cors',
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error('Failed to submit loan request');
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Backend error response:', errorText);
+        throw new Error('Failed to submit loan request');
+      }
       setSuccess(true);
       setAmount('');
     } catch (err) {
@@ -107,6 +131,14 @@ const RequestLoan = () => {
       <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <form className={styles.form} onSubmit={handleSubmit}>
+          <button
+            type="button"
+            className={styles.returnNav}
+            onClick={() => window.location.href = '/dashboard'}
+            aria-label="Return to Dashboard"
+          >
+            &larr; Return to Dashboard
+          </button>
           <h1 className={styles.title}>Request a Loan</h1>
           {loading ? (
             <div className={styles.loading}>Loading...</div>
@@ -121,8 +153,16 @@ const RequestLoan = () => {
                     type="number"
                     min="0"
                     step="any"
-                    value={amount}
+                    value={
+                      amountInputFocused
+                        ? amount
+                        : amount
+                        ? Number(amount).toFixed(8)
+                        : '0.00000000'
+                    }
                     onChange={e => setAmount(e.target.value)}
+                    onFocus={() => setAmountInputFocused(true)}
+                    onBlur={() => setAmountInputFocused(false)}
                     placeholder="Loan Amount"
                     required
                   />
@@ -172,8 +212,8 @@ const RequestLoan = () => {
               <div className={styles.collateralBox}>
                 <h2>Collateral Information</h2>
                 <div className={styles.collateralValue}>
-                  <span className={styles.collateralLabel}>Estimated Value:</span>
-                  <span className={styles.collateralAmount}>{amount || '0'} {selectedCryptoSymbol}</span>
+                  <span className={styles.collateralLabel}>Collateral Required:</span>
+                  <span className={styles.collateralAmount}><b>{amount ? Number(amount).toFixed(8) : '0.00000000'} {selectedCryptoSymbol}</b></span>
                 </div>
                 <div className={styles.collateralDesc}>
                   Collateral must be equal to the requested loan amount, denominated in the selected cryptocurrency.
