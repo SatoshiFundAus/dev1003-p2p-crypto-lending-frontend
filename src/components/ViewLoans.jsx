@@ -3,12 +3,40 @@ import styles from './ViewLoans.module.css';
 import Header from './Header';
 import Footer from './Footer';
 
+const columns = [
+  { key: 'user', label: 'User' },
+  { key: 'currency', label: 'Currency' },
+  { key: 'amount', label: 'Amount' },
+  { key: 'term', label: 'Term' },
+  { key: 'expiry', label: 'Expiry' },
+];
+
+function maskName(name) {
+  if (!name) return '';
+  const parts = name.split(' ');
+  return parts.map(part =>
+    part.length <= 2
+      ? part[0] + '*'
+      : part.slice(0, 2) + '*'.repeat(Math.max(1, part.length - 2))
+  ).join(' ');
+}
+
+function maskEmail(email) {
+  if (!email) return '';
+  const [user, domainFull] = email.split('@');
+  const [domain, ...tldParts] = domainFull.split('.');
+  const tld = tldParts.length ? '.' + tldParts.join('.') : '';
+  const maskedUser = user.slice(0, 2) + '*'.repeat(Math.max(1, user.length - 2));
+  const maskedDomain = domain.slice(0, 2) + '*'.repeat(Math.max(1, domain.length - 2));
+  return maskedUser + '@' + maskedDomain + tld;
+}
+
 const ViewLoans = () => {
   const [loans, setLoans] = useState([]);
-  const [interestTerms, setInterestTerms] = useState([]);
-  const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState('user');
+  const [sortDir, setSortDir] = useState('asc');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,44 +44,18 @@ const ViewLoans = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const [loansRes, termsRes, cryptoRes] = await Promise.all([
-          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            },
-            credentials: 'include',
-            mode: 'cors',
-          }),
-          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            },
-            credentials: 'include',
-            mode: 'cors',
-          }),
-          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-            },
-            credentials: 'include',
-            mode: 'cors',
-          })
-        ]);
+        const loansRes = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          credentials: 'include',
+          mode: 'cors',
+        });
         if (!loansRes.ok) throw new Error('Failed to fetch loans');
-        if (!termsRes.ok) throw new Error('Failed to fetch interest terms');
-        if (!cryptoRes.ok) throw new Error('Failed to fetch cryptocurrencies');
-        const [loans, terms, cryptos] = await Promise.all([
-          loansRes.json(), termsRes.json(), cryptoRes.json()
-        ]);
+        const loans = await loansRes.json();
         setLoans(loans);
-        setInterestTerms(terms);
-        setCryptos(cryptos);
       } catch (err) {
         setError(err.message || 'Error loading data');
       } finally {
@@ -63,10 +65,62 @@ const ViewLoans = () => {
     fetchData();
   }, []);
 
-  // Helper functions to resolve IDs
-  const getTerm = (id) => interestTerms.find(t => t._id === id);
-  const getCrypto = (id) => cryptos.find(c => c._id === id);
-  const getUser = (loan) => loan.borrower_id?.username || loan.borrower_id?._id || 'User';
+  // Prepare rows for sorting
+  const rows = loans.map(loan => {
+    let user = '';
+    if (loan.borrower_id?.name) {
+      user = maskName(loan.borrower_id.name);
+    } else if (loan.borrower_id?.email) {
+      user = maskEmail(loan.borrower_id.email);
+    } else {
+      user = 'User';
+    }
+    return {
+      id: loan._id,
+      user,
+      currency: loan.cryptocurrency ? `${loan.cryptocurrency.name} (${loan.cryptocurrency.symbol})` : '',
+      amount: loan.request_amount,
+      term: loan.interest_term
+        ? `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''} / ${loan.interest_term.interest_rate}%`
+        : '',
+      expiry: loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : '',
+      learnMore: loan,
+      _raw: loan,
+    };
+  });
+
+  // Sorting logic
+  const sortedRows = [...rows].sort((a, b) => {
+    let aVal = a[sortBy];
+    let bVal = b[sortBy];
+    if (sortBy === 'amount') {
+      aVal = parseFloat(aVal);
+      bVal = parseFloat(bVal);
+    } else if (sortBy === 'expiry') {
+      aVal = new Date(aVal);
+      bVal = new Date(bVal);
+    } else {
+      aVal = aVal?.toString().toLowerCase();
+      bVal = bVal?.toString().toLowerCase();
+    }
+    if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const handleSort = (col) => {
+    if (sortBy === col) {
+      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(col);
+      setSortDir('asc');
+    }
+  };
+
+  const sortArrow = (col) => {
+    if (sortBy !== col) return <span className={styles.sortArrow}></span>;
+    return <span className={styles.sortArrow}>{sortDir === 'asc' ? '▲' : '▼'}</span>;
+  };
 
   return (
     <div className={styles.container}>
@@ -83,29 +137,30 @@ const ViewLoans = () => {
               <table className={styles.loansTable}>
                 <thead>
                   <tr>
-                    <th>User</th>
-                    <th>Currency</th>
-                    <th>Amount</th>
-                    <th>Term</th>
-                    <th>Expiry</th>
+                    {columns.map(col => (
+                      <th
+                        key={col.key}
+                        className={styles.sortable}
+                        onClick={() => handleSort(col.key)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {col.label}{sortArrow(col.key)}
+                      </th>
+                    ))}
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {loans.map(loan => {
-                    const term = getTerm(loan.interest_term);
-                    const crypto = getCrypto(loan.cryptocurrency);
-                    return (
-                      <tr key={loan._id}>
-                        <td>{getUser(loan)}</td>
-                        <td>{crypto ? crypto.name : ''}</td>
-                        <td>{loan.request_amount}</td>
-                        <td>{term ? `${term.loan_length} month${term.loan_length > 1 ? 's' : ''} / ${term.interest_rate}%` : ''}</td>
-                        <td>{loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : ''}</td>
-                        <td><button className={styles.learnMoreBtn}>Learn More</button></td>
-                      </tr>
-                    );
-                  })}
+                  {sortedRows.map(row => (
+                    <tr key={row.id}>
+                      <td>{row.user}</td>
+                      <td>{row.currency}</td>
+                      <td>{row.amount}</td>
+                      <td>{row.term}</td>
+                      <td>{row.expiry}</td>
+                      <td><button className={styles.learnMoreBtn}>Learn More</button></td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
