@@ -1,14 +1,23 @@
 import { useNavigate, NavLink } from 'react-router-dom';
 import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const DashboardHeader = ({ userEmail, isAdmin }) => {
+const DashboardHeader = ({ userEmail }) => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        // Check admin status from localStorage
+        const adminStatus = localStorage.getItem('isAdmin') === 'true';
+        setIsAdmin(adminStatus);
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('isAdmin');
         navigate('/login');
     };
 
@@ -103,4 +112,4 @@ const DashboardHeader = ({ userEmail, isAdmin }) => {
 DashboardHeader.displayName = 'DashboardHeader';
 
 // Use a more explicit export
-export { DashboardHeader as default }; 
+export default DashboardHeader; 
