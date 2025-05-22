@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './LoginRegisterPage.module.css'
@@ -101,6 +102,14 @@ function Login(props) {
                 >
                     {loading ? 'Working...' : `${props.name}`}
                 </button>
+
+                <div className={styles.registerLink}>
+                    {props.name === "Log In" ? (
+                        <>Not already a user? <Link to="/register">Register here</Link></>
+                    ) : (
+                        <>Already registered? <Link to="/login">Login here</Link></>
+                    )}
+                </div>
             </form>
         </>
     );
