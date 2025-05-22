@@ -7,8 +7,158 @@
     border-bottom: 1px solid rgba(247, 147, 26, 0.1);
     backdrop-filter: blur(10px);
     position: relative;
-    z-index: 1;
+    z-index: 1000;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navigation {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.menuContainer {
+    position: relative;
+    z-index: 1001;
+}
+
+.menuTrigger {
+    background: rgba(247, 147, 26, 0.1);
+    border: 1px solid rgba(247, 147, 26, 0.2);
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.menuTrigger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(247, 147, 26, 0.1), rgba(247, 147, 26, 0));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.menuTrigger:hover::before {
+    transform: translateX(100%);
+}
+
+.menuText {
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.menuIcon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menuIcon span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: #f7931a;
+    transition: all 0.3s ease;
+}
+
+.menuOpen .menuIcon span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.menuOpen .menuIcon span:nth-child(2) {
+    opacity: 0;
+}
+
+.menuOpen .menuIcon span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 240px;
+    animation: menuSlideDown 0.3s ease forwards;
+    z-index: 1002;
+}
+
+@keyframes menuSlideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.menuBackground {
+    background: rgba(28, 30, 38, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(247, 147, 26, 0.2);
+    border-radius: 16px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                0 0 20px rgba(247, 147, 26, 0.1);
+    z-index: 1002;
+}
+
+.navLink, .activeLink {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.navLink i, .activeLink i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.navLink:hover {
+    color: #fff;
+    background: rgba(247, 147, 26, 0.1);
+    transform: translateX(5px);
+}
+
+.activeLink {
+    color: #f7931a;
+    background: rgba(247, 147, 26, 0.1);
+    font-weight: 600;
+}
+
+.activeLink i {
+    color: #f7931a;
 }
 
 .userInfo {
@@ -56,6 +206,27 @@
 @media (max-width: 768px) {
     .header {
         padding: 1rem;
+    }
+
+    .menuTrigger {
+        padding: 0.6rem 1.2rem;
+    }
+
+    .dropdownMenu {
+        position: fixed;
+        top: auto;
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        width: auto;
+    }
+
+    .menuBackground {
+        width: 100%;
+    }
+
+    .navLink, .activeLink {
+        padding: 0.8rem 1rem;
     }
 
     .userInfo {

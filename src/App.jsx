@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard';
 import ViewLoans from './components/ViewLoans';
 import LoanDetails from './components/LoanDetails';
 import Cryptocurrencies from './components/Cryptocurrencies';
+import AdminDashboard from './components/AdminDashboard';
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
           <Route path="/view-loans" element={<ViewLoans />} />
           <Route path="/view-loans/:loanId" element={<LoanDetails />} />
           <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminDashboard />} />
+          <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
