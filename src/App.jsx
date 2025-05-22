@@ -8,6 +8,7 @@ import InterestTerms from './components/InterestTerms';
 import RequestLoan from './components/RequestLoan';
 import Dashboard from './components/Dashboard';
 import ViewLoans from './components/ViewLoans';
+import LoanDetails from './components/LoanDetails';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/interest-terms" element={<InterestTerms />} />
           <Route path="/request-loan" element={<RequestLoan />} />
           <Route path="/view-loans" element={<ViewLoans />} />
+          <Route path="/view-loans/:loanId" element={<LoanDetails />} />
         </Routes>
       </BrowserRouter>
     </div>

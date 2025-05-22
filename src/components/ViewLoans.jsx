@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
 import { default as DashboardHeader } from './DashboardHeader';
 import Footer from './Footer';
+import Logo from './Logo';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'user', label: 'User' },
@@ -37,9 +39,23 @@ const ViewLoans = () => {
   const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState('user');
+  const [sortDir, setSortDir] = useState('asc');
   const [userEmail, setUserEmail] = useState('');
-  const [sortBy, setSortBy] = useState('expiry'); // Default sort by expiry date
-  const [sortDir, setSortDir] = useState('asc'); // Default sort direction
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Extract user email from JWT token
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        setUserEmail(tokenData.email);
+      } catch (e) {
+        setUserEmail('');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,11 +183,37 @@ const ViewLoans = () => {
     return <span className={styles.sortArrow}>{sortDir === 'asc' ? '▲' : '▼'}</span>;
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
   return (
     <div className={styles.container}>
+
       <DashboardHeader userEmail={userEmail} />
+
       <main className={styles.main}>
         <div className={styles.content}>
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#f7931a',
+              fontWeight: 600,
+              fontSize: '1.05rem',
+              cursor: 'pointer',
+              padding: 0,
+              marginBottom: '1.2rem',
+              textDecoration: 'underline',
+              display: 'block',
+              textAlign: 'left',
+            }}
+            aria-label="Return to Dashboard"
+          >
+            &larr; Return to Dashboard
+          </button>
           <h1 className={styles.title}>Browse Loans</h1>
           {loading ? (
             <div className={styles.loading}>Loading...</div>
@@ -203,7 +245,7 @@ const ViewLoans = () => {
                       <td>{row.amount}</td>
                       <td>{row.term}</td>
                       <td>{row.expiry}</td>
-                      <td><button className={styles.learnMoreBtn}>Learn More</button></td>
+                      <td><button className={styles.learnMoreBtn} onClick={() => navigate(`/view-loans/${row.id}`)}>Learn More</button></td>
                     </tr>
                   ))}
                 </tbody>

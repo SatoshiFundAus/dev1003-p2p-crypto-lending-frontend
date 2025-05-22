@@ -120,18 +120,22 @@
 }
 
 .learnMoreBtn {
-    background: rgba(247, 147, 26, 0.1);
-    color: #f7931a;
-    border: 1px solid #f7931a;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(247, 147, 26, 0.15);
 }
 
 .learnMoreBtn:hover {
-    background: #f7931a;
-    color: #fff;
+  background: linear-gradient(135deg, #ff9f43 0%, #f7931a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(247, 147, 26, 0.25);
 }
 
 .loading {

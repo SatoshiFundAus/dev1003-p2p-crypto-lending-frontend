@@ -1,0 +1,142 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #fff;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 0;
+}
+
+.content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem 2rem 2rem 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.loanCard {
+  background: rgba(255,255,255,0.04);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 1rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.15rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #f7931a;
+  font-weight: 600;
+  min-width: 110px;
+}
+
+.fundBtn {
+  margin-top: 2.2rem;
+  padding: 1.1rem 0;
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(247, 147, 26, 0.15);
+}
+
+.fundBtn:hover {
+  background: linear-gradient(135deg, #ff9f43 0%, #f7931a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(247, 147, 26, 0.25);
+}
+
+.loading {
+  color: #fff;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem 0;
+}
+
+.error {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.08);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.notFound {
+  color: #ffae42;
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  padding: 1.2rem 1rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 700px) {
+  .content {
+    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+  }
+  .loanCard {
+    padding: 1.2rem 0.5rem;
+  }
+  .title {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+  .detailRow {
+    font-size: 1rem;
+    padding: 0.5rem 0;
+  }
+  .fundBtn {
+    font-size: 1.05rem;
+    padding: 0.8rem 0;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1024px) {
+  .content {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .content {
+    max-width: 800px;
+  }
+} 
