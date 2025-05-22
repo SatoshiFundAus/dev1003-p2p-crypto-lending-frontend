@@ -1,0 +1,30 @@
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.3s ease;
+    background: #1a1c23;
+    padding: 0.75rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid rgba(247, 147, 26, 0.1);
+    cursor: pointer;
+}
+
+.logoContainer:hover {
+    transform: scale(1.02);
+    border-color: rgba(247, 147, 26, 0.2);
+}
+
+.btcSymbol {
+    color: #f7931a;
+    font-size: 1.8rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.logoText {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+} 
