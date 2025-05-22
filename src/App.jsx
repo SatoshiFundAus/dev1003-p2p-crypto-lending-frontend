@@ -5,6 +5,7 @@ import LoginRegisterPage from './components/LoginRegisterPage';
 import Login from './components/LoginRegister';
 import Header from './components/Header';
 import InterestTerms from './components/InterestTerms';
+import RequestLoan from './components/RequestLoan';
 import Dashboard from './components/Dashboard';
 import ViewLoans from './components/ViewLoans';
 

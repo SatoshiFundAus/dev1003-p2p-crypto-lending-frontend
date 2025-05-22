@@ -6,7 +6,23 @@ import Logo from './Logo';
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
     const [balance, setBalance] = useState(null);
-    const [loans, setLoans] = useState([]);
+    const [collateral, setCollateral] = useState([]);
+    const [loanStats, setLoanStats] = useState({
+        funded: {
+            active: 0,
+            repaid: 0,
+            defaulted: 0,
+            returnRate: 0,
+            collateralValue: 0
+        },
+        requested: {
+            pending: 0,
+            funded: 0,
+            expired: 0
+        },
+        earningsToDate: 0.05 // Example value
+    });
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,12 +35,11 @@ function Dashboard() {
         // Fetch user data
         const fetchUserData = async () => {
             try {
-                // First, get the user's email from the token
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
 
-                // Then fetch user's wallet balance
-                const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
+                // Fetch wallet balance
+                const balanceResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -33,12 +48,12 @@ function Dashboard() {
                     credentials: 'include'
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.walletBalance !== undefined) {
-                        setBalance(data.walletBalance);
+                if (balanceResponse.ok) {
+                    const balanceData = await balanceResponse.json();
+                    if (balanceData.walletBalance !== undefined) {
+                        setBalance(balanceData.walletBalance);
                     } else {
-                        // If no wallet exists, create one
+                        // Create wallet if none exists
                         const createWalletResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallets', {
                             method: 'POST',
                             headers: {
@@ -53,31 +68,35 @@ function Dashboard() {
                             setBalance(newWalletData.balance);
                         }
                     }
-                } else if (response.status === 404) {
-                    // If wallet not found, create one
-                    const createWalletResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallets', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include'
-                    });
-                    
-                    if (createWalletResponse.ok) {
-                        const newWalletData = await createWalletResponse.json();
-                        setBalance(newWalletData.balance);
-                    }
-                } else if (response.status === 401) {
-                    // Token expired or invalid
+                } else if (balanceResponse.status === 401) {
                     localStorage.removeItem('token');
                     navigate('/login');
-                } else {
-                    console.error('Failed to fetch wallet data:', response.status);
                 }
 
-                // Fetch deals/loans (if you have an endpoint for this)
-                // TODO: Add deals/loans endpoint integration when available
+                // Fetch user's collateral
+                const collateralResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/collateral', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (collateralResponse.ok) {
+                    const collateralData = await collateralResponse.json();
+                    setCollateral(collateralData);
+                    
+                    // Calculate total locked collateral
+                    const totalCollateral = collateralData
+                        .filter(c => c.status === 'locked')
+                        .reduce((sum, c) => sum + c.amount, 0);
+                    
+                    setLoanStats(prev => ({
+                        ...prev,
+                        collateralHeld: totalCollateral
+                    }));
+                }
 
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -109,42 +128,60 @@ function Dashboard() {
             </header>
 
             <main className={styles.mainContent}>
-                <div className={styles.balanceSection}>
-                    <h2>Balance</h2>
-                    <div className={styles.balanceAmount}>
-                        {balance !== null ? `${balance} BTC` : 'Loading...'}
+                <div className={styles.statsSection}>
+                    <div className={styles.loanCard}>
+                        <h2>Loans Funded</h2>
+                        <div className={styles.loanStats}>
+                            <div className={styles.statusLine}>
+                                Status: 
+                                <span className={styles.active}>Active ({loanStats.funded.active})</span> | 
+                                <span className={styles.repaid}>Repaid ({loanStats.funded.repaid})</span> | 
+                                <span className={styles.defaulted}>Defaulted ({loanStats.funded.defaulted})</span>
+                            </div>
+                            <div className={styles.returnRate}>
+                                Return Rate: {loanStats.funded.returnRate}% APY
+                            </div>
+                            <div className={styles.collateralValue}>
+                                Collateral Value: {loanStats.funded.collateralValue} BTC
+                            </div>
+                        </div>
+                        <button 
+                            className={`${styles.actionButton} ${styles.fundLoan}`}
+                            onClick={() => navigate('/fund-loan')}
+                        >
+                            Fund a Loan
+                        </button>
+                    </div>
+
+                    <div className={styles.loanCard}>
+                        <h2>Loans Requested</h2>
+                        <div className={styles.loanStats}>
+                            <div className={styles.statusLine}>
+                                Status: 
+                                <span className={styles.pending}>Pending ({loanStats.requested.pending})</span> | 
+                                <span className={styles.funded}>Funded ({loanStats.requested.funded})</span> | 
+                                <span className={styles.expired}>Expired ({loanStats.requested.expired})</span>
+                            </div>
+                        </div>
+                        <button 
+                            className={`${styles.actionButton} ${styles.requestLoan}`}
+                            onClick={() => navigate('/request-loan')}
+                        >
+                            Request a Loan
+                        </button>
                     </div>
                 </div>
 
-                <div className={styles.loansSection}>
-                    <h2>Loans</h2>
-                    <div className={styles.loansList}>
-                        {loans.length > 0 ? (
-                            loans.map((loan, index) => (
-                                <div key={index} className={styles.loanItem}>
-                                    <span>{loan.amount} BTC</span>
-                                    <span>{loan.status}</span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className={styles.noLoans}>No active loans</div>
-                        )}
+                <div className={styles.collateralSection}>
+                    <h2>Current Collateral Held</h2>
+                    <div className={styles.btcAmount}>
+                        ≈ {loanStats.collateralHeld || 0} BTC
                     </div>
-                </div>
 
-                <div className={styles.actionButtons}>
-                    <button 
-                        className={`${styles.actionButton} ${styles.requestLoan}`}
-                        onClick={() => navigate('/request-loan')}
-                    >
-                        Request Loan
-                    </button>
-                    <button 
-                        className={`${styles.actionButton} ${styles.fundLoan}`}
-                        onClick={() => navigate('/fund-loan')}
-                    >
-                        Fund Loan
-                    </button>
+                    <h2>Earnings to Date</h2>
+                    <div className={styles.btcAmount}>
+                        ≈ {loanStats.earningsToDate} BTC
+                    </div>
                 </div>
             </main>
         </div>
