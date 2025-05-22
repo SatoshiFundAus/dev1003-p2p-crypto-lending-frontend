@@ -1,7 +1,7 @@
 import styles from './LoginRegisterPage.module.css';
-import satoshiFund from '../assets/satoshiFund.png';
 import LoginRegister from './LoginRegister';
 import { useNavigate } from 'react-router-dom';
+import Logo from './Logo';
 
 function LoginRegisterPage(props) {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ function LoginRegisterPage(props) {
             </div>
 
             <div className={styles.topBar}>
-                <img src={satoshiFund} alt="SatoshiFund Logo" className={styles.logo} />
+                <Logo />
                 <button
                     onClick={() => navigate('/')}
                     aria-label="Cancel and go back"
