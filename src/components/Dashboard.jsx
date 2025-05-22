@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
-import Logo from './Logo';
+import DashboardHeader from './DashboardHeader';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
@@ -117,16 +117,7 @@ function Dashboard() {
 
     return (
         <div className={styles.dashboard}>
-            <header className={styles.header}>
-                <Logo />
-                <div className={styles.userInfo}>
-                    <div className={styles.userEmail}>{userEmail}</div>
-                    <div className={styles.userAvatar} onClick={handleLogout} title="Click to logout">
-                        <i className="fas fa-user-circle"></i>
-                    </div>
-                </div>
-            </header>
-
+            <DashboardHeader userEmail={userEmail} />
             <main className={styles.mainContent}>
                 <div className={styles.statsSection}>
                     <div className={styles.loanCard}>
