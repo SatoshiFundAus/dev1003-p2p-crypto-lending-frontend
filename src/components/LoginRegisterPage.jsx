@@ -8,6 +8,13 @@ function LoginRegisterPage(props) {
 
     return (
         <section className={styles.pageContainer}>
+            {/* Decorative blockchain elements */}
+            <div className={styles.blockchainDecor}>
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className={styles.block} style={{ animationDelay: `${i * 0.5}s` }} />
+                ))}
+            </div>
+
             <div className={styles.topBar}>
                 <img src={satoshiFund} alt="SatoshiFund Logo" className={styles.logo} />
                 <button
@@ -34,6 +41,20 @@ function LoginRegisterPage(props) {
 
             <div className={styles.cardWrapper}>
                 <LoginRegister name={props.name}/>
+            </div>
+
+            {/* Floating crypto symbols */}
+            <div className={styles.cryptoSymbols}>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
+                <span className={styles.symbol}>₿</span>
             </div>
         </section>
     );

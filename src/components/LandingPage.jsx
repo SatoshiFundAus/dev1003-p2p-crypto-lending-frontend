@@ -4,9 +4,7 @@ import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-
 function LandingPage() {
-
     const navigate = useNavigate()
 
     const cardDescription1 =
@@ -23,17 +21,28 @@ function LandingPage() {
     return (
         <>
             <div className={styles.landingPage}>
+                {/* Decorative blockchain elements */}
+                <div className={styles.blockchainDecor}>
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className={styles.block} style={{ animationDelay: `${i * 0.5}s` }} />
+                    ))}
+                </div>
+
+                {/* Floating crypto symbols */}
+                <div className={styles.cryptoSymbols}>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                    <span className={styles.symbol}>₿</span>
+                </div>
+
                 <Header />
-                {/* <header className={styles.navbar}>
-                    <img src={satoshiFund} alt="Satoshi Fund Logo" className={styles.logo} />
-                    <BTCPrice />
-                    <button
-                        className={styles.loginBtn}
-                        onClick={() => navigate('/login')}
-                    >
-                        Login
-                    </button>
-                </header> */}
 
                 <main className={styles.mainContent}>
                     <div className={styles.heroText}>
@@ -52,7 +61,6 @@ function LandingPage() {
                         <Card className={styles.instructionSteps} cardName={"Step 3. Get Started"} description={cardDescription3} />
                     </div>
                 </main>
-
             </div>
             <Footer />
         </>
