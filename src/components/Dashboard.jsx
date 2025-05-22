@@ -138,7 +138,7 @@ function Dashboard() {
                         </div>
                         <button 
                             className={`${styles.actionButton} ${styles.fundLoan}`}
-                            onClick={() => navigate('/fund-loan')}
+                            onClick={() => navigate('/view-loans')}
                         >
                             Fund a Loan
                         </button>

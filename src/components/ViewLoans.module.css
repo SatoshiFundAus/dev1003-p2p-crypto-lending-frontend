@@ -74,27 +74,33 @@
 
 .loansTable {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 0;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    table-layout: fixed;
 }
 
 .loansTable th,
 .loansTable td {
-    padding: 1.2rem;
+    padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid rgba(247, 147, 26, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .loansTable th {
-    background: rgba(247, 147, 26, 0.1);
-    color: #f7931a;
     font-weight: 600;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background-color 0.3s ease;
+    color: #f7931a;
+    background: rgba(255,255,255,0.02);
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
+
+.loansTable th:nth-child(1) { width: 20%; }
+.loansTable th:nth-child(2) { width: 20%; }
+.loansTable th:nth-child(3) { width: 15%; }
+.loansTable th:nth-child(4) { width: 25%; }
+.loansTable th:nth-child(5) { width: 15%; }
+.loansTable th:nth-child(6) { width: 5%; }
 
 .loansTable tr:last-child td {
     border-bottom: none;
@@ -160,6 +166,15 @@
     0% { opacity: 0.6; }
     50% { opacity: 1; }
     100% { opacity: 0.6; }
+}
+
+@media (max-width: 700px) {
+    .loansTable th:nth-child(1) { width: 25%; }
+    .loansTable th:nth-child(2) { width: 25%; }
+    .loansTable th:nth-child(3) { width: 20%; }
+    .loansTable th:nth-child(4) { width: 20%; }
+    .loansTable th:nth-child(5) { width: 10%; }
+    .loansTable th:nth-child(6) { width: 0%; }
 }
 
 @media (max-width: 768px) {

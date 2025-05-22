@@ -15,8 +15,8 @@
 }
 
 .content {
-  width: 100%;
-  max-width: 800px;
+  width: 85%;
+  max-width: 2000px;
   margin: 0 auto;
   padding: 1rem 2rem 2rem 2rem;
 }
@@ -33,12 +33,14 @@
   background: rgba(255,255,255,0.04);
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-  padding: 2.5rem 2rem;
+  width: 100%;
+  padding: 2.5rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   align-items: stretch;
   margin-top: 1rem;
+  box-sizing: border-box;
 }
 
 .detailRow {
@@ -114,6 +116,7 @@
   }
   .loanCard {
     padding: 1.2rem 0.5rem;
+    width: 100%;
   }
   .title {
     font-size: 1.3rem;
@@ -137,6 +140,6 @@
 
 @media (min-width: 1025px) {
   .content {
-    max-width: 800px;
+    max-width: 2000px;
   }
 } 

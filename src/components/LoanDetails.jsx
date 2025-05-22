@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './LoanDetails.module.css';
-import dashboardStyles from './Dashboard.module.css';
 import Footer from './Footer';
-import Logo from './Logo';
+import DashboardHeader from './DashboardHeader';
 
 function maskName(name) {
   if (!name) return '';
@@ -40,7 +39,7 @@ const LoanDetails = () => {
       try {
         const tokenData = JSON.parse(atob(token.split('.')[1]));
         setUserEmail(tokenData.email);
-      } catch (e) {
+      } catch {
         setUserEmail('');
       }
     }
@@ -94,15 +93,7 @@ const LoanDetails = () => {
 
   return (
     <div className={styles.container}>
-      <header className={dashboardStyles.header}>
-        <Logo />
-        <div className={dashboardStyles.userInfo}>
-          <div className={dashboardStyles.userEmail}>{userEmail}</div>
-          <div className={dashboardStyles.userAvatar} onClick={handleLogout} title="Click to logout">
-            <i className="fas fa-user-circle"></i>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
       <main className={styles.main}>
         <div className={styles.content}>
           <button
