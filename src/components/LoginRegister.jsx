@@ -72,7 +72,7 @@ function Login(props) {
                         draggable: true,
                     });
                     setTimeout(() => {
-                        window.location.href = '/';
+                        navigate('/dashboard');
                     }, 1000);
                 }
             } else {
