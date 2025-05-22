@@ -1,27 +1,38 @@
 .footer {
     width: 100%;
-    background-color: #111;
+    max-width: inherit;
+    background: linear-gradient(135deg, rgba(17, 17, 17, 0.9), rgba(34, 34, 34, 0.9));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: white;
     padding: 1rem 2rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-    position: relative; /* or fixed if you want it always visible */
+    box-shadow: 0 -2px 15px rgba(247, 147, 26, 0.1);
+    position: relative;
     bottom: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(247, 147, 26, 0.1);
 }
 
 .social-icons {
     display: flex;
     gap: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .social-icons a {
     color: #f7931a;
     font-size: 1.5rem;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
 }
 
 .social-icons a:hover {
     color: #ffae42;
+    transform: translateY(-2px);
+    text-shadow: 0 0 15px rgba(247, 147, 26, 0.5);
 }
