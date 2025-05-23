@@ -81,9 +81,19 @@ const Transactions = () => {
     if (userId) fetchTransactions();
   }, [userId]);
 
-  // Split transactions
-  const outgoing = transactions.filter(t => t.isLoanRepayment && t.fromUser && (t.fromUser._id === userId || t.fromUser === userId));
-  const incoming = transactions.filter(t => !t.isLoanRepayment && t.toUser && (t.toUser._id === userId || t.toUser === userId));
+  // Debug: log userId and transactions
+  console.log('userId:', userId, 'transactions:', transactions);
+
+  // Outgoing: all you sent (fromUser is you)
+  const outgoing = transactions.filter(
+    t => t.fromUser && String(t.fromUser._id) === String(userId)
+  );
+  // Incoming: all you received (toUser is you)
+  const incoming = transactions.filter(
+    t => t.toUser && String(t.toUser._id) === String(userId)
+  );
+  // Debug: log outgoing and incoming
+  console.log('outgoing:', outgoing, 'incoming:', incoming);
 
   // Helper to display user (mask name/email)
   const displayUser = user => {
@@ -106,6 +116,9 @@ const Transactions = () => {
 
   // Helper to display paid/received
   const displayStatus = s => s ? 'Yes' : 'No';
+
+  // Helper to display type
+  const displayType = t => t.isLoanRepayment ? 'Repayment' : 'Disbursement';
 
   if (loading) {
     return (
@@ -138,64 +151,64 @@ const Transactions = () => {
               User has no transactions.
             </div>
           )}
-          {!(outgoing.length === 0 && incoming.length === 0) && (
-            <>
-              <div className={styles.termsContainer}>
-                <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Outgoing Repayments</h2>
-                <table className={styles.termsTable}>
-                  <thead>
-                    <tr>
-                      <th>To</th>
-                      <th>Currency</th>
-                      <th>Amount</th>
-                      <th>Due Date</th>
-                      <th>Paid?</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {outgoing.length === 0 ? (
-                      <tr><td colSpan={5} style={{ textAlign: 'center', color: '#aaa' }}>No outgoing repayments</td></tr>
-                    ) : outgoing.map((t, idx) => (
-                      <tr key={idx}>
-                        <td>{displayUser(t.toUser)}</td>
-                        <td>{displayCurrency(t)}</td>
-                        <td>{Number(t.amount).toFixed(8)}</td>
-                        <td>{displayDate(t.expectedPaymentDate)}</td>
-                        <td>{displayStatus(t.paymentStatus)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.termsContainer}>
-                <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Incoming Payments</h2>
-                <table className={styles.termsTable}>
-                  <thead>
-                    <tr>
-                      <th>From</th>
-                      <th>Currency</th>
-                      <th>Amount</th>
-                      <th>Due Date</th>
-                      <th>Received?</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {incoming.length === 0 ? (
-                      <tr><td colSpan={5} style={{ textAlign: 'center', color: '#aaa' }}>No incoming payments</td></tr>
-                    ) : incoming.map((t, idx) => (
-                      <tr key={idx}>
-                        <td>{displayUser(t.fromUser)}</td>
-                        <td>{displayCurrency(t)}</td>
-                        <td>{Number(t.amount).toFixed(8)}</td>
-                        <td>{displayDate(t.expectedPaymentDate)}</td>
-                        <td>{displayStatus(t.paymentStatus)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
+          <div className={styles.termsContainer}>
+            <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Outgoing Transactions</h2>
+            <table className={styles.termsTable}>
+              <thead>
+                <tr>
+                  <th>To</th>
+                  <th>Currency</th>
+                  <th>Amount</th>
+                  <th>Due Date</th>
+                  <th>Paid?</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {outgoing.length === 0 ? (
+                  <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa' }}>No outgoing transactions</td></tr>
+                ) : outgoing.map((t, idx) => (
+                  <tr key={idx}>
+                    <td>{displayUser(t.toUser)}</td>
+                    <td>{displayCurrency(t)}</td>
+                    <td>{Number(t.amount).toFixed(8)}</td>
+                    <td>{displayDate(t.expectedPaymentDate)}</td>
+                    <td>{displayStatus(t.paymentStatus)}</td>
+                    <td>{displayType(t)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={styles.termsContainer}>
+            <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Incoming Transactions</h2>
+            <table className={styles.termsTable}>
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>Currency</th>
+                  <th>Amount</th>
+                  <th>Due Date</th>
+                  <th>Received?</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {incoming.length === 0 ? (
+                  <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa' }}>No incoming transactions</td></tr>
+                ) : incoming.map((t, idx) => (
+                  <tr key={idx}>
+                    <td>{displayUser(t.fromUser)}</td>
+                    <td>{displayCurrency(t)}</td>
+                    <td>{Number(t.amount).toFixed(8)}</td>
+                    <td>{displayDate(t.expectedPaymentDate)}</td>
+                    <td>{displayStatus(t.paymentStatus)}</td>
+                    <td>{displayType(t)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
       <Footer />
