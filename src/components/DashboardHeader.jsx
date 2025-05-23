@@ -62,12 +62,12 @@ const DashboardHeader = ({ userEmail }) => {
                                 <span>Dashboard</span>
                             </NavLink>
                             <NavLink 
-                                to="/lend" 
+                                to="/transactions" 
                                 className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <i className="fas fa-hand-holding-usd"></i>
-                                <span>Lend</span>
+                                <span>Transactions</span>
                             </NavLink>
                             <NavLink 
                                 to="/view-loans" 
