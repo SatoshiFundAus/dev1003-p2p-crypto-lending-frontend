@@ -11,25 +11,29 @@ import ViewLoans from './components/ViewLoans';
 import LoanDetails from './components/LoanDetails';
 import Cryptocurrencies from './components/Cryptocurrencies';
 import AdminDashboard from './components/AdminDashboard';
+import Transactions from './components/Transactions';
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginRegisterPage name="Log In" />} />
-        <Route path="/register" element={<LoginRegisterPage name="Register" />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/lend" element={<Dashboard />} />
-        <Route path="/interest-terms" element={<InterestTerms />} />
-        <Route path="/request-loan" element={<RequestLoan />} />
-        <Route path="/view-loans" element={<ViewLoans />} />
-        <Route path="/view-loans/:loanId" element={<LoanDetails />} />
-        <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<AdminDashboard />} />
-        <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
-      </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginRegisterPage name="Log In" />} />
+          <Route path="/register" element={<LoginRegisterPage name="Register" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/lend" element={<App />} />
+          <Route path="/interest-terms" element={<InterestTerms />} />
+          <Route path="/request-loan" element={<RequestLoan />} />
+          <Route path="/view-loans" element={<ViewLoans />} />
+          <Route path="/view-loans/:loanId" element={<LoanDetails />} />
+          <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminDashboard />} />
+          <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
