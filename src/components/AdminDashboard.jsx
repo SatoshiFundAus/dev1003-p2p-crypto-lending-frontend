@@ -15,79 +15,126 @@ const AdminDashboard = () => {
         platformEarnings: 0
     });
     const [loans, setLoans] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Get stored user data
-        const token = localStorage.getItem('token');
-        const userEmail = localStorage.getItem('userEmail');
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        const fetchAdminData = async () => {
+            try {
+                // Get stored user data
+                const token = localStorage.getItem('token');
+                const userEmail = localStorage.getItem('userEmail');
+                const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-        if (!token || !isAdmin) {
-            console.log('Not authenticated or not admin:', { token: !!token, isAdmin });
-            navigate('/login');
-            return;
-        }
+                // Debug log to check token value
+                console.log('Current auth state:', { 
+                    hasToken: !!token, 
+                    tokenValue: token,
+                    isAdmin: isAdmin,
+                    email: userEmail 
+                });
 
-        // Fetch admin dashboard data
-        Promise.all([
-            fetch(`${BACKEND_URL}/admin/stats`, {
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                if (!token || !isAdmin) {
+                    console.log('Not authenticated or not admin:', { token: !!token, isAdmin });
+                    navigate('/login');
+                    return;
                 }
-            }),
-            fetch(`${BACKEND_URL}/admin/loans`, {
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
+
+                // Common headers for all requests
+                const headers = {
+                    'Authorization': token,
                     'Content-Type': 'application/json'
+                };
+
+                // Debug log to check headers
+                console.log('Request headers:', headers);
+
+                // Fetch admin dashboard data
+                const [completedRes, activeRes] = await Promise.all([
+                    fetch(`${BACKEND_URL}/admin/deals-complete`, { 
+                        headers,
+                        credentials: 'include'
+                    }),
+                    fetch(`${BACKEND_URL}/admin/deals-incomplete`, { 
+                        headers,
+                        credentials: 'include'
+                    })
+                ]);
+
+                // Check if either request failed
+                if (!completedRes.ok || !activeRes.ok) {
+                    // Log response details for debugging
+                    console.log('Response details:', {
+                        completedStatus: completedRes.status,
+                        activeStatus: activeRes.status
+                    });
+
+                    // If unauthorized, redirect to login
+                    if (completedRes.status === 401 || activeRes.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('userEmail');
+                        localStorage.removeItem('isAdmin');
+                        navigate('/login');
+                        throw new Error('Unauthorized access. Please login again.');
+                    }
+                    throw new Error(`Failed to fetch data. Status: ${completedRes.status}, ${activeRes.status}`);
                 }
-            })
-        ])
-        .then(([statsRes, loansRes]) => {
-            if (!statsRes.ok || !loansRes.ok) {
-                throw new Error('Failed to fetch admin data');
+
+                const [completedData, activeData] = await Promise.all([
+                    completedRes.json(),
+                    activeRes.json()
+                ]);
+
+                console.log('Deals data:', { completed: completedData, active: activeData });
+                
+                setStats(prevStats => ({
+                    ...prevStats,
+                    totalLoansFunded: completedData.totalCompletedDeals || 0,
+                    activeLoans: activeData.ActiveDeals || 0,
+                    // For now, keeping example data for other stats
+                    averageInterestRate: 12.5,
+                    totalCollateralValue: 2500000,
+                    platformEarnings: 75000
+                }));
+
+                // Example loans data for the table
+                setLoans([
+                    {
+                        id: 1,
+                        borrower: 'john.doe@example.com',
+                        lender: 'jane.smith@example.com',
+                        amount: 50000,
+                        status: 'Active',
+                    },
+                    {
+                        id: 2,
+                        borrower: 'bob.wilson@example.com',
+                        lender: 'alice.brown@example.com',
+                        amount: 75000,
+                        status: 'Pending',
+                    },
+                    {
+                        id: 3,
+                        borrower: 'sarah.jones@example.com',
+                        lender: 'mike.davis@example.com',
+                        amount: 100000,
+                        status: 'Completed',
+                    }
+                ]);
+            } catch (err) {
+                console.error('Error fetching admin data:', err);
+                setError(err.message);
+                // Set fallback data
+                setStats({
+                    totalLoansFunded: 0,
+                    activeLoans: 0,
+                    averageInterestRate: 0,
+                    totalCollateralValue: 0,
+                    platformEarnings: 0
+                });
             }
-            return Promise.all([statsRes.json(), loansRes.json()]);
-        })
-        .then(([statsData, loansData]) => {
-            setStats(statsData);
-            setLoans(loansData);
-        })
-        .catch(err => {
-            console.error('Error fetching admin data:', err);
-            // For development, set example data
-            setStats({
-                totalLoansFunded: 150,
-                activeLoans: 75,
-                averageInterestRate: 12.5,
-                totalCollateralValue: 2500000,
-                platformEarnings: 75000
-            });
+        };
 
-            setLoans([
-                {
-                    id: 1,
-                    borrower: 'john.doe@example.com',
-                    lender: 'jane.smith@example.com',
-                    amount: 50000,
-                    status: 'Active',
-                },
-                {
-                    id: 2,
-                    borrower: 'bob.wilson@example.com',
-                    lender: 'alice.brown@example.com',
-                    amount: 75000,
-                    status: 'Pending',
-                },
-                {
-                    id: 3,
-                    borrower: 'sarah.jones@example.com',
-                    lender: 'mike.davis@example.com',
-                    amount: 100000,
-                    status: 'Completed',
-                }
-            ]);
-        });
+        fetchAdminData();
     }, [navigate]);
 
     const formatCurrency = (amount) => {
@@ -102,6 +149,20 @@ const AdminDashboard = () => {
 
     if (!userEmail) {
         return <div className={styles.loading}>Loading...</div>;
+    }
+
+    // Show error message if there's an error
+    if (error) {
+        return (
+            <div className={styles.adminDashboard}>
+                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <div className={styles.content}>
+                    <div className={styles.error}>
+                        Error: {error}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
