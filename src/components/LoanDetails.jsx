@@ -31,16 +31,22 @@ const LoanDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
+  const [funding, setFunding] = useState(false);
+  const [fundError, setFundError] = useState(null);
+  const [fundSuccess, setFundSuccess] = useState(null);
 
   useEffect(() => {
-    // Extract user email from JWT token
+    // Extract user email and id from JWT token
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const tokenData = JSON.parse(atob(token.split('.')[1]));
         setUserEmail(tokenData.email);
+        setUserId(tokenData.sub || tokenData.id || tokenData._id || tokenData.userId || '');
       } catch {
         setUserEmail('');
+        setUserId('');
       }
     }
   }, []);
@@ -75,11 +81,45 @@ const LoanDetails = () => {
       }
     };
     fetchLoan();
-  }, [loanId]);
+  }, [loanId, fundSuccess]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
+  };
+
+  const handleFundLoan = async () => {
+    setFunding(true);
+    setFundError(null);
+    setFundSuccess(null);
+    try {
+      const token = localStorage.getItem('token');
+      if (!userId) throw new Error('User not logged in');
+      const payload = {
+        lenderId: userId,
+        loanDetails: loanId
+      };
+      const res = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/deals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        credentials: 'include',
+        mode: 'cors',
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to fund loan');
+      }
+      setFundSuccess('Loan funded!');
+    } catch (err) {
+      setFundError(err.message || 'Failed to fund loan');
+    } finally {
+      setFunding(false);
+    }
   };
 
   let userDisplay = '';
@@ -115,6 +155,8 @@ const LoanDetails = () => {
           >
             &larr; Back to Browse Loans
           </button>
+          {fundError && <div className={styles.error}>Error: {fundError}</div>}
+          {fundSuccess && <div className={styles.success}>{fundSuccess}</div>}
           {loading ? (
             <div className={styles.loading}>Loading...</div>
           ) : error ? (
@@ -130,7 +172,15 @@ const LoanDetails = () => {
               <div className={styles.detailRow}><span className={styles.label}>Term:</span> {loan.interest_term ? `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''} / ${loan.interest_term.interest_rate}%` : ''}</div>
               <div className={styles.detailRow}><span className={styles.label}>Expiry:</span> {loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : ''}</div>
               <div className={styles.detailRow}><span className={styles.label}>Status:</span> {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}</div>
-              {loan.status === 'pending' && <button className={styles.fundBtn}>Fund Loan</button>}
+              {loan.status === 'pending' && (
+                <button
+                  className={styles.fundBtn}
+                  onClick={handleFundLoan}
+                  disabled={funding}
+                >
+                  {funding ? 'Funding...' : 'Fund Loan'}
+                </button>
+              )}
             </div>
           )}
         </div>
