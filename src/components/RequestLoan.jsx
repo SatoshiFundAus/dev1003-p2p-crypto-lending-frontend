@@ -131,14 +131,6 @@ const RequestLoan = () => {
       <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <button
-            type="button"
-            className={styles.returnNav}
-            onClick={() => window.location.href = '/dashboard'}
-            aria-label="Return to Dashboard"
-          >
-            &larr; Return to Dashboard
-          </button>
           <h1 className={styles.title}>Request a Loan</h1>
           {loading ? (
             <div className={styles.loading}>Loading...</div>
@@ -195,11 +187,13 @@ const RequestLoan = () => {
                     {interestTerms.length === 0 ? (
                       <option value="">No terms available</option>
                     ) : (
-                      interestTerms.map(term => (
-                        <option key={term._id} value={term._id}>
-                          {term.loan_length} month{term.loan_length > 1 ? 's' : ''} @ {term.interest_rate}%
-                        </option>
-                      ))
+                      interestTerms
+                        .sort((a, b) => a.loan_length - b.loan_length)
+                        .map(term => (
+                          <option key={term._id} value={term._id}>
+                            {term.loan_length} month{term.loan_length > 1 ? 's' : ''} @ {term.interest_rate}%
+                          </option>
+                        ))
                     )}
                   </select>
                 </label>

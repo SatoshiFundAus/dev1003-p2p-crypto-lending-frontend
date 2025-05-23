@@ -16,7 +16,7 @@
 
 .form {
   width: 100%;
-  max-width: 900px;
+  max-width: 1400px;
   background: rgba(255,255,255,0.04);
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
@@ -64,6 +64,18 @@
   font-size: 1rem;
   margin-top: 0.2rem;
   transition: border-color 0.2s;
+}
+
+.formFields select option {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 0.5rem;
+  border: none;
+}
+
+.formFields select option:hover {
+  background: #2d2d2d;
+  color: #f7931a;
 }
 
 .formFields input:focus,
