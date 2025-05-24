@@ -149,25 +149,6 @@ const ViewLoans = () => {
       <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
       <main className={styles.main}>
         <div className={styles.content}>
-          <button
-            onClick={() => navigate('/dashboard')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#f7931a',
-              fontWeight: 600,
-              fontSize: '1.05rem',
-              cursor: 'pointer',
-              padding: 0,
-              marginBottom: '1.2rem',
-              textDecoration: 'underline',
-              display: 'block',
-              textAlign: 'left',
-            }}
-            aria-label="Return to Dashboard"
-          >
-            &larr; Return to Dashboard
-          </button>
           <h1 className={styles.title}>Browse Loans</h1>
           {loading ? (
             <div className={styles.loading}>Loading...</div>

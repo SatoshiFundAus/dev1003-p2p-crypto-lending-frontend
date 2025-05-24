@@ -121,43 +121,71 @@ function Dashboard() {
             <main className={styles.mainContent}>
                 <div className={styles.statsSection}>
                     <div className={styles.loanCard}>
-                        <h2>Loans Funded</h2>
+                        <h2><i className="fas fa-handshake"></i> Loans Funded</h2>
                         <div className={styles.loanStats}>
-                            <div className={styles.statusLine}>
-                                Status: 
-                                <span className={styles.active}>Active ({loanStats.funded.active})</span> | 
-                                <span className={styles.repaid}>Repaid ({loanStats.funded.repaid})</span> | 
-                                <span className={styles.defaulted}>Defaulted ({loanStats.funded.defaulted})</span>
+                            <div className={styles.statsGrid}>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.funded.active}</div>
+                                    <div className={styles.statLabel}>Active</div>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.funded.repaid}</div>
+                                    <div className={styles.statLabel}>Repaid</div>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.funded.defaulted}</div>
+                                    <div className={styles.statLabel}>Defaulted</div>
+                                </div>
                             </div>
-                            <div className={styles.returnRate}>
-                                Return Rate: {loanStats.funded.returnRate}% APY
-                            </div>
-                            <div className={styles.collateralValue}>
-                                Collateral Value: {loanStats.funded.collateralValue} BTC
+                            <div className={styles.metricsGrid}>
+                                <div className={styles.metricItem}>
+                                    <span className={styles.metricIcon}>💰</span>
+                                    <div className={styles.metricInfo}>
+                                        <div className={styles.metricValue}>{loanStats.funded.returnRate}%</div>
+                                        <div className={styles.metricLabel}>APY Return Rate</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricItem}>
+                                    <span className={styles.metricIcon}>🔒</span>
+                                    <div className={styles.metricInfo}>
+                                        <div className={styles.metricValue}>{loanStats.funded.collateralValue} BTC</div>
+                                        <div className={styles.metricLabel}>Collateral Value</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button 
                             className={`${styles.actionButton} ${styles.fundLoan}`}
                             onClick={() => navigate('/view-loans')}
                         >
+                            <i className="fas fa-plus-circle"></i>
                             Fund a Loan
                         </button>
                     </div>
 
                     <div className={styles.loanCard}>
-                        <h2>Loans Requested</h2>
+                        <h2><i className="fas fa-hand-holding-usd"></i> Loans Requested</h2>
                         <div className={styles.loanStats}>
-                            <div className={styles.statusLine}>
-                                Status: 
-                                <span className={styles.pending}>Pending ({loanStats.requested.pending})</span> | 
-                                <span className={styles.funded}>Funded ({loanStats.requested.funded})</span> | 
-                                <span className={styles.expired}>Expired ({loanStats.requested.expired})</span>
+                            <div className={styles.statsGrid}>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.requested.pending}</div>
+                                    <div className={styles.statLabel}>Pending</div>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.requested.funded}</div>
+                                    <div className={styles.statLabel}>Funded</div>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <div className={styles.statValue}>{loanStats.requested.expired}</div>
+                                    <div className={styles.statLabel}>Expired</div>
+                                </div>
                             </div>
                         </div>
                         <button 
                             className={`${styles.actionButton} ${styles.requestLoan}`}
                             onClick={() => navigate('/request-loan')}
                         >
+                            <i className="fas fa-paper-plane"></i>
                             Request a Loan
                         </button>
                     </div>

@@ -29,8 +29,7 @@
 }
 
 .main {
-    width: 85%;
-    max-width: 2000px;
+    max-width: 1400px;
     margin: 3rem auto;
     padding: 0 2rem;
     position: relative;
@@ -38,6 +37,7 @@
 }
 
 .content {
+    max-width: 1400px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 24px;
     padding: 2.5rem;
