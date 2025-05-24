@@ -40,7 +40,7 @@ function Login(props) {
 
             console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Full response data:', { ...data, token: data.token ? 'exists' : 'missing' });
+            console.log('Full response data:', data);
 
             if (response.ok) {
                 if (isRegistration) {
@@ -55,49 +55,47 @@ function Login(props) {
                     setTimeout(() => {
                         navigate('/login');
                     }, 2000);
-                } else {
+                } else if (data.token) {
                     // Handle login success
-                    if (data.token) {
-                        console.log('Processing login data:', {
-                            email: data.email,
-                            isAdmin: data.isAdmin,
-                            hasToken: Boolean(data.token)
-                        });
+                    console.log('Processing login data:', {
+                        email: data.email,
+                        isAdmin: data.isAdmin,
+                        hasToken: Boolean(data.token)
+                    });
 
-                        // Store user data in localStorage
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('userEmail', data.email);
-                        localStorage.setItem('isAdmin', data.isAdmin);
+                    // Store user data in localStorage
+                    localStorage.setItem('token', `Bearer ${data.token}`);
+                    localStorage.setItem('userEmail', data.email);
+                    localStorage.setItem('isAdmin', data.isAdmin);
 
-                        // Verify stored data
-                        console.log('Stored data verification:', {
-                            storedEmail: localStorage.getItem('userEmail'),
-                            storedIsAdmin: localStorage.getItem('isAdmin'),
-                            hasStoredToken: Boolean(localStorage.getItem('token'))
-                        });
+                    // Verify stored data
+                    console.log('Stored data verification:', {
+                        storedEmail: localStorage.getItem('userEmail'),
+                        storedIsAdmin: localStorage.getItem('isAdmin'),
+                        hasStoredToken: Boolean(localStorage.getItem('token'))
+                    });
 
-                        toast.success('Login Successful', {
-                            position: "top-right",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                        });
+                    // Redirect based on user role
+                    const isAdminUser = data.isAdmin === true;
+                    console.log('Navigation decision:', {
+                        isAdmin: isAdminUser,
+                        destination: isAdminUser ? '/admin-dashboard' : '/dashboard'
+                    });
 
-                        // Redirect based on user role
-                        const isAdminUser = data.isAdmin === true;
-                        console.log('Navigation decision:', {
-                            isAdmin: isAdminUser,
-                            destination: isAdminUser ? '/admin-dashboard' : '/dashboard'
-                        });
+                    toast.success('Login Successful', {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    });
 
-                        setTimeout(() => {
-                            navigate(isAdminUser ? '/admin-dashboard' : '/dashboard');
-                        }, 1000);
-                    } else {
-                        throw new Error('No token received from server');
-                    }
+                    setTimeout(() => {
+                        navigate(isAdminUser ? '/admin-dashboard' : '/dashboard');
+                    }, 1000);
+                } else {
+                    throw new Error('No token received from server');
                 }
             } else {
                 const errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
