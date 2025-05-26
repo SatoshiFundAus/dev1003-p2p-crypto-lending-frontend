@@ -26,6 +26,11 @@ function Login(props) {
 
         try {
             console.log('Sending request with data:', { ...userData, password: '***' });
+            console.log('Request endpoint:', endpoint);
+            console.log('Request headers:', {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            });
             
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -39,6 +44,8 @@ function Login(props) {
             });
 
             console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            
             const data = await response.json();
             console.log('Full response data:', data);
 
@@ -98,7 +105,23 @@ function Login(props) {
                     throw new Error('No token received from server');
                 }
             } else {
-                const errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
+                // Handle error responses (including 404 for invalid credentials)
+                let errorMessage;
+                
+                if (response.status === 404 && data.error) {
+                    // Backend returns 404 for invalid credentials
+                    errorMessage = data.error;
+                } else if (response.status === 401) {
+                    // Standard unauthorized response
+                    errorMessage = 'Invalid email or password. Please try again.';
+                } else if (response.status >= 500) {
+                    // Server error
+                    errorMessage = 'Server error. Please try again later.';
+                } else {
+                    // Other errors
+                    errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
+                }
+                
                 console.error('Error response:', {
                     status: response.status,
                     error: errorMessage,
@@ -107,8 +130,22 @@ function Login(props) {
                 setError(errorMessage);
             }
         } catch (err) {
-            console.error('Request error:', err);
-            setError(`${isRegistration ? 'Registration' : 'Login'} failed. ${err.message}`);
+            console.error('Request error details:', {
+                name: err.name,
+                message: err.message,
+                stack: err.stack
+            });
+            
+            let errorMessage;
+            if (err.name === 'TypeError' && err.message.includes('fetch')) {
+                errorMessage = `${isRegistration ? 'Registration' : 'Login'} failed. Network error - please check your internet connection and try again.`;
+            } else if (err.message.includes('CORS')) {
+                errorMessage = `${isRegistration ? 'Registration' : 'Login'} failed. Cross-origin request blocked.`;
+            } else {
+                errorMessage = `${isRegistration ? 'Registration' : 'Login'} failed. ${err.message}`;
+            }
+            
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
