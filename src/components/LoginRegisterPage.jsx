@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './LoginRegisterPage.module.css';
 import LoginRegister from './LoginRegister';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +41,7 @@ function LoginRegisterPage(props) {
             </div>
 
             <div className={styles.cardWrapper}>
-                <LoginRegister name={props.name}/>
+                <LoginRegister name={props.name} />
             </div>
 
             {/* Floating crypto symbols */}
