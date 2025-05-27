@@ -84,14 +84,56 @@ const AdminDashboard = () => {
                     activeRes.json()
                 ]);
 
-                console.log('Deals data:', { completed: completedData, active: activeData });
+                // Try to fetch average interest rate
+                let avgInterestRate = 0;
+                try {
+                    const avgInterestRes = await fetch(`${BACKEND_URL}/admin/average-interest-rate`, { 
+                        headers,
+                        credentials: 'include'
+                    });
+                    
+                    if (avgInterestRes.ok) {
+                        const avgInterestData = await avgInterestRes.json();
+                        avgInterestRate = avgInterestData.averageInterestRate || 0;
+                        console.log('Average interest rate fetched:', avgInterestRate);
+                    } else {
+                        console.log('Average interest rate endpoint not available yet (Status:', avgInterestRes.status, ')');
+                        // TODO: Remove this fallback once backend endpoint is implemented
+                        avgInterestRate = 12.5; // Temporary fallback
+                    }
+                } catch (err) {
+                    console.log('Average interest rate endpoint not implemented yet:', err.message);
+                    // TODO: Remove this fallback once backend endpoint is implemented
+                    avgInterestRate = 12.5; // Temporary fallback
+                }
+
+                // Try to fetch total collateral value
+                let totalCollateralValue = 0;
+                try {
+                    const totalCollateralRes = await fetch(`${BACKEND_URL}/admin/collateral/total`, {
+                        headers,
+                        credentials: 'include'
+                    });
+
+                    if (totalCollateralRes.ok) {
+                        const totalCollateralData = await totalCollateralRes.json();
+                        totalCollateralValue = totalCollateralData.totalCollateral || 0;
+                    }
+                } catch (err) {
+                    console.log('Error fetching total collateral value:', err.message);
+                }
+
+                console.log('Deals data:', { 
+                    completed: completedData, 
+                    active: activeData, 
+                    avgInterest: avgInterestRate 
+                });
                 
                 setStats(prevStats => ({
                     ...prevStats,
                     totalLoansFunded: completedData.totalCompletedDeals || 0,
                     activeLoans: activeData.ActiveDeals || 0,
-                    // For now, keeping example data for other stats
-                    averageInterestRate: 12.5,
+                    averageInterestRate: avgInterestRate,
                     totalCollateralValue: 2500000,
                     platformEarnings: 75000
                 }));
