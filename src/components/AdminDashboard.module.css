@@ -153,6 +153,19 @@
     border-color: rgba(247, 147, 26, 0.4);
 }
 
+/* Delete Button */
+.deleteButton {
+    background: rgba(255, 71, 87, 0.1);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    padding: 0.5rem 1rem;
+}
+
+.deleteButton:hover {
+    background: rgba(255, 71, 87, 0.2);
+    border-color: rgba(255, 71, 87, 0.4);
+}
+
 .adminActions {
     display: flex;
     gap: 1rem;

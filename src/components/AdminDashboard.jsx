@@ -267,9 +267,11 @@ const AdminDashboard = () => {
                         <p>{stats.totalLoansFunded}</p>
                     </div>
                     <div className={styles.statCard}>
-                        <i className="fas fa-chart-line"></i>
-                        <h3>Active Loans</h3>
-                        <p>{stats.activeLoans}</p>
+                        <a href='#loans'>
+                            <i className="fas fa-chart-line"></i>
+                            <h3>Active Loans</h3>
+                            <p>{stats.activeLoans}</p>
+                        </a>
                     </div>
                     <div className={styles.statCard}>
                         <i className="fas fa-percentage"></i>
@@ -288,7 +290,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainer} id='loans'>
                     <h2>Current Loans</h2>
                     <div className={styles.tableWrapper}>
                         <table className={styles.loansTable}>
@@ -313,9 +315,10 @@ const AdminDashboard = () => {
                                             </span>
                                         </td>
                                         <td>
+                                            {/* Currently the button is not correctly loading the loan*/}
                                             <button
                                                 className={styles.viewButton}
-                                                onClick={() => navigate(`/loans/${loan.id}`)}
+                                                onClick={() => navigate(`/view-loans/${loan.id}`)}
                                             >
                                                 View Details
                                             </button>
