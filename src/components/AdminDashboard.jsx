@@ -26,11 +26,11 @@ const AdminDashboard = () => {
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
                 // Debug log to check token value
-                console.log('Current auth state:', { 
-                    hasToken: !!token, 
+                console.log('Current auth state:', {
+                    hasToken: !!token,
                     tokenValue: token,
                     isAdmin: isAdmin,
-                    email: userEmail 
+                    email: userEmail
                 });
 
                 if (!token || !isAdmin) {
@@ -50,11 +50,11 @@ const AdminDashboard = () => {
 
                 // Fetch admin dashboard data
                 const [completedRes, activeRes] = await Promise.all([
-                    fetch(`${BACKEND_URL}/admin/deals-complete`, { 
+                    fetch(`${BACKEND_URL}/admin/deals-complete`, {
                         headers,
                         credentials: 'include'
                     }),
-                    fetch(`${BACKEND_URL}/admin/deals-incomplete`, { 
+                    fetch(`${BACKEND_URL}/admin/deals-incomplete`, {
                         headers,
                         credentials: 'include'
                     })
@@ -87,11 +87,11 @@ const AdminDashboard = () => {
                 // Try to fetch average interest rate
                 let avgInterestRate = 0;
                 try {
-                    const avgInterestRes = await fetch(`${BACKEND_URL}/admin/average-interest-rate`, { 
+                    const avgInterestRes = await fetch(`${BACKEND_URL}/admin/average-interest-rate`, {
                         headers,
                         credentials: 'include'
                     });
-                    
+
                     if (avgInterestRes.ok) {
                         const avgInterestData = await avgInterestRes.json();
                         avgInterestRate = avgInterestData.averageInterestRate || 0;
@@ -129,13 +129,13 @@ const AdminDashboard = () => {
                     totalCollateralValue = 2500000;
                 }
 
-                console.log('Deals data:', { 
-                    completed: completedData, 
-                    active: activeData, 
+                console.log('Deals data:', {
+                    completed: completedData,
+                    active: activeData,
                     avgInterest: avgInterestRate,
                     totalCollateral: totalCollateralValue
                 });
-                
+
                 setStats(prevStats => ({
                     ...prevStats,
                     totalLoansFunded: completedData.totalCompletedDeals || 0,
@@ -145,30 +145,70 @@ const AdminDashboard = () => {
                     platformEarnings: 75000
                 }));
 
-                // Example loans data for the table
-                setLoans([
-                    {
-                        id: 1,
-                        borrower: 'john.doe@example.com',
-                        lender: 'jane.smith@example.com',
-                        amount: 50000,
-                        status: 'Active',
-                    },
-                    {
-                        id: 2,
-                        borrower: 'bob.wilson@example.com',
-                        lender: 'alice.brown@example.com',
-                        amount: 75000,
-                        status: 'Pending',
-                    },
-                    {
-                        id: 3,
-                        borrower: 'sarah.jones@example.com',
-                        lender: 'mike.davis@example.com',
-                        amount: 100000,
-                        status: 'Completed',
+                // Try to fetch loans data
+                let loansData = [];
+                try {
+                    const loansRes = await fetch(`${BACKEND_URL}/admin/deals-active`, {
+                        headers,
+                        credentials: 'include'
+                    });
+
+                    if (loansRes.ok) {
+                        const activeDealsData = await loansRes.json();
+                        console.log('Active data fetched:', activeDealsData);
+
+                        // Transform the backend data to match our frontend table structure
+                        loansData = activeDealsData.nap(deal => ({
+                            id: deal.dealId,
+                            borrower: deal.borrowerEmail,
+                            lender: deal.lenderEmail,
+                            amount: deal.amount,
+                            status: deal.dealStatus,
+                            expectedCompletion: deal.expectedCompletionDate
+                        }))
+
+                        console.log('Processed loans data:', loansData);
+                    } else {
+                        console.log('Active deals endpoint not available yet (Status:', loansRes.status, ')');
+                        // TODO: Remove this fallback once backend endpoint is implemented
+                        loansData = [{
+                            id: 1,
+                            borrower: 'john.doe@example.com',
+                            lender: 'jane.smith@example.com',
+                            amount: 50000,
+                            status: 'Active',
+                        },
+                        {
+                            id: 2,
+                            borrower: 'bob.wilson@example.com',
+                            lender: 'alice.brown@example.com',
+                            amount: 75000,
+                            status: 'Pending',
+                        },
+                        {
+                            id: 3,
+                            borrower: 'sarah.jones@example.com',
+                            lender: 'mike.davis@example.com',
+                            amount: 100000,
+                            status: 'Completed',
+                        }]; // Temporary fallback
                     }
-                ]);
+                } catch (err) {
+                    console.log('Error fetching loans data:', err.message);
+                    loansData = [
+                        {
+                            id: 1,
+                            borrower: 'john.doe@example.com',
+                            lender: 'jane.smith@example.com',
+                            amount: 50000,
+                            status: 'Active',
+                        }
+                    ];
+                }
+
+                setLoans(loansData);
+
+
             } catch (err) {
                 console.error('Error fetching admin data:', err);
                 setError(err.message);
@@ -219,7 +259,7 @@ const AdminDashboard = () => {
             <DashboardHeader userEmail={userEmail} isAdmin={true} />
             <div className={styles.content}>
                 <h1>Admin Dashboard</h1>
-                
+
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
                         <i className="fas fa-money-bill-wave"></i>
@@ -273,7 +313,7 @@ const AdminDashboard = () => {
                                             </span>
                                         </td>
                                         <td>
-                                            <button 
+                                            <button
                                                 className={styles.viewButton}
                                                 onClick={() => navigate(`/loans/${loan.id}`)}
                                             >
@@ -288,14 +328,14 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className={styles.adminActions}>
-                    <button 
+                    <button
                         className={styles.actionButton}
                         onClick={() => navigate('/admin/users')}
                     >
                         <i className="fas fa-users"></i>
                         View All Registered Users
                     </button>
-                    <button 
+                    <button
                         className={styles.actionButton}
                         onClick={() => navigate('/admin/suspicious-accounts')}
                     >
