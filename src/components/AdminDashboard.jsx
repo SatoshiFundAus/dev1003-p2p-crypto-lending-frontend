@@ -118,15 +118,22 @@ const AdminDashboard = () => {
                     if (totalCollateralRes.ok) {
                         const totalCollateralData = await totalCollateralRes.json();
                         totalCollateralValue = totalCollateralData.totalCollateral || 0;
+                        console.log('Total collateral value fetched:', totalCollateralValue);
+                    } else {
+                        console.log('Total collateral endpoint not available yet (Status:', totalCollateralRes.status, ')');
+                        // TODO: Remove this fallback once backend endpoint is implemented
+                        totalCollateralValue = 2500000; // Temporary fallback
                     }
                 } catch (err) {
                     console.log('Error fetching total collateral value:', err.message);
+                    totalCollateralValue = 2500000;
                 }
 
                 console.log('Deals data:', { 
                     completed: completedData, 
                     active: activeData, 
-                    avgInterest: avgInterestRate 
+                    avgInterest: avgInterestRate,
+                    totalCollateral: totalCollateralValue
                 });
                 
                 setStats(prevStats => ({
@@ -134,7 +141,7 @@ const AdminDashboard = () => {
                     totalLoansFunded: completedData.totalCompletedDeals || 0,
                     activeLoans: activeData.ActiveDeals || 0,
                     averageInterestRate: avgInterestRate,
-                    totalCollateralValue: 2500000,
+                    totalCollateralValue: totalCollateralValue,
                     platformEarnings: 75000
                 }));
 
