@@ -158,7 +158,7 @@ const AdminDashboard = () => {
                         console.log('Active data fetched:', activeDealsData);
 
                         // Transform the backend data to match our frontend table structure
-                        loansData = activeDealsData.nap(deal => ({
+                        loansData = activeDealsData.map(deal => ({
                             id: deal.dealId,
                             borrower: deal.borrowerEmail,
                             lender: deal.lenderEmail,
@@ -306,7 +306,7 @@ const AdminDashboard = () => {
                                     <tr key={loan.id}>
                                         <td>{loan.borrower}</td>
                                         <td>{loan.lender}</td>
-                                        <td>{formatCurrency(loan.amount)}</td>
+                                        <td>&#x0e3f; {loan.amount}</td>
                                         <td>
                                             <span className={`${styles.status} ${styles[loan.status.toLowerCase()]}`}>
                                                 {loan.status}
