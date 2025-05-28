@@ -15,11 +15,17 @@ const AdminDashboard = () => {
         platformEarnings: 0
     });
     const [loans, setLoans] = useState([]);
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null);
+    const [underDevelopment, setUnderDevelopment] = useState(false)
 
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
+
+                setLoading(true);
+                setError(null)
+
                 // Get stored user data
                 const token = localStorage.getItem('token');
                 const userEmail = localStorage.getItem('userEmail');
@@ -103,8 +109,7 @@ const AdminDashboard = () => {
                     }
                 } catch (err) {
                     console.log('Average interest rate endpoint not implemented yet:', err.message);
-                    // TODO: Remove this fallback once backend endpoint is implemented
-                    avgInterestRate = 12.5; // Temporary fallback
+                    setError('Failed to fetch interest average interest rate')
                 }
 
                 // Try to fetch total collateral value
@@ -126,6 +131,7 @@ const AdminDashboard = () => {
                     }
                 } catch (err) {
                     console.log('Error fetching total collateral value:', err.message);
+                    setError('An error occured while loading Collateral Value')
                     totalCollateralValue = 2500000;
                 }
 
@@ -158,7 +164,7 @@ const AdminDashboard = () => {
                         console.log('Active data fetched:', activeDealsData);
 
                         // Transform the backend data to match our frontend table structure
-                        loansData = activeDealsData.nap(deal => ({
+                        loansData = activeDealsData.map(deal => ({
                             id: deal.dealId,
                             borrower: deal.borrowerEmail,
                             lender: deal.lenderEmail,
@@ -204,6 +210,7 @@ const AdminDashboard = () => {
                             status: 'Active',
                         }
                     ];
+                    setError('Error fetching loans data')
                 }
 
                 setLoans(loansData);
@@ -220,6 +227,8 @@ const AdminDashboard = () => {
                     totalCollateralValue: 0,
                     platformEarnings: 0
                 });
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -233,11 +242,49 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
+    
+
     // Get userEmail from localStorage for the header
     const userEmail = localStorage.getItem('userEmail');
 
     if (!userEmail) {
         return <div className={styles.loading}>Loading...</div>;
+    }
+
+    // Try and develop a constant that will activate when the flag suspicious accounts button is pressed
+    const buttonDevelopment = () => {
+        setUnderDevelopment(true)
+    }
+
+    if (underDevelopment) {
+        return (
+            <div className={styles.adminDashboard}>
+                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <div className={styles.content}>
+                    <div style={{fontSize: '2rem'}}>This feature is under development</div>
+                </div>
+
+                <button
+                    className={styles.actionButton}
+                    onClick={() => setUnderDevelopment(false)}
+                    style={{marginTop: '20px'}}
+                >
+                    <i className='fas fa-arrow-left'></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        )
+    }
+
+    if (loading) {
+        return (
+            <div className={styles.adminDashboard}>
+                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <div className={styles.content}>
+                    <div className={styles.loading}>Loading...</div>
+                </div>
+            </div>
+        )
     }
 
     // Show error message if there's an error
@@ -267,9 +314,11 @@ const AdminDashboard = () => {
                         <p>{stats.totalLoansFunded}</p>
                     </div>
                     <div className={styles.statCard}>
-                        <i className="fas fa-chart-line"></i>
-                        <h3>Active Loans</h3>
-                        <p>{stats.activeLoans}</p>
+                        <a href='#loans'>
+                            <i className="fas fa-chart-line"></i>
+                            <h3>Active Loans</h3>
+                            <p>{stats.activeLoans}</p>
+                        </a>
                     </div>
                     <div className={styles.statCard}>
                         <i className="fas fa-percentage"></i>
@@ -288,7 +337,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                <div className={styles.tableContainer}>
+                <div className={styles.tableContainer} id='loans'>
                     <h2>Current Loans</h2>
                     <div className={styles.tableWrapper}>
                         <table className={styles.loansTable}>
@@ -306,16 +355,17 @@ const AdminDashboard = () => {
                                     <tr key={loan.id}>
                                         <td>{loan.borrower}</td>
                                         <td>{loan.lender}</td>
-                                        <td>{formatCurrency(loan.amount)}</td>
+                                        <td>&#x0e3f; {loan.amount}</td>
                                         <td>
                                             <span className={`${styles.status} ${styles[loan.status.toLowerCase()]}`}>
                                                 {loan.status}
                                             </span>
                                         </td>
                                         <td>
+                                            {/* Currently the button is not correctly loading the loan*/}
                                             <button
                                                 className={styles.viewButton}
-                                                onClick={() => navigate(`/loans/${loan.id}`)}
+                                                onClick={() => navigate(`/view-loans/${loan.id}`)}
                                             >
                                                 View Details
                                             </button>
@@ -337,7 +387,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                         className={styles.actionButton}
-                        onClick={() => navigate('/admin/suspicious-accounts')}
+                        onClick={() => buttonDevelopment()}
                     >
                         <i className="fas fa-user-shield"></i>
                         Flag or Ban Suspicious Accounts

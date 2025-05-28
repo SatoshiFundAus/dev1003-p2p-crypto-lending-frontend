@@ -1,114 +1,72 @@
 .container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
+    background: rgba(28, 30, 38, 0.95);
     color: #fff;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Animated background effect */
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 10% 10%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 90% 90%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
-    animation: gradientShift 15s ease infinite;
-    z-index: 0;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
+    display: flex;
+    flex-direction: column;
 }
 
 .main {
-    max-width: 1400px;
-    margin: 3rem auto;
-    padding: 0 2rem;
-    position: relative;
-    z-index: 1;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 0;
 }
 
 .content {
+    padding: 2rem;
     max-width: 1400px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
-    padding: 2.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(247, 147, 26, 0.1);
-    border: 1px solid rgba(247, 147, 26, 0.1);
-    transition: all 0.3s ease;
-}
-
-.content:hover {
-    transform: translateY(-5px);
-    box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(247, 147, 26, 0.2);
+    margin: 0 auto;
+    width: 100%;
 }
 
 .title {
-    color: #f7931a;
+    color: #fff;
     margin-bottom: 2rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 600;
-    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
 }
 
 .tableWrapper {
-    overflow-x: auto;
-    margin-top: 2rem;
+    background: rgba(28, 30, 38, 0.8);
+    border: 1px solid rgba(247, 147, 26, 0.2);
     border-radius: 16px;
-    background: rgba(28, 30, 38, 0.7);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    overflow-x: auto;
 }
 
 .loansTable {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    table-layout: fixed;
-}
-
-.loansTable th,
-.loansTable td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .loansTable th {
+    background: rgba(247, 147, 26, 0.1);
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
-    color: #f7931a;
-    background: rgba(255,255,255,0.02);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-.loansTable th:nth-child(1) { width: 20%; }
-.loansTable th:nth-child(2) { width: 20%; }
-.loansTable th:nth-child(3) { width: 15%; }
-.loansTable th:nth-child(4) { width: 25%; }
-.loansTable th:nth-child(5) { width: 15%; }
-.loansTable th:nth-child(6) { width: 5%; }
-
-.loansTable tr:last-child td {
-    border-bottom: none;
-}
-
-.loansTable tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid rgba(247, 147, 26, 0.2);
+    cursor: pointer;
+    user-select: none;
     transition: background-color 0.3s ease;
+}
+
+.loansTable th:hover {
+    background: rgba(247, 147, 26, 0.15);
+}
+
+.loansTable td {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loansTable tr:hover td {
+    background: rgba(247, 147, 26, 0.05);
 }
 
 .sortable {
@@ -116,85 +74,101 @@
     user-select: none;
 }
 
-.sortable:hover {
-    background: rgba(247, 147, 26, 0.15) !important;
-}
-
 .sortArrow {
     margin-left: 0.5rem;
     opacity: 0.7;
+    color: #f7931a;
 }
 
 .learnMoreBtn {
-  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.98rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px rgba(247, 147, 26, 0.15);
+    background: rgba(247, 147, 26, 0.1);
+    color: #f7931a;
+    border: 1px solid rgba(247, 147, 26, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
 .learnMoreBtn:hover {
-  background: linear-gradient(135deg, #ff9f43 0%, #f7931a 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(247, 147, 26, 0.25);
+    background: rgba(247, 147, 26, 0.2);
+    border-color: rgba(247, 147, 26, 0.4);
+    transform: translateY(-2px);
 }
 
 .loading {
-    text-align: center;
-    padding: 3rem;
-    color: #f7931a;
-    font-size: 1.2rem;
-    animation: pulse 1.5s infinite;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
 }
 
 .error {
-    color: #f44336;
-    text-align: center;
-    padding: 2rem;
-    background: rgba(244, 67, 54, 0.1);
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    padding: 1rem;
     border-radius: 12px;
     margin: 2rem 0;
-    border: 1px solid rgba(244, 67, 54, 0.2);
+    text-align: center;
 }
 
-@keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
+/* Status badges (if you want to add status indicators) */
+.status {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
-@media (max-width: 700px) {
-    .loansTable th:nth-child(1) { width: 25%; }
-    .loansTable th:nth-child(2) { width: 25%; }
-    .loansTable th:nth-child(3) { width: 20%; }
-    .loansTable th:nth-child(4) { width: 20%; }
-    .loansTable th:nth-child(5) { width: 10%; }
-    .loansTable th:nth-child(6) { width: 0%; }
+.active {
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
 }
 
+.pending {
+    background: rgba(255, 171, 0, 0.15);
+    color: #ffab00;
+}
+
+.completed {
+    background: rgba(48, 51, 107, 0.15);
+    color: #30336b;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-    .main {
-        width: 95%;
-        margin: 1.5rem auto;
-        padding: 0 1rem;
-    }
-
     .content {
-        padding: 1.5rem;
+        padding: 1rem;
     }
 
     .title {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .loansTable th,
     .loansTable td {
-        padding: 1rem 0.75rem;
+        padding: 0.75rem 0.5rem;
         font-size: 0.9rem;
     }
-} 
+
+    .tableWrapper {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loansTable th,
+    .loansTable td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .learnMoreBtn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}

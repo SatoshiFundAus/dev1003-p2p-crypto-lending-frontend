@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
 import { default as DashboardHeader } from './DashboardHeader';
 import Footer from './Footer';
-import Logo from './Logo';
 import { useNavigate } from 'react-router-dom';
 
 const columns = [
@@ -101,6 +100,7 @@ const ViewLoans = () => {
         ? `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''} / ${loan.interest_term.interest_rate}%`
         : '',
       expiry: loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : '',
+      status: loan.status || 'pending',
       learnMore: loan,
       _raw: loan,
     };
@@ -144,49 +144,85 @@ const ViewLoans = () => {
     window.location.href = '/login';
   };
 
+  // Get userEmail from localStorage for the header
+  const userEmailFromStorage = localStorage.getItem('userEmail');
+
+  if (!userEmailFromStorage) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+        <main className={styles.main}>
+          <div className={styles.content}>
+            <div className={styles.loading}>Loading loans...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+        <main className={styles.main}>
+          <div className={styles.content}>
+            <div className={styles.error}>Error: {error}</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
       <main className={styles.main}>
         <div className={styles.content}>
-          <h1 className={styles.title}>Browse Loans</h1>
-          {loading ? (
-            <div className={styles.loading}>Loading...</div>
-          ) : error ? (
-            <div className={styles.error}>Error: {error}</div>
-          ) : (
-            <div className={styles.tableWrapper}>
-              <table className={styles.loansTable}>
-                <thead>
-                  <tr>
-                    {columns.map(col => (
-                      <th
-                        key={col.key}
-                        className={styles.sortable}
-                        onClick={() => handleSort(col.key)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {col.label}{sortArrow(col.key)}
-                      </th>
-                    ))}
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedRows.map(row => (
-                    <tr key={row.id}>
-                      <td>{row.user}</td>
-                      <td>{row.currency}</td>
-                      <td>{row.amount}</td>
-                      <td>{row.term}</td>
-                      <td>{row.expiry}</td>
-                      <td><button className={styles.learnMoreBtn} onClick={() => navigate(`/view-loans/${row.id}`)}>Learn More</button></td>
-                    </tr>
+          <h1 className={styles.title}>Browse Loan Requests</h1>
+          
+          <div className={styles.tableWrapper}>
+            <table className={styles.loansTable}>
+              <thead>
+                <tr>
+                  {columns.map(col => (
+                    <th
+                      key={col.key}
+                      className={styles.sortable}
+                      onClick={() => handleSort(col.key)}
+                    >
+                      {col.label}{sortArrow(col.key)}
+                    </th>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedRows.map(row => (
+                  <tr key={row.id}>
+                    <td>{row.user}</td>
+                    <td>{row.currency}</td>
+                    <td>{row.amount}</td>
+                    <td>{row.term}</td>
+                    <td>{row.expiry}</td>
+                    <td>
+                      <button 
+                        className={styles.learnMoreBtn} 
+                        onClick={() => navigate(`/view-loans/${row.id}`)}
+                      >
+                        Learn More
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
       <Footer />
@@ -194,4 +230,4 @@ const ViewLoans = () => {
   );
 };
 
-export default ViewLoans; 
+export default ViewLoans;
