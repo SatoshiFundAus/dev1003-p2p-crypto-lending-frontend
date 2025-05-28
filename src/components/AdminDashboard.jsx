@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     const [loans, setLoans] = useState([]);
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null);
+    const [underDevelopment, setUnderDevelopment] = useState(false)
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -241,11 +242,38 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
+    
+
     // Get userEmail from localStorage for the header
     const userEmail = localStorage.getItem('userEmail');
 
     if (!userEmail) {
         return <div className={styles.loading}>Loading...</div>;
+    }
+
+    // Try and develop a constant that will activate when the flag suspicious accounts button is pressed
+    const buttonDevelopment = () => {
+        setUnderDevelopment(true)
+    }
+
+    if (underDevelopment) {
+        return (
+            <div className={styles.adminDashboard}>
+                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <div className={styles.content}>
+                    <div style={{fontSize: '2rem'}}>This feature is under development</div>
+                </div>
+
+                <button
+                    className={styles.actionButton}
+                    onClick={() => setUnderDevelopment(false)}
+                    style={{marginTop: '20px'}}
+                >
+                    <i className='fas fa-arrow-left'></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        )
     }
 
     if (loading) {
@@ -359,7 +387,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                         className={styles.actionButton}
-                        onClick={() => navigate('/admin/suspicious-accounts')}
+                        onClick={() => buttonDevelopment()}
                     >
                         <i className="fas fa-user-shield"></i>
                         Flag or Ban Suspicious Accounts
