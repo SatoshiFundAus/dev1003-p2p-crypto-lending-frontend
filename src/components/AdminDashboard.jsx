@@ -15,11 +15,16 @@ const AdminDashboard = () => {
         platformEarnings: 0
     });
     const [loans, setLoans] = useState([]);
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
+
+                setLoading(true);
+                setError(null)
+
                 // Get stored user data
                 const token = localStorage.getItem('token');
                 const userEmail = localStorage.getItem('userEmail');
@@ -103,8 +108,7 @@ const AdminDashboard = () => {
                     }
                 } catch (err) {
                     console.log('Average interest rate endpoint not implemented yet:', err.message);
-                    // TODO: Remove this fallback once backend endpoint is implemented
-                    avgInterestRate = 12.5; // Temporary fallback
+                    setError('Failed to fetch interest average interest rate')
                 }
 
                 // Try to fetch total collateral value
@@ -126,6 +130,7 @@ const AdminDashboard = () => {
                     }
                 } catch (err) {
                     console.log('Error fetching total collateral value:', err.message);
+                    setError('An error occured while loading Collateral Value')
                     totalCollateralValue = 2500000;
                 }
 
@@ -204,6 +209,7 @@ const AdminDashboard = () => {
                             status: 'Active',
                         }
                     ];
+                    setError('Error fetching loans data')
                 }
 
                 setLoans(loansData);
@@ -220,6 +226,8 @@ const AdminDashboard = () => {
                     totalCollateralValue: 0,
                     platformEarnings: 0
                 });
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -238,6 +246,17 @@ const AdminDashboard = () => {
 
     if (!userEmail) {
         return <div className={styles.loading}>Loading...</div>;
+    }
+
+    if (loading) {
+        return (
+            <div className={styles.adminDashboard}>
+                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <div className={styles.content}>
+                    <div className={styles.loading}>Loading...</div>
+                </div>
+            </div>
+        )
     }
 
     // Show error message if there's an error
