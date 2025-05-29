@@ -3,6 +3,7 @@ import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
 import { useState, useEffect } from 'react';
 
+
 const DashboardHeader = ({ userEmail }) => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
