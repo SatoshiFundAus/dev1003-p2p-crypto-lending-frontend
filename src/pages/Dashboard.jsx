@@ -5,6 +5,7 @@ import DashboardHeader from '../components/DashboardHeader';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
+    const [userId, setUserId] = useState('');
     const [balance, setBalance] = useState(null);
     const [collateral, setCollateral] = useState([]);
     const [loanStats, setLoanStats] = useState({
@@ -45,6 +46,7 @@ function Dashboard() {
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
+                setUserId(tokenData.id); // Assuming 'id' is the user ID key
 
                 // Fetch wallet balance
                 const balanceResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
@@ -103,6 +105,33 @@ function Dashboard() {
                     setLoanStats(prev => ({
                         ...prev,
                         collateralHeld: totalCollateral
+                    }));
+                }
+
+                // Fetch loan data
+                const loansResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (loansResponse.ok) {
+                    const loansData = await loansResponse.json();
+                    const userLoans = loansData.filter(loan => loan.borrower_id && String(loan.borrower_id._id) === String(tokenData.id));
+                    const pendingLoans = userLoans.filter(loan => loan.status === 'pending').length;
+                    const fundedLoans = userLoans.filter(loan => loan.status === 'funded').length;
+                    const expiredLoans = userLoans.filter(loan => loan.status === 'expired').length;
+
+                    setLoanStats(prev => ({
+                        ...prev,
+                        requested: {
+                            pending: pendingLoans,
+                            funded: fundedLoans,
+                            expired: expiredLoans
+                        }
                     }));
                 }
 
