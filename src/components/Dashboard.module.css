@@ -129,8 +129,8 @@
 .dashboardGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr;
-    gap: 2.5rem;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 7.5rem;
     align-items: stretch;
 }
 
@@ -143,7 +143,7 @@
         0 8px 32px rgba(0, 0, 0, 0.2),
         0 0 0 1px rgba(247, 147, 26, 0.1);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -415,6 +415,59 @@
     content: '\f1d8'; /* fa-paper-plane */
 }
 
+/* Additional icon classes */
+.iconBorrowedLoans::before {
+    content: '\f09d'; /* fa-credit-card */
+}
+
+.iconViewLoans::before {
+    content: '\f06e'; /* fa-eye */
+}
+
+.iconWallet::before {
+    content: '\f555'; /* fa-wallet */
+}
+
+.iconDeposit::before {
+    content: '\f53c'; /* fa-money-bill-wave */
+}
+
+/* Button variants */
+.viewButton {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+}
+
+.viewButton:hover {
+    background: linear-gradient(135deg, #357abd 0%, #4a90e2 100%);
+    box-shadow: 0 8px 30px rgba(74, 144, 226, 0.4);
+}
+
+.depositButton {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.depositButton:hover {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.4);
+}
+
+.fullWidthStat {
+    grid-column: 1 / -1;  /* Spans all columns */
+    padding: 2rem 1rem;   /* Slightly larger padding for emphasis */
+    background: rgba(247, 147, 26, 0.05);  /* Slightly different background */
+    border-color: rgba(247, 147, 26, 0.15);  /* Slightly stronger border */
+}
+
+.fullWidthStat .statNumber {
+    font-size: 2.5rem;  /* Larger font size for emphasis */
+    margin-bottom: 0.75rem;  /* More space between number and label */
+}
+
+.fullWidthStat .statTitle {
+    font-size: 1rem;  /* Slightly larger label */
+    opacity: 0.9;  /* More visible label */
+}
+
 @media (max-width: 768px) {
     .dashboardContent {
         padding: 0 1rem;
@@ -422,6 +475,7 @@
 
     .dashboardGrid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
     }
 
     .btcValue {

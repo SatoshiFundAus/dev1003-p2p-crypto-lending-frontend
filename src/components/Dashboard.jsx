@@ -20,6 +20,14 @@ function Dashboard() {
             funded: 0,
             expired: 0
         },
+        borrowed: {
+            openLoans: 0,
+            totalBorrowed: 0,
+            monthlyRepayments: 0
+        },
+        wallet: {
+            totalFunds: 0
+        },
         earningsToDate: 0.05 // Example value
     });
 
@@ -146,10 +154,10 @@ function Dashboard() {
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>🔒</span>
+                                    <span className={styles.metricIcon}>📈</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>{loanStats.funded.collateralValue} BTC</div>
-                                        <div className={styles.metricTitle}>Collateral Value</div>
+                                        <div className={styles.metricNumber}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
+                                        <div className={styles.metricTitle}>Lifetime Earnings</div>
                                     </div>
                                 </div>
                             </div>
@@ -160,6 +168,84 @@ function Dashboard() {
                         >
                             <i className={`${styles.icon} ${styles.iconAddFund}`}></i>
                             Fund a Loan
+                        </button>
+                    </div>
+
+                    <div className={styles.loanStatsCard}>
+                        <h2><i className={`${styles.icon} ${styles.iconBorrowedLoans}`}></i> Loans Borrowed</h2>
+                        <div className={styles.statsContainer}>
+                            <div className={styles.statsRow}>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.openLoans}</div>
+                                    <div className={styles.statTitle}>Open Loans</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.totalBorrowed.toFixed(8)}</div>
+                                    <div className={styles.statTitle}>Total Borrowed</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.monthlyRepayments.toFixed(8)}</div>
+                                    <div className={styles.statTitle}>Monthly Repayments</div>
+                                </div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>📅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Next Payment</div>
+                                        <div className={styles.metricTitle}>Due in 5 days</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>📊</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Interest Rate</div>
+                                        <div className={styles.metricTitle}>5% APY</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button 
+                            className={styles.primaryButton}
+                            onClick={() => navigate('/my-loans')}
+                        >
+                            <i className={`${styles.icon} ${styles.iconViewLoans}`}></i>
+                            View My Loans
+                        </button>
+                    </div>
+
+                    <div className={styles.loanStatsCard}>
+                        <h2><i className={`${styles.icon} ${styles.iconWallet}`}></i> Wallet Funds</h2>
+                        <div className={styles.statsContainer}>
+                            <div className={styles.statsRow}>
+                                <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
+                                    <div className={styles.statNumber}>{loanStats.wallet.totalFunds.toFixed(8)}</div>
+                                    <div className={styles.statTitle}>Total Balance</div>
+                                </div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>💸</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Available</div>
+                                        <div className={styles.metricTitle}>{loanStats.wallet.totalFunds.toFixed(8)} BTC</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>🔒</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Locked</div>
+                                        <div className={styles.metricTitle}>{loanStats.funded.collateralValue} BTC</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button 
+                            className={styles.primaryButton}
+                            onClick={() => navigate('/wallet')}
+                        >
+                            <i className={`${styles.icon} ${styles.iconDeposit}`}></i>
+                            Manage Wallet
                         </button>
                     </div>
 
@@ -188,18 +274,6 @@ function Dashboard() {
                             <i className={`${styles.icon} ${styles.iconSendRequest}`}></i>
                             Request a Loan
                         </button>
-                    </div>
-                </div>
-
-                <div className={styles.summaryCard}>
-                    <h2>Current Collateral Held</h2>
-                    <div className={styles.btcValue}>
-                        ≈ {loanStats.collateralHeld || 0} BTC
-                    </div>
-
-                    <h2>Earnings to Date</h2>
-                    <div className={styles.btcValue}>
-                        ≈ {loanStats.earningsToDate} BTC
                     </div>
                 </div>
             </main>
