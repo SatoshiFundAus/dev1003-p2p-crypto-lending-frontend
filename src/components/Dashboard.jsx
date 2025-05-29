@@ -116,89 +116,89 @@ function Dashboard() {
     };
 
     return (
-        <div className={styles.dashboard}>
+        <div className={styles.dashboardContainer}>
             <DashboardHeader userEmail={userEmail} />
-            <main className={styles.mainContent}>
-                <div className={styles.statsSection}>
-                    <div className={styles.loanCard}>
-                        <h2><i className="fas fa-handshake"></i> Loans Funded</h2>
-                        <div className={styles.loanStats}>
-                            <div className={styles.statsGrid}>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.funded.active}</div>
-                                    <div className={styles.statLabel}>Active</div>
+            <main className={styles.dashboardContent}>
+                <div className={styles.dashboardGrid}>
+                    <div className={styles.loanStatsCard}>
+                        <h2><i className={`${styles.icon} ${styles.iconFundedLoans}`}></i> Loans Funded</h2>
+                        <div className={styles.statsContainer}>
+                            <div className={styles.statsRow}>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.funded.active}</div>
+                                    <div className={styles.statTitle}>Active</div>
                                 </div>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.funded.repaid}</div>
-                                    <div className={styles.statLabel}>Repaid</div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.funded.repaid}</div>
+                                    <div className={styles.statTitle}>Repaid</div>
                                 </div>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.funded.defaulted}</div>
-                                    <div className={styles.statLabel}>Defaulted</div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.funded.defaulted}</div>
+                                    <div className={styles.statTitle}>Defaulted</div>
                                 </div>
                             </div>
-                            <div className={styles.metricsGrid}>
-                                <div className={styles.metricItem}>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💰</span>
-                                    <div className={styles.metricInfo}>
-                                        <div className={styles.metricValue}>{loanStats.funded.returnRate}%</div>
-                                        <div className={styles.metricLabel}>APY Return Rate</div>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>{loanStats.funded.returnRate}%</div>
+                                        <div className={styles.metricTitle}>APY Return Rate</div>
                                     </div>
                                 </div>
-                                <div className={styles.metricItem}>
+                                <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>🔒</span>
-                                    <div className={styles.metricInfo}>
-                                        <div className={styles.metricValue}>{loanStats.funded.collateralValue} BTC</div>
-                                        <div className={styles.metricLabel}>Collateral Value</div>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>{loanStats.funded.collateralValue} BTC</div>
+                                        <div className={styles.metricTitle}>Collateral Value</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <button 
-                            className={`${styles.actionButton} ${styles.fundLoan}`}
+                            className={`${styles.primaryButton} ${styles.fundButton}`}
                             onClick={() => navigate('/view-loans')}
                         >
-                            <i className="fas fa-plus-circle"></i>
+                            <i className={`${styles.icon} ${styles.iconAddFund}`}></i>
                             Fund a Loan
                         </button>
                     </div>
 
-                    <div className={styles.loanCard}>
-                        <h2><i className="fas fa-hand-holding-usd"></i> Loans Requested</h2>
-                        <div className={styles.loanStats}>
-                            <div className={styles.statsGrid}>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.requested.pending}</div>
-                                    <div className={styles.statLabel}>Pending</div>
+                    <div className={styles.loanStatsCard}>
+                        <h2><i className={`${styles.icon} ${styles.iconRequestedLoans}`}></i> Loans Requested</h2>
+                        <div className={styles.statsContainer}>
+                            <div className={styles.statsRow}>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.requested.pending}</div>
+                                    <div className={styles.statTitle}>Pending</div>
                                 </div>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.requested.funded}</div>
-                                    <div className={styles.statLabel}>Funded</div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.requested.funded}</div>
+                                    <div className={styles.statTitle}>Funded</div>
                                 </div>
-                                <div className={styles.statItem}>
-                                    <div className={styles.statValue}>{loanStats.requested.expired}</div>
-                                    <div className={styles.statLabel}>Expired</div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.requested.expired}</div>
+                                    <div className={styles.statTitle}>Expired</div>
                                 </div>
                             </div>
                         </div>
                         <button 
-                            className={`${styles.actionButton} ${styles.requestLoan}`}
+                            className={`${styles.primaryButton} ${styles.requestButton}`}
                             onClick={() => navigate('/request-loan')}
                         >
-                            <i className="fas fa-paper-plane"></i>
+                            <i className={`${styles.icon} ${styles.iconSendRequest}`}></i>
                             Request a Loan
                         </button>
                     </div>
                 </div>
 
-                <div className={styles.collateralSection}>
+                <div className={styles.summaryCard}>
                     <h2>Current Collateral Held</h2>
-                    <div className={styles.btcAmount}>
+                    <div className={styles.btcValue}>
                         ≈ {loanStats.collateralHeld || 0} BTC
                     </div>
 
                     <h2>Earnings to Date</h2>
-                    <div className={styles.btcAmount}>
+                    <div className={styles.btcValue}>
                         ≈ {loanStats.earningsToDate} BTC
                     </div>
                 </div>

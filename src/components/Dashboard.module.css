@@ -1,4 +1,4 @@
-.dashboard {
+.dashboardContainer {
     min-height: 100vh;
     background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
     color: white;
@@ -9,7 +9,7 @@
 }
 
 /* Animated background effect */
-.dashboard::before {
+.dashboardContainer::before {
     content: '';
     position: absolute;
     top: 0;
@@ -115,7 +115,7 @@
     transform: rotate(360deg);
 }
 
-.mainContent {
+.dashboardContent {
     max-width: 1400px;
     margin: 3rem auto;
     padding: 0 2rem;
@@ -126,7 +126,7 @@
     z-index: 1;
 }
 
-.statsSection {
+.dashboardGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr;
@@ -134,7 +134,7 @@
     align-items: stretch;
 }
 
-.loanCard {
+.loanStatsCard {
     background: rgba(28, 30, 38, 0.7);
     border-radius: 24px;
     padding: 2.5rem;
@@ -150,14 +150,14 @@
     height: 100%;
 }
 
-.loanCard:hover {
+.loanStatsCard:hover {
     transform: translateY(-5px);
     box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(247, 147, 26, 0.2);
 }
 
-.loanCard h2 {
+.loanStatsCard h2 {
     color: #f7931a;
     margin: 0 0 1.5rem 0;
     font-size: 1.8rem;
@@ -167,12 +167,12 @@
     gap: 0.75rem;
 }
 
-.loanCard h2 i {
+.loanStatsCard h2 i {
     font-size: 1.6rem;
     opacity: 0.8;
 }
 
-.loanStats {
+.statsContainer {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(247, 147, 26, 0.1);
     border-radius: 16px;
@@ -185,7 +185,7 @@
     flex-direction: column;
 }
 
-.loanStats::before {
+.statsContainer::before {
     content: '';
     position: absolute;
     top: 0;
@@ -201,7 +201,7 @@
     100% { transform: translateX(100%); }
 }
 
-.statsGrid {
+.statsRow {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
@@ -209,7 +209,7 @@
     flex-shrink: 0;
 }
 
-.statItem {
+.statBox {
     text-align: center;
     padding: 1.5rem 1rem;
     background: rgba(255, 255, 255, 0.05);
@@ -220,13 +220,13 @@
     overflow: hidden;
 }
 
-.statItem:hover {
+.statBox:hover {
     transform: translateY(-2px);
     border-color: rgba(247, 147, 26, 0.2);
     background: rgba(255, 255, 255, 0.08);
 }
 
-.statItem::before {
+.statBox::before {
     content: '';
     position: absolute;
     top: 0;
@@ -238,11 +238,11 @@
     transition: transform 0.5s ease;
 }
 
-.statItem:hover::before {
+.statBox:hover::before {
     transform: translateX(100%);
 }
 
-.statValue {
+.statNumber {
     font-size: 2.2rem;
     font-weight: 700;
     color: #ffffff;
@@ -250,7 +250,7 @@
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-.statLabel {
+.statTitle {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);
     font-weight: 500;
@@ -258,7 +258,7 @@
     letter-spacing: 0.5px;
 }
 
-.metricsGrid {
+.metricsRow {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
@@ -266,7 +266,7 @@
     flex-shrink: 0;
 }
 
-.metricItem {
+.metricBox {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -277,7 +277,7 @@
     transition: all 0.3s ease;
 }
 
-.metricItem:hover {
+.metricBox:hover {
     background: rgba(247, 147, 26, 0.08);
     border-color: rgba(247, 147, 26, 0.2);
     transform: scale(1.02);
@@ -290,30 +290,30 @@
     transition: all 0.3s ease;
 }
 
-.metricItem:hover .metricIcon {
+.metricBox:hover .metricIcon {
     filter: none;
     opacity: 1;
     transform: scale(1.1);
 }
 
-.metricInfo {
+.metricContent {
     flex: 1;
 }
 
-.metricValue {
+.metricNumber {
     font-size: 1.4rem;
     font-weight: 600;
     color: #ffffff;
     margin-bottom: 0.25rem;
 }
 
-.metricLabel {
+.metricTitle {
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.6);
     font-weight: 500;
 }
 
-.actionButton {
+.primaryButton {
     width: 100%;
     padding: 1.4rem 2rem;
     font-size: 1.2rem;
@@ -334,7 +334,7 @@
     letter-spacing: 0.5px;
 }
 
-.actionButton::before {
+.primaryButton::before {
     content: '';
     position: absolute;
     top: 0;
@@ -345,40 +345,25 @@
     transition: left 0.5s ease;
 }
 
-.actionButton:hover::before {
+.primaryButton:hover::before {
     left: 100%;
 }
 
-.actionButton:hover {
+.primaryButton:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 30px rgba(247, 147, 26, 0.4);
     background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
 }
 
-.actionButton:active {
+.primaryButton:active {
     transform: translateY(-1px);
 }
 
-.actionButton i {
+.primaryButton i {
     font-size: 1.1rem;
 }
 
-/* Remove old color classes */
-.statusLine {
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.returnRate, .collateralValue {
-    color: #fff;
-    margin-top: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.collateralSection {
+.summaryCard {
     background: rgba(28, 30, 38, 0.7);
     border-radius: 24px;
     padding: 2.5rem;
@@ -389,14 +374,14 @@
     text-align: center;
 }
 
-.collateralSection h2 {
+.summaryCard h2 {
     color: #f7931a;
     margin: 0 0 1rem 0;
     font-size: 1.8rem;
     font-weight: 600;
 }
 
-.btcAmount {
+.btcValue {
     font-size: 2.5rem;
     font-weight: 700;
     color: #fff;
@@ -404,55 +389,81 @@
     text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
 }
 
+/* Icon base class */
+.icon {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-style: normal;
+    font-size: 1.6rem;
+    opacity: 0.8;
+}
+
+/* Icon specific classes */
+.iconFundedLoans::before {
+    content: '\f2b5'; /* fa-handshake */
+}
+
+.iconAddFund::before {
+    content: '\f055'; /* fa-plus-circle */
+}
+
+.iconRequestedLoans::before {
+    content: '\f4d3'; /* fa-hand-holding-usd */
+}
+
+.iconSendRequest::before {
+    content: '\f1d8'; /* fa-paper-plane */
+}
+
 @media (max-width: 768px) {
-    .mainContent {
+    .dashboardContent {
         padding: 0 1rem;
     }
 
-    .statsSection {
+    .dashboardGrid {
         grid-template-columns: 1fr;
     }
 
-    .btcAmount {
+    .btcValue {
         font-size: 2rem;
     }
 
-    .loanCard {
+    .loanStatsCard {
         padding: 1.5rem;
     }
 
-    .loanCard h2 {
+    .loanStatsCard h2 {
         font-size: 1.5rem;
     }
 
-    .loanCard h2 i {
+    .loanStatsCard h2 i {
         font-size: 1.3rem;
     }
 
-    .loanStats {
+    .statsContainer {
         padding: 1.5rem;
     }
 
-    .statsGrid {
+    .statsRow {
         grid-template-columns: 1fr;
         gap: 1rem;
         margin-bottom: 1.5rem;
     }
 
-    .statItem {
+    .statBox {
         padding: 1.25rem 1rem;
     }
 
-    .statValue {
+    .statNumber {
         font-size: 1.8rem;
     }
 
-    .metricsGrid {
+    .metricsRow {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    .metricItem {
+    .metricBox {
         padding: 1rem;
     }
 
@@ -460,16 +471,12 @@
         font-size: 1.5rem;
     }
 
-    .metricValue {
+    .metricNumber {
         font-size: 1.2rem;
     }
 
-    .actionButton {
+    .primaryButton {
         padding: 1.2rem 1.5rem;
         font-size: 1rem;
-    }
-
-    .statusLine {
-        font-size: 0.9rem;
     }
 } 
