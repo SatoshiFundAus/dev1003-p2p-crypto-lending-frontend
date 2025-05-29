@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Dashboard.module.css';
-import DashboardHeader from './DashboardHeader';
+import styles from '../styles/Dashboard.module.css';
+import DashboardHeader from '../components/DashboardHeader';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
@@ -128,6 +128,7 @@ function Dashboard() {
             <DashboardHeader userEmail={userEmail} />
             <main className={styles.dashboardContent}>
                 <div className={styles.dashboardGrid}>
+                    {/* Top Left - Loans Funded */}
                     <div className={styles.loanStatsCard}>
                         <h2><i className={`${styles.icon} ${styles.iconFundedLoans}`}></i> Loans Funded</h2>
                         <div className={styles.statsContainer}>
@@ -171,6 +172,7 @@ function Dashboard() {
                         </button>
                     </div>
 
+                    {/* Top Right - Loans Borrowed */}
                     <div className={styles.loanStatsCard}>
                         <h2><i className={`${styles.icon} ${styles.iconBorrowedLoans}`}></i> Loans Borrowed</h2>
                         <div className={styles.statsContainer}>
@@ -214,6 +216,7 @@ function Dashboard() {
                         </button>
                     </div>
 
+                    {/* Bottom Left - Wallet Funds */}
                     <div className={styles.loanStatsCard}>
                         <h2><i className={`${styles.icon} ${styles.iconWallet}`}></i> Wallet Funds</h2>
                         <div className={styles.statsContainer}>
@@ -249,6 +252,7 @@ function Dashboard() {
                         </button>
                     </div>
 
+                    {/* Bottom Right - Loans Requested */}
                     <div className={styles.loanStatsCard}>
                         <h2><i className={`${styles.icon} ${styles.iconRequestedLoans}`}></i> Loans Requested</h2>
                         <div className={styles.statsContainer}>
@@ -281,4 +285,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default Dashboard; 

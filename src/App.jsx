@@ -4,7 +4,7 @@ import LandingPage from './components/LandingPage';
 import LoginRegisterPage from './components/LoginRegisterPage';
 import InterestTerms from './components/InterestTerms';
 import RequestLoan from './components/RequestLoan';
-import Dashboard from './components/Dashboard';
+import Dashboard from './pages/Dashboard';
 import ViewLoans from './components/ViewLoans';
 import LoanDetails from './components/LoanDetails';
 import Cryptocurrencies from './components/Cryptocurrencies';

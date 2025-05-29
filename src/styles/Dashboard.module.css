@@ -30,91 +30,6 @@
     100% { background-position: 0% 0%; }
 }
 
-.header {
-    background: rgba(28, 30, 38, 0.8);
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(247, 147, 26, 0.1);
-    backdrop-filter: blur(10px);
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.logoContainer {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: transform 0.3s ease;
-    background: #1a1c23;
-    padding: 0.75rem 1.2rem;
-    border-radius: 8px;
-    border: 1px solid rgba(247, 147, 26, 0.1);
-}
-
-.logoContainer:hover {
-    transform: scale(1.02);
-    border-color: rgba(247, 147, 26, 0.2);
-}
-
-.btcSymbol {
-    color: #f7931a;
-    font-size: 1.8rem;
-    font-weight: 600;
-    line-height: 1;
-}
-
-.logoText {
-    color: #ffffff;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.userInfo {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50px;
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-}
-
-.userInfo:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-}
-
-.userEmail {
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.userAvatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(247, 147, 26, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.userAvatar:hover {
-    border-color: #f7931a;
-    transform: rotate(360deg);
-}
-
 .dashboardContent {
     max-width: 1400px;
     margin: 3rem auto;
@@ -363,30 +278,21 @@
     font-size: 1.1rem;
 }
 
-.summaryCard {
-    background: rgba(28, 30, 38, 0.7);
-    border-radius: 24px;
-    padding: 2.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(247, 147, 26, 0.1);
-    text-align: center;
+.fullWidthStat {
+    grid-column: 1 / -1;  /* Spans all columns */
+    padding: 2rem 1rem;   /* Slightly larger padding for emphasis */
+    background: rgba(247, 147, 26, 0.05);  /* Slightly different background */
+    border-color: rgba(247, 147, 26, 0.15);  /* Slightly stronger border */
 }
 
-.summaryCard h2 {
-    color: #f7931a;
-    margin: 0 0 1rem 0;
-    font-size: 1.8rem;
-    font-weight: 600;
+.fullWidthStat .statNumber {
+    font-size: 2.5rem;  /* Larger font size for emphasis */
+    margin-bottom: 0.75rem;  /* More space between number and label */
 }
 
-.btcValue {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+.fullWidthStat .statTitle {
+    font-size: 1rem;  /* Slightly larger label */
+    opacity: 0.9;  /* More visible label */
 }
 
 /* Icon base class */
@@ -432,42 +338,6 @@
     content: '\f53c'; /* fa-money-bill-wave */
 }
 
-/* Button variants */
-.viewButton {
-    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-}
-
-.viewButton:hover {
-    background: linear-gradient(135deg, #357abd 0%, #4a90e2 100%);
-    box-shadow: 0 8px 30px rgba(74, 144, 226, 0.4);
-}
-
-.depositButton {
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-}
-
-.depositButton:hover {
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.4);
-}
-
-.fullWidthStat {
-    grid-column: 1 / -1;  /* Spans all columns */
-    padding: 2rem 1rem;   /* Slightly larger padding for emphasis */
-    background: rgba(247, 147, 26, 0.05);  /* Slightly different background */
-    border-color: rgba(247, 147, 26, 0.15);  /* Slightly stronger border */
-}
-
-.fullWidthStat .statNumber {
-    font-size: 2.5rem;  /* Larger font size for emphasis */
-    margin-bottom: 0.75rem;  /* More space between number and label */
-}
-
-.fullWidthStat .statTitle {
-    font-size: 1rem;  /* Slightly larger label */
-    opacity: 0.9;  /* More visible label */
-}
-
 @media (max-width: 768px) {
     .dashboardContent {
         padding: 0 1rem;
@@ -476,10 +346,6 @@
     .dashboardGrid {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
-    }
-
-    .btcValue {
-        font-size: 2rem;
     }
 
     .loanStatsCard {
