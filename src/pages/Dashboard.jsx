@@ -222,7 +222,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{loanStats.wallet.totalFunds.toFixed(8)}</div>
+                                    <div className={styles.statNumber}>{balance !== null ? balance.toFixed(8) : 'Loading...'}</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
@@ -231,7 +231,7 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Available</div>
-                                        <div className={styles.metricTitle}>{loanStats.wallet.totalFunds.toFixed(8)} BTC</div>
+                                        <div className={styles.metricTitle}>{balance !== null ? balance.toFixed(8) : 'Loading...'} BTC</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
