@@ -3,6 +3,7 @@ import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
 import { useState, useEffect } from 'react';
 
+
 const DashboardHeader = ({ userEmail }) => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -92,6 +93,14 @@ const DashboardHeader = ({ userEmail }) => {
                             >
                                 <i className="fas fa-file-invoice-dollar"></i>
                                 <span>Request Loan</span>
+                            </NavLink>
+                            <NavLink 
+                                to="/wallet" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fa-solid fa-wallet"></i>
+                                <span>Wallet</span>
                             </NavLink>
                         </div>
                     </nav>

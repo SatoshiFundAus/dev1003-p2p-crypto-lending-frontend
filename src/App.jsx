@@ -11,6 +11,7 @@ import Cryptocurrencies from './components/Cryptocurrencies';
 import AdminDashboard from './components/AdminDashboard';
 import Transactions from './components/Transactions';
 import Users from './components/Users';
+import Wallet from './components/Wallet';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
+        <Route path="/wallet" element={<Wallet />} />
       </Routes>
     </div>
   );
