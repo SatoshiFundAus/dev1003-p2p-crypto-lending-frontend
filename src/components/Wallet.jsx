@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -14,6 +15,10 @@ function Wallet() {
 
     const [btcPrice, setBtcPrice] = useState(null);
     const [priceLastUpdated, setPriceLastUpdated] = useState(null);
+
+    // Session expiry
+    const [sessionExpired, setSessionExpired] = useState(false);
+    const [redirectCountdown, setRedirectCountdown] = useState(3);
 
     const getBTCLivePrice = async () => {
         try {
@@ -103,12 +108,37 @@ function Wallet() {
                     console.log('Wallet data fetched:', incomingWalletData)
 
                     setWalletBalance(incomingWalletData.walletBalance || 0);
+
                 } else if (walletRes.status === 401) {
                     localStorage.removeItem('token');
                     navigate('/login');
                 } else {
                     console.log('Wallet data not available (Status:', walletRes.status, ')');
+
+                    if (walletRes.status === 403) {
+                        // Session expried - show countdown before redirect
+                        setSessionExpired(true);
+                        setError('Session expired. Redirecting to login...');
+                        localStorage.removeItem('token');
+                        
+                        // Start countdown
+                        let countdown = 3;
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            setRedirectCountdown(countdown);
+
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                navigate('/login');
+                            }
+                        }, 1000);
+
+                        return;
+                        
+                    }
+
                     setError('Failed to fetch wallet data');
+
                 }
 
             } catch (err) {
@@ -122,19 +152,81 @@ function Wallet() {
         fetchWalletData();
     }, []);
 
+    // Creating a way to process creating of a wallet
+    const handleCreateClick = async () => {
+        try {
+
+            // Get the token for authentication
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                setError('Not authenticated');
+                navigate('/login');
+                return
+            }
+
+            const response = await fetch(`${BACKEND_URL}/wallets`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+                // Note: No body needed since backend gets UserId from token
+            });
+
+            if (response.ok) {
+                const newWallet = await response.json();
+                console.log('Wallet created successfully:', newWallet)
+
+                setWalletBalance(newWallet.balance || 0);
+
+                setError(null);
+
+            } else if (response.status === 409) {
+                // Wallet already exists
+                toast.warning('Wallet already exists for this user');
+
+            } else if (response.status === 401) {
+                // Unauthorised - token expired
+                localStorage.removeItem('token');
+                navigate('/login')
+
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error || 'Failed to create wallet')
+            }
+            
+        } catch (err) {
+            console.error('Create wallet failed:', err);
+            setError('An error occured while creating wallet');
+        }
+    };
+
     if (loading) {
         return (
             <div className={styles.container}>
+                <DashboardHeader userEmail={userEmail} />
                 <div className={styles.loading}>Loading wallet...</div>
             </div>
         )
     }
 
 
+    
     if (error) {
         return (
             <div className={styles.container}>
-                <div className={styles.error}>{error}</div>
+                <DashboardHeader userEmail={userEmail} />
+                <div className={styles.error}>
+                    {error}
+                    {sessionExpired && (
+                        <div style={{ marginTop: '1rem', fontSize: '1.2rem' }}>
+                            <i className="fas fa-clock" style={{ marginRight: '0.5rem' }}></i>
+                            Redirecting in {redirectCountdown} seconds...
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }
@@ -205,7 +297,7 @@ function Wallet() {
                     <div className={styles.actionsContainer}>
                         <h2>Quick Actions</h2>
                         <div className={styles.actions}>
-                            <button className={`${styles.actionButton} ${styles.primary}`}>
+                            <button className={`${styles.actionButton} ${styles.secondary}`}>
                                 <i className="fas fa-plus"></i>
                                 Deposit
                             </button>
@@ -226,6 +318,13 @@ function Wallet() {
                             >
                                 <i className="fas fa-search"></i>
                                 Browse Loans
+                            </button>
+                            <button
+                                className={`${styles.actionButton} ${styles.secondary}`}
+                                onClick={handleCreateClick}
+                            >
+                                <i className="fa-solid fa-wallet"></i>
+                                Create Wallet
                             </button>
                         </div>
                     </div>

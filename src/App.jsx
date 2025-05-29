@@ -1,4 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 import './App.css';
 import LandingPage from './components/LandingPage';
 import LoginRegisterPage from './components/LoginRegisterPage';
@@ -32,6 +34,20 @@ function App() {
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
         <Route path="/wallet" element={<Wallet />} />
       </Routes>
+
+      {/* Toast Container for notifications */}
+      <ToastContainer
+        position='top-right'
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false} // Right to left display
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='dark'
+      />
     </div>
   );
 }
