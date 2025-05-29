@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
+import DashboardHeader from "./DashboardHeader";
+import styles from './AdminDashboard.module.css'
 
 
 function Wallet() {
@@ -37,11 +39,12 @@ function Wallet() {
     })
 
     return (
-        <div>
+        <div className={styles.adminDashboard}>
+            <DashboardHeader userEmail={userEmail}/>
             <h1>Hello!</h1>
         </div>
     )
 
 };
 
-export default Wallet()
+export default Wallet;
