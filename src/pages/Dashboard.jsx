@@ -135,6 +135,39 @@ function Dashboard() {
                     }));
                 }
 
+                // Fetch deals where user is lender
+                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/user-deals', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (dealsResponse.ok) {
+                    const dealsData = await dealsResponse.json();
+                    dealsData.forEach(deal => {
+                        console.log('Deal lenderId:', deal.lenderId);
+                    });
+                    // Filter for deals where the logged-in user is the lender (by email)
+                    const fundedDeals = dealsData.filter(deal => deal.lenderId && deal.lenderId.email === tokenData.email);
+                    const active = fundedDeals.filter(deal => deal.isComplete === false).length;
+                    const repaid = fundedDeals.filter(deal => deal.isComplete === true).length;
+                    // Defaulted, returnRate, collateralValue: set to 0 for now
+                    setLoanStats(prev => ({
+                        ...prev,
+                        funded: {
+                            ...prev.funded,
+                            active,
+                            repaid,
+                            defaulted: 0,
+                            returnRate: 0,
+                            collateralValue: 0
+                        }
+                    }));
+                }
+
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 if (error.name === 'TokenExpiredError') {
