@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
@@ -123,7 +123,7 @@ function Wallet() {
                     console.log('Wallet data not available (Status:', walletRes.status, ')');
 
                     if (walletRes.status === 403) {
-                        // Session expried - show countdown before redirect
+                        // Session expired - show countdown before redirect
                         setSessionExpired(true);
                         setError('Session expired. Redirecting to login...');
                         localStorage.removeItem('token');
@@ -149,9 +149,8 @@ function Wallet() {
                 }
 
             } catch (err) {
-                console.error('An error has occured:', err)
-                setError('An error occured while fetching user data')
-
+                console.error('An error has occurred:', err)
+                setError('An error occurred while fetching user data')
             } finally {
                 setLoading(false);
             }
@@ -210,7 +209,7 @@ function Wallet() {
 
         } catch (err) {
             console.error('Create wallet failed:', err);
-            setError('An error occured while creating wallet');
+            setError('An error occurred while creating wallet');
         }
     };
 
@@ -228,12 +227,8 @@ function Wallet() {
                 return
             }
 
-            const url = `${BACKEND_URL}/wallets`;
-
-
             // Send Response Don't add bearer if token already has it
             const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-
 
             // Send response
             const response = await fetch(`${BACKEND_URL}/wallets`, {
@@ -334,7 +329,7 @@ function Wallet() {
 
         } catch (err) {
             console.error('Deposit failed', err);
-            toast.error('An error occured while depositing funds');
+            toast.error('An error occurred while depositing funds');
         } finally {
             setDepositing(false);
         }
