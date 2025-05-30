@@ -215,6 +215,40 @@
     box-shadow: 0 4px 20px rgba(247, 147, 26, 0.1);
 }
 
+.actionButton.success {
+    background: rgba(46, 213, 115, 0.1);
+    color: #fff;
+    border: 1px solid rgba(46, 213, 115, 0.2);
+}
+
+.actionButton.success i {
+    color: #2ed573;
+}
+
+.actionButton.success:hover {
+    background: rgba(46, 213, 115, 0.2);
+    border-color: rgba(46, 213, 115, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(46, 213, 115, 0.15);
+}
+
+.actionButton.danger {
+    background: rgba(255, 71, 87, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+.actionButton.danger i {
+    color: #ff4757;
+}
+
+.actionButton.danger:hover {
+    background: rgba(255, 71, 87, 0.2);
+    border-color: rgba(255, 71, 87, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 71, 87, 0.15);
+}
+
 .actionButton.primary {
     background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
     border: none;
