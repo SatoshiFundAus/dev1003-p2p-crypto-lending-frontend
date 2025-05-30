@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
-import { default as DashboardHeader } from './DashboardHeader';
+import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
-import { useNavigate } from 'react-router-dom';
 
 const columns = [
   { key: 'user', label: 'User' },
@@ -36,23 +35,7 @@ const ViewLoans = () => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortBy, setSortBy] = useState('user');
-  const [sortDir, setSortDir] = useState('asc');
   const [userEmail, setUserEmail] = useState('');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Extract user email from JWT token
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const tokenData = JSON.parse(atob(token.split('.')[1]));
-        setUserEmail(tokenData.email);
-      } catch {
-        setUserEmail('');
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,15 +43,40 @@ const ViewLoans = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const loansRes = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          credentials: 'include',
-          mode: 'cors',
-        });
+        if (token) {
+          const tokenData = JSON.parse(atob(token.split('.')[1]));
+          setUserEmail(tokenData.email);
+        }
+        
+        const [loansRes, termsRes, cryptoRes] = await Promise.all([
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            credentials: 'include',
+            mode: 'cors',
+          }),
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            credentials: 'include',
+            mode: 'cors',
+          }),
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            credentials: 'include',
+            mode: 'cors',
+          })
+        ]);
         if (!loansRes.ok) throw new Error('Failed to fetch loans');
         const loans = await loansRes.json();
         setLoans(loans);
@@ -100,7 +108,6 @@ const ViewLoans = () => {
         ? `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''} / ${loan.interest_term.interest_rate}%`
         : '',
       expiry: loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : '',
-      status: loan.status || 'pending',
       learnMore: loan,
       _raw: loan,
     };
@@ -139,90 +146,49 @@ const ViewLoans = () => {
     return <span className={styles.sortArrow}>{sortDir === 'asc' ? '▲' : '▼'}</span>;
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-  };
-
-  // Get userEmail from localStorage for the header
-  const userEmailFromStorage = localStorage.getItem('userEmail');
-
-  if (!userEmailFromStorage) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
-        <main className={styles.main}>
-          <div className={styles.content}>
-            <div className={styles.loading}>Loading loans...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.container}>
-        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
-        <main className={styles.main}>
-          <div className={styles.content}>
-            <div className={styles.error}>Error: {error}</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
     <div className={styles.container}>
-      <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+      <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <div className={styles.content}>
-          <h1 className={styles.title}>Browse Loan Requests</h1>
-          
-          <div className={styles.tableWrapper}>
-            <table className={styles.loansTable}>
-              <thead>
-                <tr>
-                  {columns.map(col => (
-                    <th
-                      key={col.key}
-                      className={styles.sortable}
-                      onClick={() => handleSort(col.key)}
-                    >
-                      {col.label}{sortArrow(col.key)}
-                    </th>
-                  ))}
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedRows.map(row => (
-                  <tr key={row.id}>
-                    <td>{row.user}</td>
-                    <td>{row.currency}</td>
-                    <td>{row.amount}</td>
-                    <td>{row.term}</td>
-                    <td>{row.expiry}</td>
-                    <td>
-                      <button 
-                        className={styles.learnMoreBtn} 
-                        onClick={() => navigate(`/view-loans/${row.id}`)}
+          <h1 className={styles.title}>Browse Loans</h1>
+          {loading ? (
+            <div className={styles.loading}>Loading...</div>
+          ) : error ? (
+            <div className={styles.error}>Error: {error}</div>
+          ) : (
+            <div className={styles.tableWrapper}>
+              <table className={styles.loansTable}>
+                <thead>
+                  <tr>
+                    {columns.map(col => (
+                      <th
+                        key={col.key}
+                        className={styles.sortable}
+                        onClick={() => handleSort(col.key)}
+                        style={{ cursor: 'pointer' }}
                       >
-                        Learn More
-                      </button>
-                    </td>
+                        {col.label}{sortArrow(col.key)}
+                      </th>
+                    ))}
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {sortedRows.map(row => (
+                    <tr key={row.id}>
+                      <td>{row.user}</td>
+                      <td>{row.currency}</td>
+                      <td>{row.amount}</td>
+                      <td>{row.term}</td>
+                      <td>{row.expiry}</td>
+                      <td><button className={styles.learnMoreBtn}>Learn More</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
@@ -230,4 +196,4 @@ const ViewLoans = () => {
   );
 };
 
-export default ViewLoans;
+export default ViewLoans; 
