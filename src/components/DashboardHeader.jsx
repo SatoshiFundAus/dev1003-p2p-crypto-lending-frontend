@@ -1,9 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { useState } from 'react';
 import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
 
 const DashboardHeader = ({ userEmail }) => {
     const navigate = useNavigate();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // TODO: Replace with real admin check if available
+    const isAdmin = false;
 
     const handleLogout = () => {
         localStorage.removeItem('token');
