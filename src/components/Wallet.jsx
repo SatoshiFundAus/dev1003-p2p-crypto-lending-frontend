@@ -137,7 +137,7 @@ function Wallet() {
                         
                     }
 
-                    setError('Failed to fetch wallet data');
+                    toast.info('You need to create a wallet!')
 
                 }
 
@@ -152,7 +152,7 @@ function Wallet() {
         fetchWalletData();
     }, []);
 
-    // Creating a way to process creating of a wallet
+    // Creating of a wallet through button click
     const handleCreateClick = async () => {
         try {
 
@@ -178,6 +178,7 @@ function Wallet() {
             if (response.ok) {
                 const newWallet = await response.json();
                 console.log('Wallet created successfully:', newWallet)
+                toast.info('Wallet created successfully ✅')
 
                 setWalletBalance(newWallet.balance || 0);
 
@@ -190,16 +191,65 @@ function Wallet() {
             } else if (response.status === 401) {
                 // Unauthorised - token expired
                 localStorage.removeItem('token');
+                toast.error('Session expired. Please log in again')
                 navigate('/login')
 
             } else {
                 const errorData = await response.json();
-                setError(errorData.error || 'Failed to create wallet')
+                toast.error(errorData.error || 'Failed to create wallet');
             }
             
         } catch (err) {
             console.error('Create wallet failed:', err);
             setError('An error occured while creating wallet');
+        }
+    };
+
+    // Deleting of a wallet through button click
+    const handleDeleteClick = async () => {
+        try {
+
+            // Get token for authentication
+            const token = localStorage.getItem('token')
+
+            if (!token) {
+                setError('Not authenticated');
+                navigate('/login');
+                return
+            }
+
+            // Send response
+            const response = fetch(`${BACKEND_URL}/wallets`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                const deleteWallet = (await response).json();
+                console.log('Wallet deleted successfully');
+                toast.info('Wallet deleted successfully')
+
+            } else if (response.status === 409) {
+                // Funds in wallet still
+                toast.warning('There are still funds in your wallet, withdraw them first')
+
+            } else if (response.status === 401) {
+                // Unauthorised - token expired
+                localStorage.removeItem('token');
+                toast.error('Session expired. Please log in again')
+                navigate('/login')
+
+            } else {
+                const errorData = (await response).json();
+                toast.error(errorData.error || 'Failed to delete wallet')
+            }
+
+        } catch (err) {
+
         }
     };
 
@@ -320,11 +370,18 @@ function Wallet() {
                                 Browse Loans
                             </button>
                             <button
-                                className={`${styles.actionButton} ${styles.secondary}`}
+                                className={`${styles.actionButton} ${styles.success}`}
                                 onClick={handleCreateClick}
                             >
                                 <i className="fa-solid fa-wallet"></i>
                                 Create Wallet
+                            </button>
+                            <button
+                                className={`${styles.actionButton} ${styles.danger}`}
+                                onClick={handleDeleteClick}
+                            >
+                                <i className="fa-solid fa-wallet"></i>
+                                Delete Wallet
                             </button>
                         </div>
                     </div>
