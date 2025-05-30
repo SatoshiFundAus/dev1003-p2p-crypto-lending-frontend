@@ -1,9 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
 import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
 
 const DashboardHeader = ({ userEmail }) => {
     const navigate = useNavigate();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    // Check if user is admin when component mounts
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const tokenData = JSON.parse(atob(token.split('.')[1]));
+                setIsAdmin(tokenData.isAdmin || false);
+            } catch (err) {
+                console.error('Error parsing token:', err);
+                setIsAdmin(false);
+            }
+        }
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -105,4 +122,4 @@ const DashboardHeader = ({ userEmail }) => {
     );
 }
 
-export default DashboardHeader; 
+export default DashboardHeader;

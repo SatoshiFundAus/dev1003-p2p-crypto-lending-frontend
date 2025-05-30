@@ -15,6 +15,11 @@ function Wallet() {
 
     const [btcPrice, setBtcPrice] = useState(null);
     const [priceLastUpdated, setPriceLastUpdated] = useState(null);
+    const [showDepositModal, setShowDepositModal] = useState(false);
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const [amount, setAmount] = useState('')
+    const [isProcessing, setIsProcessing] = useState(false)
+
 
     // Session expiry
     const [sessionExpired, setSessionExpired] = useState(false);
