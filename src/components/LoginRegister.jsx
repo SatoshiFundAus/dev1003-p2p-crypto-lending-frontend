@@ -71,7 +71,7 @@ function Login(props) {
                     });
 
                     // Store user data in localStorage
-                    localStorage.setItem('token', `Bearer ${data.token}`);
+                    localStorage.setItem('token', data.token);
                     localStorage.setItem('userEmail', data.email);
                     localStorage.setItem('isAdmin', data.isAdmin);
 

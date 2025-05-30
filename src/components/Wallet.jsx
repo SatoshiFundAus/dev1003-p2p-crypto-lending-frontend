@@ -3,6 +3,7 @@ import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FineTuningJobCheckpointsPage } from "openai/resources/fine-tuning/jobs/checkpoints.mjs";
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -12,9 +13,17 @@ function Wallet() {
     const [userEmail, setUserEmail] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [depositAmount, setDepositAmount] = useState('');
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+    const [depositing, setDepositing] = useState(false);
+    const [withdrawing, setWithdrawing] = useState(false);
+    const [depositWalletModal, setDepositWalletModal] = useState(false);
+    const [withdrawWalletModal, setWithdrawWalletModal] = useState(false);
 
     const [btcPrice, setBtcPrice] = useState(null);
     const [priceLastUpdated, setPriceLastUpdated] = useState(null);
+
+
 
     // Session expiry
     const [sessionExpired, setSessionExpired] = useState(false);
@@ -120,7 +129,7 @@ function Wallet() {
                         setSessionExpired(true);
                         setError('Session expired. Redirecting to login...');
                         localStorage.removeItem('token');
-                        
+
                         // Start countdown
                         let countdown = 3;
                         const countdownInterval = setInterval(() => {
@@ -134,7 +143,7 @@ function Wallet() {
                         }, 1000);
 
                         return;
-                        
+
                     }
 
                     toast.info('You need to create a wallet!')
@@ -198,7 +207,7 @@ function Wallet() {
                 const errorData = await response.json();
                 toast.error(errorData.error || 'Failed to create wallet');
             }
-            
+
         } catch (err) {
             console.error('Create wallet failed:', err);
             setError('An error occured while creating wallet');
@@ -218,24 +227,38 @@ function Wallet() {
                 return
             }
 
+            const url = `${BACKEND_URL}/wallets`;
+
+
+            // Send Response Don't add bearer if token already has it
+            const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+
+
             // Send response
-            const response = fetch(`${BACKEND_URL}/wallets`, {
+            const response = await fetch(`${BACKEND_URL}/wallets`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': authHeader,
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include'
             })
 
             if (response.ok) {
-                const deleteWallet = (await response).json();
+                const deleteWallet = await response.json();
                 console.log('Wallet deleted successfully');
                 toast.info('Wallet deleted successfully')
 
             } else if (response.status === 409) {
                 // Funds in wallet still
                 toast.warning('There are still funds in your wallet, withdraw them first')
+
+            } else if (response.status === 404) {
+                const responseText = await response.text();
+                console.log('404 Response body:', responseText);
+
+                toast.error('Delete wallet functionality is not available on the server');
+                console.error('DELETE /wallets endpoint not found (404)');
 
             } else if (response.status === 401) {
                 // Unauthorised - token expired
@@ -244,14 +267,155 @@ function Wallet() {
                 navigate('/login')
 
             } else {
-                const errorData = (await response).json();
-                toast.error(errorData.error || 'Failed to delete wallet')
+                let errorMessage = 'Failed to delete wallet';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+
+                } catch (jsonError) {
+                    // Response is not JSON
+                    console.error('Server returned non-JSON response:', response.status);
+                    errorMessage = `Server error (${response.status})`;
+                }
+                toast.error(errorMessage);
             }
 
         } catch (err) {
 
         }
     };
+
+    // Handle deposits with positive values
+    const handleDepositSubmit = async (e) => {
+        e.preventDefault();
+        if (!depositAmount || parseFloat(depositAmount) <= 0) {
+            toast.error('Please enter a valid deposit amount');
+            return;
+        }
+
+        setDepositing(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${BACKEND_URL}/wallets`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    fundsDeposited: parseFloat(depositAmount)
+                })
+            });
+
+            if (response.ok) {
+                const updatedWallet = await response.json();
+                setWalletBalance(updatedWallet.balance);
+                setDepositAmount('');
+                setDepositWalletModal(false);
+                toast.success(`Successfully deposited ₿${depositAmount} to your wallet!`)
+
+            } else if (response.status === 401) {
+                localStorage.removeItem('token');
+                toast.error('Session expired. Please log in again');
+                navigate('/login')
+
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.error || 'Failed to deposit funds');
+            }
+
+        } catch (err) {
+            console.error('Deposit failed', err);
+            toast.error('An error occured while depositing funds');
+        } finally {
+            setDepositing(false);
+        }
+    }
+
+    // Handle withdrawals with negative values
+    const handleWithdrawSubmit = async (e) => {
+        e.preventDefault();
+        if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
+            toast.error('Please enter a valid withdrawal amount');
+            return;
+        }
+
+        if (parseFloat(withdrawAmount) > walletBalance) {
+            toast.error('Insufficient funds for withdrawal');
+            return
+        }
+
+        setWithdrawing(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                localStorage.removeItem('token');
+                toast.error('You are being redirected back to login');
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${BACKEND_URL}/wallets`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    fundsDeposited: -parseFloat(withdrawAmount) // Negative value for withdrawal
+                })
+            });
+
+            if (response.ok) {
+                const updatedWallet = await response.json();
+                setWalletBalance(updatedWallet.balance);
+                setWithdrawAmount('');
+                setWithdrawWalletModal(false);
+                toast.success(`Successfully withdrew ₿${withdrawAmount} from your wallet!`);
+
+            } else if (response.status === 401) {
+                localStorage.removeItem('token');
+                toast.error('Session expired. Please log in again');
+                navigate('/login');
+
+            } else if (response.status === 400) {
+                const errorData = await response.json();
+
+                if (errorData.error && errorData.error.includes('insufficient')) {
+                    toast.error('Insufficient funds for withdrawal');
+
+                } else {
+                    toast.error(errorData.error || 'Failed to withdraw funds');
+                }
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.error || 'Failed to withdraw funds');
+            }
+
+        } catch (err) {
+            console.error('Withdrawal failed:', err);
+            toast.error('An error occurred while withdrawing funds');
+
+        } finally {
+            setWithdrawing(false);
+        }
+    };
+
+    const closeModals = () => {
+        setDepositWalletModal(false);
+        setWithdrawWalletModal(false);
+        setDepositAmount('');
+        setWithdrawAmount('');
+    };
+
 
     if (loading) {
         return (
@@ -263,7 +427,7 @@ function Wallet() {
     }
 
 
-    
+
     if (error) {
         return (
             <div className={styles.container}>
@@ -315,7 +479,7 @@ function Wallet() {
                         <div className={styles.portfolioCard}>
                             <h3>Portfolio Value</h3>
                             <div className={styles.portfolioValue}>
-                            ${usdBalance.toLocaleString(undefined, {maximumFractionDigits: 2})}
+                                ${usdBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                             </div>
                             <div className={styles.portfolioChange + ' ' + styles.positive}>
                                 +2.5% (24h)
@@ -347,11 +511,17 @@ function Wallet() {
                     <div className={styles.actionsContainer}>
                         <h2>Quick Actions</h2>
                         <div className={styles.actions}>
-                            <button className={`${styles.actionButton} ${styles.secondary}`}>
+                            <button
+                                className={`${styles.actionButton} ${styles.secondary}`}
+                                onClick={() => setDepositWalletModal(true)}
+                            >
                                 <i className="fas fa-plus"></i>
                                 Deposit
                             </button>
-                            <button className={`${styles.actionButton} ${styles.secondary}`}>
+                            <button
+                                className={`${styles.actionButton} ${styles.secondary}`}
+                                onClick={() => setWithdrawWalletModal(true)}
+                            >
                                 <i className="fas fa-minus"></i>
                                 Withdraw
                             </button>
@@ -410,6 +580,138 @@ function Wallet() {
                             </div>
                         </div>
                     </div>
+                    {/* Deposit Modal */}
+                    {depositWalletModal && (
+                        <div className={styles.modalOverlay} onClick={closeModals}>
+                            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                                <div className={styles.modalHeader}>
+                                    <h3>Deposit Bitcoin</h3>
+                                    <button
+                                        className={styles.closeButton}
+                                        onClick={closeModals}
+                                    >
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <form onSubmit={handleDepositSubmit} className={styles.modalForm}>
+                                    <div className={styles.inputGroup}>
+                                        <label htmlFor="depositAmount">Amount (BTC)</label>
+                                        <input
+                                            type="number"
+                                            id="depositAmount"
+                                            value={depositAmount}
+                                            onChange={(e) => setDepositAmount(e.target.value)}
+                                            placeholder="0.00000000"
+                                            step="0.00000001"
+                                            min="0"
+                                            required
+                                            className={styles.amountInput}
+                                        />
+                                        {depositAmount && (
+                                            <div className={styles.usdEquivalent}>
+                                                ≈ ${(parseFloat(depositAmount) * currentBtcPrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className={styles.modalActions}>
+                                        <button
+                                            type="button"
+                                            onClick={closeModals}
+                                            className={`${styles.actionButton} ${styles.secondary}`}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={depositing}
+                                            className={`${styles.actionButton} ${styles.success}`}
+                                        >
+                                            {depositing ? (
+                                                <>
+                                                    <i className="fas fa-spinner fa-spin"></i>
+                                                    Depositing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-plus"></i>
+                                                    Deposit
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Withdraw Modal */}
+                    {withdrawWalletModal && (
+                        <div className={styles.modalOverlay} onClick={closeModals}>
+                            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                                <div className={styles.modalHeader}>
+                                    <h3>Withdraw Bitcoin</h3>
+                                    <button 
+                                        className={styles.closeButton}
+                                        onClick={closeModals}
+                                    >
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <form onSubmit={handleWithdrawSubmit} className={styles.modalForm}>
+                                    <div className={styles.inputGroup}>
+                                        <label htmlFor="withdrawAmount">Amount (BTC)</label>
+                                        <input
+                                            type="number"
+                                            id="withdrawAmount"
+                                            value={withdrawAmount}
+                                            onChange={(e) => setWithdrawAmount(e.target.value)}
+                                            placeholder="0.00000000"
+                                            step="0.00000001"
+                                            min="0"
+                                            max={walletBalance}
+                                            required
+                                            className={styles.amountInput}
+                                        />
+                                        <div className={styles.balanceInfo}>
+                                            Available: ₿{walletBalance.toFixed(8)}
+                                        </div>
+                                        {withdrawAmount && (
+                                            <div className={styles.usdEquivalent}>
+                                                ≈ ${(parseFloat(withdrawAmount) * currentBtcPrice).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className={styles.modalActions}>
+                                        <button
+                                            type="button"
+                                            onClick={closeModals}
+                                            className={`${styles.actionButton} ${styles.secondary}`}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={withdrawing}
+                                            className={`${styles.actionButton} ${styles.danger}`}
+                                        >
+                                            {withdrawing ? (
+                                                <>
+                                                    <i className="fas fa-spinner fa-spin"></i>
+                                                    Withdrawing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-minus"></i>
+                                                    Withdraw
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                    
                 </div>
             </main>
         </div>
