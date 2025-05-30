@@ -33,6 +33,7 @@ function Wallet() {
             const res = await fetch('https://pricing.bitcoin.block.xyz/current-price');
 
             if (!res.ok) {
+                toast.error("Can't fetch BTC Live Price, try again later")
                 throw new Error(`HTTP error! status: ${res.status}`)
             }
 
@@ -89,9 +90,6 @@ function Wallet() {
                     return;
                 }
 
-                // Debug token information
-                console.log('Token exists:', !!token);
-                console.log('Token length:', token ? token.length : 0);
                 try {
                     const tokenData = JSON.parse(atob(token.split('.')[1]));
                     console.log('Token payload:', tokenData);
@@ -119,6 +117,7 @@ function Wallet() {
 
                 } else if (walletRes.status === 401) {
                     localStorage.removeItem('token');
+                    toast.error("Please login again, you are being redirected")
                     navigate('/login');
                 } else {
                     console.log('Wallet data not available (Status:', walletRes.status, ')');
@@ -152,6 +151,7 @@ function Wallet() {
             } catch (err) {
                 console.error('An error has occured:', err)
                 setError('An error occured while fetching user data')
+
             } finally {
                 setLoading(false);
             }
@@ -168,6 +168,7 @@ function Wallet() {
             const token = localStorage.getItem('token');
 
             if (!token) {
+                toast.error("You are not authenticated, please login again")
                 setError('Not authenticated');
                 navigate('/login');
                 return
@@ -221,6 +222,7 @@ function Wallet() {
             const token = localStorage.getItem('token')
 
             if (!token) {
+                toast.error('Not authenticated, being redirected to login')
                 setError('Not authenticated');
                 navigate('/login');
                 return
