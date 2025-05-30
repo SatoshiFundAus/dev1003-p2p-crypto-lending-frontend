@@ -135,6 +135,37 @@ function Dashboard() {
                     }));
                 }
 
+                // Fetch loan requests where user is borrower and status is funded
+                const loanRequestsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                if (loanRequestsResponse.ok) {
+                    const loanRequestsData = await loanRequestsResponse.json();
+                    const borrowedLoans = loanRequestsData.filter(loan => {
+                        return (
+                            String(loan.borrower_id) === String(tokenData.id) &&
+                            loan.status === 'funded'
+                        );
+                    });
+                    const openLoans = borrowedLoans.length;
+                    const totalBorrowed = borrowedLoans.reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+                    setLoanStats(prev => ({
+                        ...prev,
+                        borrowed: {
+                            ...prev.borrowed,
+                            openLoans,
+                            totalBorrowed,
+                            monthlyRepayments: 0
+                        }
+                    }));
+                }
+
                 // Fetch deals where user is lender
                 const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/user-deals', {
                     method: 'GET',
