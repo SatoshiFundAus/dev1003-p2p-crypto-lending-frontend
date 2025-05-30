@@ -1,4 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 import './App.css';
 import LandingPage from './components/LandingPage';
 import LoginRegisterPage from './components/LoginRegisterPage';
@@ -11,6 +13,7 @@ import Cryptocurrencies from './components/Cryptocurrencies';
 import AdminDashboard from './components/AdminDashboard';
 import Transactions from './components/Transactions';
 import Users from './components/Users';
+import Wallet from './components/Wallet';
 
 function App() {
   return (
@@ -29,7 +32,22 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
+        <Route path="/wallet" element={<Wallet />} />
       </Routes>
+
+      {/* Toast Container for notifications */}
+      <ToastContainer
+        position='top-right'
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false} // Right to left display
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='dark'
+      />
     </div>
   );
 }
