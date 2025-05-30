@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import DashboardHeader from './DashboardHeader';
+import { toast } from 'react-toastify';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
@@ -27,7 +28,7 @@ function Dashboard() {
         wallet: {
             totalFunds: 0
         },
-        earningsToDate: 0.05 // Example value
+        earningsToDate: 0.05 
     });
 
     const navigate = useNavigate();
@@ -193,6 +194,9 @@ function Dashboard() {
                             collateralValue: 0
                         }
                     }));
+
+                } else if (dealsResponse.status === 404) {
+                    // Add that deals don't yet exist for this user.
                 }
 
             } catch (error) {

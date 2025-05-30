@@ -99,6 +99,7 @@ const LoanDetails = () => {
         lenderId: userId,
         loanDetails: loanId
       };
+
       const res = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/deals', {
         method: 'POST',
         headers: {
@@ -110,13 +111,25 @@ const LoanDetails = () => {
         mode: 'cors',
         body: JSON.stringify(payload)
       });
+
       if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to fund loan');
+        let errorMessage;
+        try {
+          const errorData = await res.json();
+          errorMessage = JSON.stringify(errorData);
+
+        } catch {
+          errorMessage = await res.text();
+        }
+
+        throw new Error(errorMessage || 'Failed to fund loan');
       }
       setFundSuccess('Loan funded!');
+
     } catch (err) {
+      console.error('Funding error:', err);
       setFundError(err.message || 'Failed to fund loan');
+      
     } finally {
       setFunding(false);
     }
