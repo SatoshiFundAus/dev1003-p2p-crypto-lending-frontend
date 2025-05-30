@@ -185,7 +185,7 @@ const ViewLoans = () => {
       <main className={styles.main}>
         <div className={styles.content}>
           <h1 className={styles.title}>Browse Loan Requests</h1>
-          
+
           <div className={styles.tableWrapper}>
             <table className={styles.loansTable}>
               <thead>
@@ -211,8 +211,8 @@ const ViewLoans = () => {
                     <td>{row.term}</td>
                     <td>{row.expiry}</td>
                     <td>
-                      <button 
-                        className={styles.learnMoreBtn} 
+                      <button
+                        className={styles.learnMoreBtn}
                         onClick={() => navigate(`/view-loans/${row.id}`)}
                       >
                         Learn More

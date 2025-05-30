@@ -47,7 +47,7 @@ const AdminDashboard = () => {
 
                 // Common headers for all requests
                 const headers = {
-                    'Authorization': token,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 };
 
