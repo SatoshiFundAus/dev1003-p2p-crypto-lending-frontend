@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+=======
+import { useNavigate, NavLink } from 'react-router-dom';
+import { useState } from 'react';
+>>>>>>> d2aee7567cb6e4a098a81cbdfb8c4c81eaf1ba72
 import styles from './DashboardHeader.module.css';
 import Logo from './Logo';
 
