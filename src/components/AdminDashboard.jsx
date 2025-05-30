@@ -51,9 +51,14 @@ const AdminDashboard = () => {
                     'Content-Type': 'application/json'
                 };
 
-                // Debug log to check headers
-                console.log('Request headers:', headers);
-
+                // setStats(prevStats => ({
+                //     ...prevStats,
+                //     totalLoansFunded: completedData.totalCompletedDeals || 0,
+                //     activeLoans: activeData.ActiveDeals || 0,
+                //     averageInterestRate: avgInterestRate,
+                //     totalCollateralValue: totalCollateralValue,
+                //     platformEarnings: 75000
+                // }));
                 // Fetch admin dashboard data
                 const [completedRes, activeRes] = await Promise.all([
                     fetch(`${BACKEND_URL}/admin/deals-complete`, {
@@ -176,29 +181,8 @@ const AdminDashboard = () => {
                         console.log('Processed loans data:', loansData);
                     } else {
                         console.log('Active deals endpoint not available yet (Status:', loansRes.status, ')');
-                        // TODO: Remove this fallback once backend endpoint is implemented
-                        loansData = [{
-                            id: 1,
-                            borrower: 'john.doe@example.com',
-                            lender: 'jane.smith@example.com',
-                            amount: 50000,
-                            status: 'Active',
-                        },
-                        {
-                            id: 2,
-                            borrower: 'bob.wilson@example.com',
-                            lender: 'alice.brown@example.com',
-                            amount: 75000,
-                            status: 'Pending',
-                        },
-                        {
-                            id: 3,
-                            borrower: 'sarah.jones@example.com',
-                            lender: 'mike.davis@example.com',
-                            amount: 100000,
-                            status: 'Completed',
-                        }]; // Temporary fallback
                     }
+
                 } catch (err) {
                     console.log('Error fetching loans data:', err.message);
                     loansData = [
