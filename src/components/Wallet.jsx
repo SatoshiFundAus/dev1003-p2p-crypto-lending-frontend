@@ -3,7 +3,6 @@ import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FineTuningJobCheckpointsPage } from "openai/resources/fine-tuning/jobs/checkpoints.mjs";
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -711,7 +710,7 @@ function Wallet() {
                             </div>
                         </div>
                     )}
-                    
+
                 </div>
             </main>
         </div>
