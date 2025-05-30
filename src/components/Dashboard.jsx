@@ -6,9 +6,7 @@ import { toast } from 'react-toastify';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
-    const [userId, setUserId] = useState('');
     const [balance, setBalance] = useState(null);
-    const [collateral, setCollateral] = useState([]);
     const [loanStats, setLoanStats] = useState({
         funded: {
             active: 0,
@@ -47,7 +45,6 @@ function Dashboard() {
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
-                setUserId(tokenData.id); // Assuming 'id' is the user ID key
 
                 // Fetch wallet balance
                 const balanceResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
@@ -96,7 +93,6 @@ function Dashboard() {
 
                 if (collateralResponse.ok) {
                     const collateralData = await collateralResponse.json();
-                    setCollateral(collateralData);
                     
                     // Calculate total locked collateral
                     const totalCollateral = collateralData
@@ -213,12 +209,7 @@ function Dashboard() {
         };
 
         fetchUserData();
-    }, [navigate]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
-    };
+    }, [navigate])
 
     return (
         <div className={styles.dashboardContainer}>
@@ -247,15 +238,15 @@ function Dashboard() {
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💰</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>{loanStats.funded.returnRate}%</div>
-                                        <div className={styles.metricTitle}>APY Return Rate</div>
+                                        <div className={styles.metricNumber}>Return Rate</div>
+                                        <div className={styles.metricTitle}>{loanStats.funded.returnRate}%</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>📈</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
-                                        <div className={styles.metricTitle}>Lifetime Earnings</div>
+                                        <div className={styles.metricNumber}>Total Earnings</div>
+                                        <div className={styles.metricTitle}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
@@ -278,13 +269,21 @@ function Dashboard() {
                                     <div className={styles.statNumber}>{loanStats.borrowed.openLoans}</div>
                                     <div className={styles.statTitle}>Open Loans</div>
                                 </div>
-                                <div className={styles.statBox}>
-                                    <div className={styles.statNumber}>{loanStats.borrowed.totalBorrowed.toFixed(8)}</div>
-                                    <div className={styles.statTitle}>Total Borrowed</div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>💸</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Total Borrowed</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.totalBorrowed.toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
-                                <div className={styles.statBox}>
-                                    <div className={styles.statNumber}>{loanStats.borrowed.monthlyRepayments.toFixed(8)}</div>
-                                    <div className={styles.statTitle}>Monthly Repayments</div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>📅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Repayments</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
                             </div>
                             <div className={styles.metricsRow}>
@@ -319,7 +318,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{balance !== null ? (balance + loanStats.funded.collateralValue).toFixed(8) : 'Loading...'}</div>
+                                    <div className={styles.statNumber}>{balance !== null ? (balance + loanStats.funded.collateralValue).toFixed(8) : 'Loading...'} BTC</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
