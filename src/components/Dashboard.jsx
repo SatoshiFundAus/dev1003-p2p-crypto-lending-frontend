@@ -274,13 +274,21 @@ function Dashboard() {
                                     <div className={styles.statNumber}>{loanStats.borrowed.openLoans}</div>
                                     <div className={styles.statTitle}>Open Loans</div>
                                 </div>
-                                <div className={styles.statBox}>
-                                    <div className={styles.statNumber}>{loanStats.borrowed.totalBorrowed.toFixed(8)}</div>
-                                    <div className={styles.statTitle}>Total Borrowed</div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>💸</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Total Borrowed</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.totalBorrowed.toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
-                                <div className={styles.statBox}>
-                                    <div className={styles.statNumber}>{loanStats.borrowed.monthlyRepayments.toFixed(8)}</div>
-                                    <div className={styles.statTitle}>Monthly Repayments</div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>📅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Repayments</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
                             </div>
                             <div className={styles.metricsRow}>
