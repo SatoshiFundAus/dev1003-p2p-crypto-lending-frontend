@@ -5,9 +5,7 @@ import DashboardHeader from './DashboardHeader';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('');
-    const [userId, setUserId] = useState('');
     const [balance, setBalance] = useState(null);
-    const [collateral, setCollateral] = useState([]);
     const [loanStats, setLoanStats] = useState({
         funded: {
             active: 0,
@@ -46,7 +44,6 @@ function Dashboard() {
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
-                setUserId(tokenData.id); // Assuming 'id' is the user ID key
 
                 // Fetch wallet balance
                 const balanceResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
@@ -95,7 +92,6 @@ function Dashboard() {
 
                 if (collateralResponse.ok) {
                     const collateralData = await collateralResponse.json();
-                    setCollateral(collateralData);
                     
                     // Calculate total locked collateral
                     const totalCollateral = collateralData
@@ -209,12 +205,7 @@ function Dashboard() {
         };
 
         fetchUserData();
-    }, [navigate]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
-    };
+    }, [navigate])
 
     return (
         <div className={styles.dashboardContainer}>
