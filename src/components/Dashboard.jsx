@@ -243,15 +243,15 @@ function Dashboard() {
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💰</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>{loanStats.funded.returnRate}%</div>
-                                        <div className={styles.metricTitle}>APY Return Rate</div>
+                                        <div className={styles.metricNumber}>Return Rate</div>
+                                        <div className={styles.metricTitle}>{loanStats.funded.returnRate}%</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>📈</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
-                                        <div className={styles.metricTitle}>Lifetime Earnings</div>
+                                        <div className={styles.metricNumber}>Total Earnings</div>
+                                        <div className={styles.metricTitle}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
