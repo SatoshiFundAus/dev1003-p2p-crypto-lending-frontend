@@ -52,7 +52,7 @@ const DashboardHeader = ({ userEmail }) => {
                             {isAdmin && (
                                 <NavLink 
                                     to="/admin-dashboard" 
-                                    className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                    className={({ isActive }) => isActive ? `${styles.activeLink}` : styles.navLink}
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     <i className="fas fa-user-shield"></i>
