@@ -492,13 +492,6 @@ function Dashboard() {
                                         <div className={styles.metricTitle}>Due in 5 days</div>
                                     </div>
                                 </div>
-                                <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📊</span>
-                                    <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Interest Rate</div>
-                                        <div className={styles.metricTitle}>5% APY</div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <button 
