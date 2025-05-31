@@ -27,7 +27,8 @@ function Dashboard() {
             defaultedLoans: 0,
             totalBorrowed: 0,
             monthlyRepayments: 0,
-            activeLoansAmount: 0
+            activeLoansAmount: 0,
+            nextPayment: { date: null, amount: 0 }
         },
         wallet: {
             totalFunds: 0
@@ -166,6 +167,20 @@ function Dashboard() {
                         return sum;
                     }, 0);
 
+                    // Calculate next payment
+                    const nextPayment = borrowerDealsData.reduce((next, deal) => {
+                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
+                            const dealDate = new Date(deal.expectedCompletionDate);
+                            if (!next.date || dealDate < next.date) {
+                                return {
+                                    date: dealDate,
+                                    amount: deal.loanDetails?.request_amount || 0
+                                };
+                            }
+                        }
+                        return next;
+                    }, { date: null, amount: 0 });
+
                     // Calculate repaid and defaulted loans
                     const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
                     const defaultedLoans = borrowerDealsData.filter(deal => {
@@ -207,7 +222,8 @@ function Dashboard() {
                             defaultedLoans,
                             totalBorrowed,
                             activeLoansAmount,
-                            monthlyRepayments: 0
+                            monthlyRepayments: 0,
+                            nextPayment
                         }
                     }));
                 } else if (borrowerDealsResponse.status === 404) {
@@ -497,14 +513,14 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>💎</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Active Loans</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.activeLoansAmount.toFixed(8)} BTC</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.activeLoansAmount || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Total Borrowed</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.totalBorrowed.toFixed(8)} BTC</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.totalBorrowed || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
@@ -513,14 +529,18 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>📅</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Next Payment</div>
-                                        <div className={styles.metricTitle}>Due in 5 days</div>
+                                        <div className={styles.metricTitle}>
+                                            {loanStats.borrowed?.nextPayment?.date ? 
+                                                `Due in ${Math.ceil((loanStats.borrowed.nextPayment.date - new Date()) / (1000 * 60 * 60 * 24))} days` :
+                                                'No upcoming payments'}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>📅</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Repayments</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.monthlyRepayments || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
