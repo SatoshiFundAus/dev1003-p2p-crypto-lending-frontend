@@ -176,14 +176,30 @@ function Dashboard() {
 
                 if (dealsResponse.ok) {
                     const dealsData = await dealsResponse.json();
+                    console.log('All deals data:', dealsData);
                     
                     // Calculate metrics from the deals data
-                    const active = dealsData.filter(deal => {
+                    const activeDeals = dealsData.filter(deal => {
                         const isLender = deal.lenderId?.email === tokenData.email;
                         const isNotComplete = !deal.isComplete;
                         const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        console.log('Deal check:', {
+                            dealId: deal._id,
+                            isLender,
+                            isNotComplete,
+                            isNotExpired,
+                            email: deal.lenderId?.email,
+                            userEmail: tokenData.email,
+                            completionDate: deal.expectedCompletionDate,
+                            isComplete: deal.isComplete,
+                            fullDeal: deal
+                        });
                         return isLender && isNotComplete && isNotExpired;
-                    }).length;
+                    });
+                    console.log('Active deals:', activeDeals);
+
+                    const active = activeDeals.length;
+                    console.log('Active count:', active);
 
                     const repaid = dealsData.filter(deal => {
                         const isLender = deal.lenderId?.email === tokenData.email;
@@ -196,17 +212,10 @@ function Dashboard() {
                         return isLender && !deal.isComplete && isExpired;
                     }).length;
                     
-                    // Calculate total invested and average interest rate
-                    const activeDeals = dealsData.filter(deal => {
-                        const isLender = deal.lenderId?.email === tokenData.email;
-                        const isNotComplete = !deal.isComplete;
-                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
-                        return isLender && isNotComplete && isNotExpired;
-                    });
-
                     const activeInvested = activeDeals.reduce((sum, deal) => {
                         return sum + (deal.loanDetails?.request_amount || 0);
                     }, 0);
+                    console.log('Active invested:', activeInvested);
 
                     // Calculate total lifetime invested (all loans)
                     const totalInvested = dealsData.reduce((sum, deal) => {
@@ -216,12 +225,36 @@ function Dashboard() {
                         return sum;
                     }, 0);
 
+                    // Fetch interest terms for all active deals
+                    const interestTermsPromises = activeDeals.map(async (deal) => {
+                        try {
+                            const response = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+                            if (response.ok) {
+                                const termData = await response.json();
+                                return termData.interest_rate;
+                            }
+                            return 0;
+                        } catch (error) {
+                            console.error('Error fetching interest term:', error);
+                            return 0;
+                        }
+                    });
+
+                    const interestRates = await Promise.all(interestTermsPromises);
+                    console.log('Interest rates:', interestRates);
+
                     // Calculate average interest rate of active loans
-                    const averageInterestRate = activeDeals.length > 0 
-                        ? activeDeals.reduce((sum, deal) => {
-                            return sum + (deal.loanDetails?.interest_term?.interest_rate || 0);
-                        }, 0) / activeDeals.length
+                    const averageInterestRate = interestRates.length > 0 
+                        ? interestRates.reduce((sum, rate) => sum + rate, 0) / interestRates.length
                         : 0;
+                    console.log('Average interest rate:', averageInterestRate);
 
                     const totalEarned = dealsData.reduce((sum, deal) => {
                         if (deal.lenderId?.email === tokenData.email && deal.isComplete) {
@@ -320,7 +353,7 @@ function Dashboard() {
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>📈</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Return Rate</div>
+                                        <div className={styles.metricNumber}>Average Rate</div>
                                         <div className={styles.metricTitle}>
                                             {loanStats.funded.returnRate}%
                                         </div>
