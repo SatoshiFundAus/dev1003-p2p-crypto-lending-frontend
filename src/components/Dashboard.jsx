@@ -26,7 +26,8 @@ function Dashboard() {
             repaidLoans: 0,
             defaultedLoans: 0,
             totalBorrowed: 0,
-            monthlyRepayments: 0
+            monthlyRepayments: 0,
+            activeLoansAmount: 0
         },
         wallet: {
             totalFunds: 0
@@ -155,6 +156,16 @@ function Dashboard() {
                         return isNotComplete && isNotExpired;
                     }).length;
 
+                    // Calculate active loans amount
+                    const activeLoansAmount = borrowerDealsData.reduce((sum, deal) => {
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        if (isNotComplete && isNotExpired) {
+                            return sum + (deal.loanDetails?.request_amount || 0);
+                        }
+                        return sum;
+                    }, 0);
+
                     // Calculate repaid and defaulted loans
                     const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
                     const defaultedLoans = borrowerDealsData.filter(deal => {
@@ -166,14 +177,26 @@ function Dashboard() {
                     // Calculate total borrowed (sum of all loan amounts)
                     const totalBorrowed = borrowerDealsData.reduce((sum, deal) => {
                         const amount = deal.loanDetails?.request_amount || 0;
+                        console.log('Adding to total borrowed:', {
+                            dealId: deal._id,
+                            amount,
+                            status: deal.isComplete ? 'repaid' : 
+                                   new Date(deal.expectedCompletionDate) <= new Date() ? 'defaulted' : 'active',
+                            currentSum: sum
+                        });
                         return sum + amount;
                     }, 0);
 
-                    console.log('Borrower stats:', {
-                        openLoans,
-                        repaidLoans,
-                        defaultedLoans,
-                        totalBorrowed
+                    console.log('Total borrowed breakdown:', {
+                        totalBorrowed,
+                        activeAmount: activeLoansAmount,
+                        repaidAmount: borrowerDealsData.filter(deal => deal.isComplete)
+                            .reduce((sum, deal) => sum + (deal.loanDetails?.request_amount || 0), 0),
+                        defaultedAmount: borrowerDealsData.filter(deal => {
+                            const isNotComplete = !deal.isComplete;
+                            const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                            return isNotComplete && isExpired;
+                        }).reduce((sum, deal) => sum + (deal.loanDetails?.request_amount || 0), 0)
                     });
 
                     setLoanStats(prev => ({
@@ -183,6 +206,7 @@ function Dashboard() {
                             repaidLoans,
                             defaultedLoans,
                             totalBorrowed,
+                            activeLoansAmount,
                             monthlyRepayments: 0
                         }
                     }));
@@ -470,17 +494,17 @@ function Dashboard() {
                             </div>
                             <div className={styles.metricsRow}>
                                 <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>💎</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Active Loans</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.activeLoansAmount.toFixed(8)} BTC</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Total Borrowed</div>
                                         <div className={styles.metricTitle}>{loanStats.borrowed.totalBorrowed.toFixed(8)} BTC</div>
-                                    </div>
-                                </div>
-                                <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📅</span>
-                                    <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Repayments</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
@@ -490,6 +514,13 @@ function Dashboard() {
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Next Payment</div>
                                         <div className={styles.metricTitle}>Due in 5 days</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>📅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Repayments</div>
+                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
