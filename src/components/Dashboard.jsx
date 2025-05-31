@@ -211,18 +211,49 @@ function Dashboard() {
                     const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
 
                     // Calculate next payment
-                    const nextPayment = borrowerDealsData.reduce((next, deal) => {
-                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
-                            const dealDate = new Date(deal.expectedCompletionDate);
-                            if (!next.date || dealDate < next.date) {
-                                return {
-                                    date: dealDate,
-                                    amount: deal.loanDetails?.request_amount || 0
-                                };
-                            }
+                    const nextPayment = await (async () => {
+                        try {
+                            // Fetch user's transactions
+                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+
+                            if (!transactionsResponse.ok) return { date: null, amount: 0 };
+                            
+                            const transactions = await transactionsResponse.json();
+                            // Filter for unpaid outgoing transactions (repayments)
+                            const unpaidRepayments = transactions.filter(t => 
+                                t.fromUser && 
+                                String(t.fromUser._id) === String(tokenData.id) && 
+                                t.isLoanRepayment && 
+                                !t.paymentStatus &&
+                                new Date(t.expectedPaymentDate) > new Date()
+                            );
+
+                            if (unpaidRepayments.length === 0) return { date: null, amount: 0 };
+
+                            // Find the earliest payment
+                            const nextPayment = unpaidRepayments.reduce((next, t) => {
+                                const paymentDate = new Date(t.expectedPaymentDate);
+                                if (!next.date || paymentDate < next.date) {
+                                    return {
+                                        date: paymentDate,
+                                        amount: t.amount
+                                    };
+                                }
+                                return next;
+                            }, { date: null, amount: 0 });
+
+                            return nextPayment;
+                        } catch {
+                            return { date: null, amount: 0 };
                         }
-                        return next;
-                    }, { date: null, amount: 0 });
+                    })();
 
                     // Calculate repaid and defaulted loans
                     const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
