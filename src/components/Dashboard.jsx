@@ -411,7 +411,7 @@ function Dashboard() {
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>🎯</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Unrealized Returns</div>
+                                        <div className={styles.metricNumber}>Unrealised Returns</div>
                                         <div className={styles.metricTitle}>
                                             {(loanStats.funded.unrealizedReturns || 0).toFixed(8)} BTC
                                         </div>
@@ -420,7 +420,7 @@ function Dashboard() {
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>✅</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Realized Returns</div>
+                                        <div className={styles.metricNumber}>Realised Returns</div>
                                         <div className={styles.metricTitle}>
                                             {(loanStats.funded.realizedReturns || 0).toFixed(8)} BTC
                                         </div>
