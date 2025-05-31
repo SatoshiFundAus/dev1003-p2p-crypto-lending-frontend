@@ -13,7 +13,8 @@ function Dashboard() {
             repaid: 0,
             defaulted: 0,
             returnRate: 0,
-            collateralValue: 0
+            activeInvested: 0,
+            totalInvested: 0
         },
         requested: {
             pending: 0,
@@ -22,13 +23,17 @@ function Dashboard() {
         },
         borrowed: {
             openLoans: 0,
+            repaidLoans: 0,
+            defaultedLoans: 0,
             totalBorrowed: 0,
-            monthlyRepayments: 0
+            monthlyRepayments: 0,
+            activeLoansAmount: 0,
+            nextPayment: { date: null, amount: 0 }
         },
         wallet: {
             totalFunds: 0
         },
-        earningsToDate: 0.05 
+        earningsToDate: 0
     });
 
     const navigate = useNavigate();
@@ -95,13 +100,16 @@ function Dashboard() {
                     const collateralData = await collateralResponse.json();
                     
                     // Calculate total locked collateral
-                    const totalCollateral = collateralData
+                    const lockedCollateral = collateralData
                         .filter(c => c.status === 'locked')
                         .reduce((sum, c) => sum + c.amount, 0);
                     
                     setLoanStats(prev => ({
                         ...prev,
-                        collateralHeld: totalCollateral
+                        wallet: {
+                            ...prev.wallet,
+                            lockedCollateral
+                        }
                     }));
                 }
 
@@ -122,18 +130,29 @@ function Dashboard() {
                     const fundedLoans = userLoans.filter(loan => loan.status === 'funded').length;
                     const expiredLoans = userLoans.filter(loan => loan.status === 'expired').length;
 
+                    // Calculate total amounts for pending and funded loans
+                    const pendingAmount = userLoans
+                        .filter(loan => loan.status === 'pending')
+                        .reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
+                    const fundedAmount = userLoans
+                        .filter(loan => loan.status === 'funded')
+                        .reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
                     setLoanStats(prev => ({
                         ...prev,
                         requested: {
                             pending: pendingLoans,
                             funded: fundedLoans,
-                            expired: expiredLoans
+                            expired: expiredLoans,
+                            pendingAmount,
+                            fundedAmount
                         }
                     }));
                 }
 
                 // Fetch loan requests where user is borrower and status is funded
-                const loanRequestsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+                const borrowerDealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/borrower-deals', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -141,30 +160,132 @@ function Dashboard() {
                     },
                     credentials: 'include'
                 });
+                
+                if (borrowerDealsResponse.ok) {
+                    const borrowerDealsData = await borrowerDealsResponse.json();
 
-                if (loanRequestsResponse.ok) {
-                    const loanRequestsData = await loanRequestsResponse.json();
-                    const borrowedLoans = loanRequestsData.filter(loan => {
-                        return (
-                            String(loan.borrower_id) === String(tokenData.id) &&
-                            loan.status === 'funded'
-                        );
+                    // Calculate open loans (incomplete deals that haven't expired)
+                    const openLoans = borrowerDealsData.filter(deal => {
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        return isNotComplete && isNotExpired;
+                    }).length;
+
+                    // Calculate active loans amount
+                    const activeLoansAmount = borrowerDealsData.reduce((sum, deal) => {
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        if (isNotComplete && isNotExpired) {
+                            return sum + (deal.loanDetails?.request_amount || 0);
+                        }
+                        return sum;
+                    }, 0);
+
+                    // Calculate total repayments needed for active loans
+                    const monthlyRepayments = await Promise.all(borrowerDealsData.map(async (deal) => {
+                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
+                            try {
+                                // Fetch interest term details
+                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    credentials: 'include'
+                                });
+
+                                if (!termResponse.ok) return 0;
+                                const termData = await termResponse.json();
+                                const interestRate = termData.interest_rate;
+                                const principal = deal.loanDetails?.request_amount || 0;
+                                const totalInterest = principal * (interestRate / 100);
+                                return principal + totalInterest; // Total amount to repay (principal + interest)
+                            } catch {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    }));
+
+                    const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
+
+                    // Calculate next payment
+                    const nextPayment = borrowerDealsData.reduce((next, deal) => {
+                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
+                            const dealDate = new Date(deal.expectedCompletionDate);
+                            if (!next.date || dealDate < next.date) {
+                                return {
+                                    date: dealDate,
+                                    amount: deal.loanDetails?.request_amount || 0
+                                };
+                            }
+                        }
+                        return next;
+                    }, { date: null, amount: 0 });
+
+                    // Calculate repaid and defaulted loans
+                    const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
+                    const defaultedLoans = borrowerDealsData.filter(deal => {
+                        const isNotComplete = !deal.isComplete;
+                        const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                        return isNotComplete && isExpired;
+                    }).length;
+
+                    // Calculate total borrowed (sum of all loan amounts)
+                    const totalBorrowed = borrowerDealsData.reduce((sum, deal) => {
+                        const amount = deal.loanDetails?.request_amount || 0;
+                        console.log('Adding to total borrowed:', {
+                            dealId: deal._id,
+                            amount,
+                            status: deal.isComplete ? 'repaid' : 
+                                   new Date(deal.expectedCompletionDate) <= new Date() ? 'defaulted' : 'active',
+                            currentSum: sum
+                        });
+                        return sum + amount;
+                    }, 0);
+
+                    console.log('Total borrowed breakdown:', {
+                        totalBorrowed,
+                        activeAmount: activeLoansAmount,
+                        repaidAmount: borrowerDealsData.filter(deal => deal.isComplete)
+                            .reduce((sum, deal) => sum + (deal.loanDetails?.request_amount || 0), 0),
+                        defaultedAmount: borrowerDealsData.filter(deal => {
+                            const isNotComplete = !deal.isComplete;
+                            const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                            return isNotComplete && isExpired;
+                        }).reduce((sum, deal) => sum + (deal.loanDetails?.request_amount || 0), 0)
                     });
-                    const openLoans = borrowedLoans.length;
-                    const totalBorrowed = borrowedLoans.reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
+                    setLoanStats(prev => ({
+                        ...prev,
+                        borrowed: {
+                            openLoans,
+                            repaidLoans,
+                            defaultedLoans,
+                            totalBorrowed,
+                            activeLoansAmount,
+                            monthlyRepayments: totalRepayments,
+                            nextPayment
+                        }
+                    }));
+                } else if (borrowerDealsResponse.status === 404) {
+                    // No deals found for this borrower
                     setLoanStats(prev => ({
                         ...prev,
                         borrowed: {
                             ...prev.borrowed,
-                            openLoans,
-                            totalBorrowed,
+                            openLoans: 0,
+                            totalBorrowed: 0,
                             monthlyRepayments: 0
                         }
                     }));
+                } else {
+                    toast.error('Failed to fetch your borrowed loans data');
                 }
 
                 // Fetch deals where user is lender
-                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/user-deals', {
+                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/lender-deals', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -175,28 +296,156 @@ function Dashboard() {
 
                 if (dealsResponse.ok) {
                     const dealsData = await dealsResponse.json();
-                    dealsData.forEach(deal => {
-                        console.log('Deal lenderId:', deal.lenderId);
+                    
+                    // Calculate metrics from the deals data
+                    const activeDeals = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        return isLender && isNotComplete && isNotExpired;
                     });
-                    // Filter for deals where the logged-in user is the lender (by email)
-                    const fundedDeals = dealsData.filter(deal => deal.lenderId && deal.lenderId.email === tokenData.email);
-                    const active = fundedDeals.filter(deal => deal.isComplete === false).length;
-                    const repaid = fundedDeals.filter(deal => deal.isComplete === true).length;
-                    // Defaulted, returnRate, collateralValue: set to 0 for now
+
+                    const active = activeDeals.length;
+
+                    const repaid = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        return isLender && deal.isComplete;
+                    }).length;
+
+                    const defaulted = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                        return isLender && !deal.isComplete && isExpired;
+                    }).length;
+                    
+                    const activeInvested = activeDeals.reduce((sum, deal) => {
+                        return sum + (deal.loanDetails?.request_amount || 0);
+                    }, 0);
+
+                    // Calculate total lifetime invested (all loans)
+                    const totalInvested = dealsData.reduce((sum, deal) => {
+                        if (deal.lenderId?.email === tokenData.email) {
+                            return sum + (deal.loanDetails?.request_amount || 0);
+                        }
+                        return sum;
+                    }, 0);
+
+                    // Calculate total collateral for active loans
+                    // const activeCollateral = activeDeals.reduce((sum, deal) => {
+                    //     return sum + (deal.loanDetails?.collateral_amount || 0);
+                    // }, 0);
+
+                    // Calculate unrealized and realized returns
+                    const returns = await Promise.all(dealsData.map(async (deal) => {
+                        if (deal.lenderId?.email !== tokenData.email) return { unrealized: 0, realized: 0 };
+
+                        try {
+                            // Fetch interest term details
+                            const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+
+                            if (!termResponse.ok) return { unrealized: 0, realized: 0 };
+                            const termData = await termResponse.json();
+                            const interestRate = termData.interest_rate;
+                            const principal = deal.loanDetails?.request_amount || 0;
+                            const totalInterest = principal * (interestRate / 100);
+
+                            // Fetch user's transactions
+                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+
+                            let receivedInterest = 0;
+                            if (transactionsResponse.ok) {
+                                const transactions = await transactionsResponse.json();
+                                // Filter transactions for this specific deal and sum up interest payments
+                                receivedInterest = transactions.reduce((sum, transaction) => {
+                                    if (transaction.dealId === deal._id && 
+                                        transaction.type === 'interest' && 
+                                        transaction.status === 'completed') {
+                                        return sum + transaction.amount;
+                                    }
+                                    return sum;
+                                }, 0);
+                            }
+
+                            // Calculate returns based on loan status
+                            if (deal.isComplete) {
+                                // Repaid loan - all interest is realized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            } else if (new Date(deal.expectedCompletionDate) <= new Date()) {
+                                // Defaulted loan - only received interest is realized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            } else {
+                                // Active loan - received interest is realized, rest is unrealized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            }
+                        } catch {
+                            return 0;
+                        }
+                    }));
+
+                    const totalUnrealizedReturns = returns.reduce((sum, r) => sum + r.unrealized, 0);
+                    const totalRealizedReturns = returns.reduce((sum, r) => sum + r.realized, 0);
+
+                    const totalEarned = dealsData.reduce((sum, deal) => {
+                        if (deal.lenderId?.email === tokenData.email && deal.isComplete) {
+                            const principal = deal.loanDetails?.request_amount || 0;
+                            const interestRate = deal.loanDetails?.interest_term?.interest_rate || 0;
+                            const interest = principal * (interestRate / 100);
+                            return sum + interest;
+                        }
+                        return sum;
+                    }, 0);
+
+                    setLoanStats(prev => ({
+                        ...prev,
+                        funded: {
+                            active,
+                            repaid,
+                            defaulted,
+                            activeInvested,
+                            totalInvested,
+                            unrealizedReturns: totalUnrealizedReturns,
+                            realizedReturns: totalRealizedReturns
+                        },
+                        earningsToDate: totalEarned
+                    }));
+                } else if (dealsResponse.status === 404) {
+                    // No deals found for this lender
                     setLoanStats(prev => ({
                         ...prev,
                         funded: {
                             ...prev.funded,
-                            active,
-                            repaid,
+                            active: 0,
+                            repaid: 0,
                             defaulted: 0,
                             returnRate: 0,
                             collateralValue: 0
                         }
                     }));
-
-                } else if (dealsResponse.status === 404) {
-                    // Add that deals don't yet exist for this user.
+                } else {
+                    toast.error('Failed to fetch your funded loans data');
                 }
 
             } catch (error) {
@@ -236,17 +485,41 @@ function Dashboard() {
                             </div>
                             <div className={styles.metricsRow}>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>💰</span>
+                                    <span className={styles.metricIcon}>💎</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Return Rate</div>
-                                        <div className={styles.metricTitle}>{loanStats.funded.returnRate}%</div>
+                                        <div className={styles.metricNumber}>Active Invested</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.activeInvested || 0).toFixed(8)} BTC
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📈</span>
+                                    <span className={styles.metricIcon}>💰</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Total Earnings</div>
-                                        <div className={styles.metricTitle}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
+                                        <div className={styles.metricNumber}>Total Invested</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.totalInvested || 0).toFixed(8)} BTC
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>🎯</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Unrealised Returns</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.unrealizedReturns || 0).toFixed(8)} BTC
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>✅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Realised Returns</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.realizedReturns || 0).toFixed(8)} BTC
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -267,22 +540,30 @@ function Dashboard() {
                             <div className={styles.statsRow}>
                                 <div className={styles.statBox}>
                                     <div className={styles.statNumber}>{loanStats.borrowed.openLoans}</div>
-                                    <div className={styles.statTitle}>Open Loans</div>
+                                    <div className={styles.statTitle}>Active</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.repaidLoans}</div>
+                                    <div className={styles.statTitle}>Repaid</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.defaultedLoans}</div>
+                                    <div className={styles.statTitle}>Defaulted</div>
                                 </div>
                             </div>
                             <div className={styles.metricsRow}>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>💸</span>
+                                    <span className={styles.metricIcon}>💎</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Total Borrowed</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.totalBorrowed.toFixed(8)} BTC</div>
+                                        <div className={styles.metricNumber}>Active Loans</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.activeLoansAmount || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📅</span>
+                                    <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Repayments</div>
-                                        <div className={styles.metricTitle}>{loanStats.borrowed.monthlyRepayments.toFixed(8)} BTC</div>
+                                        <div className={styles.metricNumber}>Total Borrowed</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.totalBorrowed || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
@@ -291,24 +572,28 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>📅</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Next Payment</div>
-                                        <div className={styles.metricTitle}>Due in 5 days</div>
+                                        <div className={styles.metricTitle}>
+                                            {loanStats.borrowed.nextPayment?.date ? 
+                                                `Due in ${Math.ceil((loanStats.borrowed.nextPayment.date - new Date()) / (1000 * 60 * 60 * 24))} days` :
+                                                'No upcoming payments'}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📊</span>
+                                    <span className={styles.metricIcon}>📅</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Interest Rate</div>
-                                        <div className={styles.metricTitle}>5% APY</div>
+                                        <div className={styles.metricNumber}>Repayments</div>
+                                        <div className={styles.metricTitle}>{(loanStats.borrowed?.monthlyRepayments || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <button 
                             className={styles.primaryButton}
-                            onClick={() => navigate('/my-loans')}
+                            onClick={() => navigate('/transactions')}
                         >
                             <i className={`${styles.icon} ${styles.iconViewLoans}`}></i>
-                            View My Loans
+                            View Transactions
                         </button>
                     </div>
 
@@ -318,7 +603,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{balance !== null ? (balance + loanStats.funded.collateralValue).toFixed(8) : 'Loading...'} BTC</div>
+                                    <div className={styles.statNumber}>{balance !== null ? (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) : 'Loading...'} BTC</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
@@ -334,7 +619,7 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>🔒</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Locked</div>
-                                        <div className={styles.metricTitle}>{loanStats.funded.collateralValue} BTC</div>
+                                        <div className={styles.metricTitle}>{(loanStats.wallet?.lockedCollateral || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
@@ -364,6 +649,22 @@ function Dashboard() {
                                 <div className={styles.statBox}>
                                     <div className={styles.statNumber}>{loanStats.requested.expired}</div>
                                     <div className={styles.statTitle}>Expired</div>
+                                </div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>⏳</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Pending Loans</div>
+                                        <div className={styles.metricTitle}>{(loanStats.requested?.pendingAmount || 0).toFixed(8)} BTC</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>✅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Funded Loans</div>
+                                        <div className={styles.metricTitle}>{(loanStats.requested?.fundedAmount || 0).toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
