@@ -130,12 +130,23 @@ function Dashboard() {
                     const fundedLoans = userLoans.filter(loan => loan.status === 'funded').length;
                     const expiredLoans = userLoans.filter(loan => loan.status === 'expired').length;
 
+                    // Calculate total amounts for pending and funded loans
+                    const pendingAmount = userLoans
+                        .filter(loan => loan.status === 'pending')
+                        .reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
+                    const fundedAmount = userLoans
+                        .filter(loan => loan.status === 'funded')
+                        .reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
                     setLoanStats(prev => ({
                         ...prev,
                         requested: {
                             pending: pendingLoans,
                             funded: fundedLoans,
-                            expired: expiredLoans
+                            expired: expiredLoans,
+                            pendingAmount,
+                            fundedAmount
                         }
                     }));
                 }
@@ -638,6 +649,22 @@ function Dashboard() {
                                 <div className={styles.statBox}>
                                     <div className={styles.statNumber}>{loanStats.requested.expired}</div>
                                     <div className={styles.statTitle}>Expired</div>
+                                </div>
+                            </div>
+                            <div className={styles.metricsRow}>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>⏳</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Pending Loans</div>
+                                        <div className={styles.metricTitle}>{(loanStats.requested?.pendingAmount || 0).toFixed(8)} BTC</div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>✅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Funded Loans</div>
+                                        <div className={styles.metricTitle}>{(loanStats.requested?.fundedAmount || 0).toFixed(8)} BTC</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
