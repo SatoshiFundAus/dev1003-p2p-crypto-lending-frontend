@@ -245,14 +245,15 @@ function Dashboard() {
                                 },
                                 credentials: 'include'
                             });
+
                             if (!termResponse.ok) return { unrealized: 0, realized: 0 };
                             const termData = await termResponse.json();
                             const interestRate = termData.interest_rate;
                             const principal = deal.loanDetails?.request_amount || 0;
                             const totalInterest = principal * (interestRate / 100);
 
-                            // Fetch payment history
-                            const paymentsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/payments/${deal._id}`, {
+                            // Fetch user's transactions
+                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
@@ -262,11 +263,14 @@ function Dashboard() {
                             });
 
                             let receivedInterest = 0;
-                            if (paymentsResponse.ok) {
-                                const payments = await paymentsResponse.json();
-                                receivedInterest = payments.reduce((sum, payment) => {
-                                    if (payment.status === 'completed' && payment.type === 'interest') {
-                                        return sum + payment.amount;
+                            if (transactionsResponse.ok) {
+                                const transactions = await transactionsResponse.json();
+                                // Filter transactions for this specific deal and sum up interest payments
+                                receivedInterest = transactions.reduce((sum, transaction) => {
+                                    if (transaction.dealId === deal._id && 
+                                        transaction.type === 'interest' && 
+                                        transaction.status === 'completed') {
+                                        return sum + transaction.amount;
                                     }
                                     return sum;
                                 }, 0);
