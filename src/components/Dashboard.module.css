@@ -338,6 +338,68 @@
     content: '\f53c'; /* fa-money-bill-wave */
 }
 
+/* Tablet-specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboardContent {
+        padding: 0 1.5rem;
+        margin: 2rem auto;
+    }
+
+    .dashboardGrid {
+        gap: 2rem;
+    }
+
+    .loanStatsCard {
+        padding: 1.5rem;
+    }
+
+    .statsContainer {
+        padding: 1.25rem;
+    }
+
+    .statsRow {
+        gap: 1rem;
+    }
+
+    .statBox {
+        padding: 1rem 0.75rem;
+    }
+
+    .statNumber {
+        font-size: 1.6rem;
+    }
+
+    .metricsRow {
+        gap: 1rem;
+    }
+
+    .metricBox {
+        padding: 0.875rem;
+    }
+
+    .metricIcon {
+        font-size: 1.4rem;
+    }
+
+    .metricNumber {
+        font-size: 1.1rem;
+    }
+
+    .metricTitle {
+        font-size: 0.75rem;
+    }
+
+    .primaryButton {
+        padding: 1rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .fullWidthStat .statNumber {
+        font-size: 2rem;
+    }
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
     .dashboardContent {
         padding: 0 1rem;
