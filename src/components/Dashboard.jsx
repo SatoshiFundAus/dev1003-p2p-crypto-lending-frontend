@@ -5,8 +5,9 @@ import DashboardHeader from './DashboardHeader';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
-    const [userEmail, setUserEmail] = useState('');
-    const [balance, setBalance] = useState(null);
+    const [userEmail, setUserEmail] = useState('')
+    const [balance, setBalance] = useState(null)
+    const [loading, setLoading] = useState(true)
     const [loanStats, setLoanStats] = useState({
         funded: {
             active: 0,
@@ -34,7 +35,7 @@ function Dashboard() {
             totalFunds: 0
         },
         earningsToDate: 0
-    });
+    })
 
     const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ function Dashboard() {
 
         // Fetch user data
         const fetchUserData = async () => {
+            setLoading(true)
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
@@ -211,18 +213,49 @@ function Dashboard() {
                     const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
 
                     // Calculate next payment
-                    const nextPayment = borrowerDealsData.reduce((next, deal) => {
-                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
-                            const dealDate = new Date(deal.expectedCompletionDate);
-                            if (!next.date || dealDate < next.date) {
-                                return {
-                                    date: dealDate,
-                                    amount: deal.loanDetails?.request_amount || 0
-                                };
-                            }
+                    const nextPayment = await (async () => {
+                        try {
+                            // Fetch user's transactions
+                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+
+                            if (!transactionsResponse.ok) return { date: null, amount: 0 };
+                            
+                            const transactions = await transactionsResponse.json();
+                            // Filter for unpaid outgoing transactions (repayments)
+                            const unpaidRepayments = transactions.filter(t => 
+                                t.fromUser && 
+                                String(t.fromUser._id) === String(tokenData.id) && 
+                                t.isLoanRepayment && 
+                                !t.paymentStatus &&
+                                new Date(t.expectedPaymentDate) > new Date()
+                            );
+
+                            if (unpaidRepayments.length === 0) return { date: null, amount: 0 };
+
+                            // Find the earliest payment
+                            const nextPayment = unpaidRepayments.reduce((next, t) => {
+                                const paymentDate = new Date(t.expectedPaymentDate);
+                                if (!next.date || paymentDate < next.date) {
+                                    return {
+                                        date: paymentDate,
+                                        amount: t.amount
+                                    };
+                                }
+                                return next;
+                            }, { date: null, amount: 0 });
+
+                            return nextPayment;
+                        } catch {
+                            return { date: null, amount: 0 };
                         }
-                        return next;
-                    }, { date: null, amount: 0 });
+                    })();
 
                     // Calculate repaid and defaulted loans
                     const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
@@ -329,11 +362,6 @@ function Dashboard() {
                         }
                         return sum;
                     }, 0);
-
-                    // Calculate total collateral for active loans
-                    // const activeCollateral = activeDeals.reduce((sum, deal) => {
-                    //     return sum + (deal.loanDetails?.collateral_amount || 0);
-                    // }, 0);
 
                     // Calculate unrealized and realized returns
                     const returns = await Promise.all(dealsData.map(async (deal) => {
@@ -454,11 +482,27 @@ function Dashboard() {
                     localStorage.removeItem('token');
                     navigate('/login');
                 }
+            } finally {
+                setLoading(false)
             }
         };
 
         fetchUserData();
     }, [navigate])
+
+    if (loading) {
+        return (
+            <div className={styles.dashboardContainer}>
+                <DashboardHeader userEmail={userEmail} />
+                <main className={styles.dashboardContent}>
+                    <div className={styles.loadingContainer}>
+                        <div className={styles.loadingSpinner}></div>
+                        <div className={styles.loadingText}>Loading dashboard data...</div>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.dashboardContainer}>

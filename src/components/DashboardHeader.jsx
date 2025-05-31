@@ -63,28 +63,12 @@ const DashboardHeader = ({ userEmail }) => {
                                 <span>Dashboard</span>
                             </NavLink>
                             <NavLink 
-                                to="/transactions" 
+                                to="/wallet" 
                                 className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
                                 onClick={() => setIsMenuOpen(false)}
                             >
-                                <i className="fas fa-hand-holding-usd"></i>
-                                <span>Transactions</span>
-                            </NavLink>
-                            <NavLink 
-                                to="/view-loans" 
-                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <i className="fas fa-list-ul"></i>
-                                <span>View Loans</span>
-                            </NavLink>
-                            <NavLink 
-                                to="/cryptocurrencies" 
-                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <i className="fas fa-coins"></i>
-                                <span>Cryptocurrencies</span>
+                                <i className="fa-solid fa-wallet"></i>
+                                <span>Wallet</span>
                             </NavLink>
                             <NavLink 
                                 to="/request-loan" 
@@ -95,12 +79,36 @@ const DashboardHeader = ({ userEmail }) => {
                                 <span>Request Loan</span>
                             </NavLink>
                             <NavLink 
-                                to="/wallet" 
+                                to="/view-loans" 
                                 className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
                                 onClick={() => setIsMenuOpen(false)}
                             >
-                                <i className="fa-solid fa-wallet"></i>
-                                <span>Wallet</span>
+                                <i className="fas fa-list-ul"></i>
+                                <span>View Loans</span>
+                            </NavLink>
+                            <NavLink 
+                                to="/transactions" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-hand-holding-usd"></i>
+                                <span>Transactions</span>
+                            </NavLink>
+                            <NavLink 
+                                to="/cryptocurrencies" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-coins"></i>
+                                <span>Cryptocurrencies</span>
+                            </NavLink>
+                            <NavLink 
+                                to="/interest-terms" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-percentage"></i>
+                                <span>Interest Terms</span>
                             </NavLink>
                         </div>
                     </nav>
