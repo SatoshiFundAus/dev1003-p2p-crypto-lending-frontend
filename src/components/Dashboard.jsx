@@ -167,6 +167,35 @@ function Dashboard() {
                         return sum;
                     }, 0);
 
+                    // Calculate total repayments needed for active loans
+                    const monthlyRepayments = await Promise.all(borrowerDealsData.map(async (deal) => {
+                        if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
+                            try {
+                                // Fetch interest term details
+                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    credentials: 'include'
+                                });
+
+                                if (!termResponse.ok) return 0;
+                                const termData = await termResponse.json();
+                                const interestRate = termData.interest_rate;
+                                const principal = deal.loanDetails?.request_amount || 0;
+                                const totalInterest = principal * (interestRate / 100);
+                                return principal + totalInterest; // Total amount to repay (principal + interest)
+                            } catch (error) {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    }));
+
+                    const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
+
                     // Calculate next payment
                     const nextPayment = borrowerDealsData.reduce((next, deal) => {
                         if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
@@ -222,7 +251,7 @@ function Dashboard() {
                             defaultedLoans,
                             totalBorrowed,
                             activeLoansAmount,
-                            monthlyRepayments: 0,
+                            monthlyRepayments: totalRepayments,
                             nextPayment
                         }
                     }));
