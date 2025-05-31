@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AdminDashboard.module.css';
 import DashboardHeader from './DashboardHeader';
+import Footer from './Footer';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -51,7 +52,7 @@ const AdminDashboard = () => {
                     'Content-Type': 'application/json'
                 };
 
-                
+
                 // Fetch admin dashboard data
                 const [completedRes, activeRes] = await Promise.all([
                     fetch(`${BACKEND_URL}/admin/deals-complete`, {
@@ -220,7 +221,7 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
-    
+
 
     // Get userEmail from localStorage for the header
     const userEmail = localStorage.getItem('userEmail');
@@ -239,13 +240,13 @@ const AdminDashboard = () => {
             <div className={styles.adminDashboard}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
                 <div className={styles.content}>
-                    <div style={{fontSize: '2rem'}}>This feature is under development</div>
+                    <div style={{ fontSize: '2rem' }}>This feature is under development</div>
                 </div>
 
                 <button
                     className={styles.actionButton}
                     onClick={() => setUnderDevelopment(false)}
-                    style={{marginTop: '20px'}}
+                    style={{ marginTop: '20px' }}
                 >
                     <i className='fas fa-arrow-left'></i>
                     Back to Dashboard
@@ -258,9 +259,13 @@ const AdminDashboard = () => {
         return (
             <div className={styles.adminDashboard}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
-                <div className={styles.content}>
-                    <div className={styles.loading}>Loading...</div>
-                </div>
+                <main>
+                    <div className={styles.loadingContainer}>
+                        <div className={styles.loadingSpinner}></div>
+                        <div className={styles.loadingText}>Loading...</div>
+                    </div>
+                </main>
+                <Footer />
             </div>
         )
     }
