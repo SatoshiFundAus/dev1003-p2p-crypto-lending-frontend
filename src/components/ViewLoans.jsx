@@ -71,7 +71,9 @@ const ViewLoans = () => {
         });
         if (!loansRes.ok) throw new Error('Failed to fetch loans');
         const loans = await loansRes.json();
-        setLoans(loans);
+        // Filter to only show pending loans
+        const pendingLoans = loans.filter(loan => loan.status === 'pending');
+        setLoans(pendingLoans);
       } catch (err) {
         setError(err.message || 'Error loading data');
       } finally {
