@@ -23,6 +23,8 @@ function Dashboard() {
         },
         borrowed: {
             openLoans: 0,
+            repaidLoans: 0,
+            defaultedLoans: 0,
             totalBorrowed: 0,
             monthlyRepayments: 0
         },
@@ -134,7 +136,7 @@ function Dashboard() {
                 }
 
                 // Fetch loan requests where user is borrower and status is funded
-                const loanRequestsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+                const borrowerDealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/borrower-deals', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -142,26 +144,61 @@ function Dashboard() {
                     },
                     credentials: 'include'
                 });
+                
+                if (borrowerDealsResponse.ok) {
+                    const borrowerDealsData = await borrowerDealsResponse.json();
 
-                if (loanRequestsResponse.ok) {
-                    const loanRequestsData = await loanRequestsResponse.json();
-                    const borrowedLoans = loanRequestsData.filter(loan => {
-                        return (
-                            String(loan.borrower_id) === String(tokenData.id) &&
-                            loan.status === 'funded'
-                        );
+                    // Calculate open loans (incomplete deals that haven't expired)
+                    const openLoans = borrowerDealsData.filter(deal => {
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        return isNotComplete && isNotExpired;
+                    }).length;
+
+                    // Calculate repaid and defaulted loans
+                    const repaidLoans = borrowerDealsData.filter(deal => deal.isComplete).length;
+                    const defaultedLoans = borrowerDealsData.filter(deal => {
+                        const isNotComplete = !deal.isComplete;
+                        const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                        return isNotComplete && isExpired;
+                    }).length;
+
+                    // Calculate total borrowed (sum of all loan amounts)
+                    const totalBorrowed = borrowerDealsData.reduce((sum, deal) => {
+                        const amount = deal.loanDetails?.request_amount || 0;
+                        return sum + amount;
+                    }, 0);
+
+                    console.log('Borrower stats:', {
+                        openLoans,
+                        repaidLoans,
+                        defaultedLoans,
+                        totalBorrowed
                     });
-                    const openLoans = borrowedLoans.length;
-                    const totalBorrowed = borrowedLoans.reduce((sum, loan) => sum + (loan.request_amount || 0), 0);
+
                     setLoanStats(prev => ({
                         ...prev,
                         borrowed: {
-                            ...prev.borrowed,
                             openLoans,
+                            repaidLoans,
+                            defaultedLoans,
                             totalBorrowed,
                             monthlyRepayments: 0
                         }
                     }));
+                } else if (borrowerDealsResponse.status === 404) {
+                    // No deals found for this borrower
+                    setLoanStats(prev => ({
+                        ...prev,
+                        borrowed: {
+                            ...prev.borrowed,
+                            openLoans: 0,
+                            totalBorrowed: 0,
+                            monthlyRepayments: 0
+                        }
+                    }));
+                } else {
+                    toast.error('Failed to fetch your borrowed loans data');
                 }
 
                 // Fetch deals where user is lender
@@ -176,30 +213,16 @@ function Dashboard() {
 
                 if (dealsResponse.ok) {
                     const dealsData = await dealsResponse.json();
-                    console.log('All deals data:', dealsData);
                     
                     // Calculate metrics from the deals data
                     const activeDeals = dealsData.filter(deal => {
                         const isLender = deal.lenderId?.email === tokenData.email;
                         const isNotComplete = !deal.isComplete;
                         const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
-                        console.log('Deal check:', {
-                            dealId: deal._id,
-                            isLender,
-                            isNotComplete,
-                            isNotExpired,
-                            email: deal.lenderId?.email,
-                            userEmail: tokenData.email,
-                            completionDate: deal.expectedCompletionDate,
-                            isComplete: deal.isComplete,
-                            fullDeal: deal
-                        });
                         return isLender && isNotComplete && isNotExpired;
                     });
-                    console.log('Active deals:', activeDeals);
 
                     const active = activeDeals.length;
-                    console.log('Active count:', active);
 
                     const repaid = dealsData.filter(deal => {
                         const isLender = deal.lenderId?.email === tokenData.email;
@@ -215,7 +238,6 @@ function Dashboard() {
                     const activeInvested = activeDeals.reduce((sum, deal) => {
                         return sum + (deal.loanDetails?.request_amount || 0);
                     }, 0);
-                    console.log('Active invested:', activeInvested);
 
                     // Calculate total lifetime invested (all loans)
                     const totalInvested = dealsData.reduce((sum, deal) => {
@@ -229,7 +251,6 @@ function Dashboard() {
                     const activeCollateral = activeDeals.reduce((sum, deal) => {
                         return sum + (deal.loanDetails?.collateral_amount || 0);
                     }, 0);
-                    console.log('Active collateral:', activeCollateral);
 
                     // Calculate unrealized and realized returns
                     const returns = await Promise.all(dealsData.map(async (deal) => {
@@ -296,20 +317,13 @@ function Dashboard() {
                                     realized: receivedInterest
                                 };
                             }
-                        } catch (error) {
-                            console.error('Error calculating returns:', error);
+                        } catch {
                             return { unrealized: 0, realized: 0 };
                         }
                     }));
 
                     const totalUnrealizedReturns = returns.reduce((sum, r) => sum + r.unrealized, 0);
                     const totalRealizedReturns = returns.reduce((sum, r) => sum + r.realized, 0);
-
-                    console.log('Returns calculation:', {
-                        totalUnrealizedReturns,
-                        totalRealizedReturns,
-                        returns
-                    });
 
                     const totalEarned = dealsData.reduce((sum, deal) => {
                         if (deal.lenderId?.email === tokenData.email && deal.isComplete) {
@@ -348,7 +362,6 @@ function Dashboard() {
                         }
                     }));
                 } else {
-                    console.error('Error fetching lender deals:', dealsResponse.status);
                     toast.error('Failed to fetch your funded loans data');
                 }
 
@@ -444,7 +457,15 @@ function Dashboard() {
                             <div className={styles.statsRow}>
                                 <div className={styles.statBox}>
                                     <div className={styles.statNumber}>{loanStats.borrowed.openLoans}</div>
-                                    <div className={styles.statTitle}>Open Loans</div>
+                                    <div className={styles.statTitle}>Active</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.repaidLoans}</div>
+                                    <div className={styles.statTitle}>Repaid</div>
+                                </div>
+                                <div className={styles.statBox}>
+                                    <div className={styles.statNumber}>{loanStats.borrowed.defaultedLoans}</div>
+                                    <div className={styles.statTitle}>Defaulted</div>
                                 </div>
                             </div>
                             <div className={styles.metricsRow}>
