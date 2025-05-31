@@ -51,14 +51,7 @@ const AdminDashboard = () => {
                     'Content-Type': 'application/json'
                 };
 
-                // setStats(prevStats => ({
-                //     ...prevStats,
-                //     totalLoansFunded: completedData.totalCompletedDeals || 0,
-                //     activeLoans: activeData.ActiveDeals || 0,
-                //     averageInterestRate: avgInterestRate,
-                //     totalCollateralValue: totalCollateralValue,
-                //     platformEarnings: 75000
-                // }));
+                
                 // Fetch admin dashboard data
                 const [completedRes, activeRes] = await Promise.all([
                     fetch(`${BACKEND_URL}/admin/deals-complete`, {
@@ -105,7 +98,8 @@ const AdminDashboard = () => {
 
                     if (avgInterestRes.ok) {
                         const avgInterestData = await avgInterestRes.json();
-                        avgInterestRate = avgInterestData.averageInterestRate || 0;
+                        const rawInterestRate = avgInterestData.averageInterestRate || 0;
+                        avgInterestRate = rawInterestRate.toFixed(2);
                         console.log('Average interest rate fetched:', avgInterestRate);
                     } else {
                         console.log('Average interest rate endpoint not available yet (Status:', avgInterestRes.status, ')');
