@@ -225,10 +225,19 @@ function Dashboard() {
                         return sum;
                     }, 0);
 
-                    // Fetch interest terms for all active deals
-                    const interestTermsPromises = activeDeals.map(async (deal) => {
+                    // Calculate total collateral for active loans
+                    const activeCollateral = activeDeals.reduce((sum, deal) => {
+                        return sum + (deal.loanDetails?.collateral_amount || 0);
+                    }, 0);
+                    console.log('Active collateral:', activeCollateral);
+
+                    // Calculate unrealized and realized returns
+                    const returns = await Promise.all(dealsData.map(async (deal) => {
+                        if (deal.lenderId?.email !== tokenData.email) return { unrealized: 0, realized: 0 };
+
                         try {
-                            const response = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                            // Fetch interest term details
+                            const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
@@ -236,25 +245,67 @@ function Dashboard() {
                                 },
                                 credentials: 'include'
                             });
-                            if (response.ok) {
-                                const termData = await response.json();
-                                return termData.interest_rate;
+                            if (!termResponse.ok) return { unrealized: 0, realized: 0 };
+                            const termData = await termResponse.json();
+                            const interestRate = termData.interest_rate;
+                            const principal = deal.loanDetails?.request_amount || 0;
+                            const totalInterest = principal * (interestRate / 100);
+
+                            // Fetch payment history
+                            const paymentsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/payments/${deal._id}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include'
+                            });
+
+                            let receivedInterest = 0;
+                            if (paymentsResponse.ok) {
+                                const payments = await paymentsResponse.json();
+                                receivedInterest = payments.reduce((sum, payment) => {
+                                    if (payment.status === 'completed' && payment.type === 'interest') {
+                                        return sum + payment.amount;
+                                    }
+                                    return sum;
+                                }, 0);
                             }
-                            return 0;
+
+                            // Calculate returns based on loan status
+                            if (deal.isComplete) {
+                                // Repaid loan - all interest is realized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            } else if (new Date(deal.expectedCompletionDate) <= new Date()) {
+                                // Defaulted loan - only received interest is realized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            } else {
+                                // Active loan - received interest is realized, rest is unrealized
+                                return {
+                                    unrealized: totalInterest,
+                                    realized: receivedInterest
+                                };
+                            }
                         } catch (error) {
-                            console.error('Error fetching interest term:', error);
-                            return 0;
+                            console.error('Error calculating returns:', error);
+                            return { unrealized: 0, realized: 0 };
                         }
+                    }));
+
+                    const totalUnrealizedReturns = returns.reduce((sum, r) => sum + r.unrealized, 0);
+                    const totalRealizedReturns = returns.reduce((sum, r) => sum + r.realized, 0);
+
+                    console.log('Returns calculation:', {
+                        totalUnrealizedReturns,
+                        totalRealizedReturns,
+                        returns
                     });
-
-                    const interestRates = await Promise.all(interestTermsPromises);
-                    console.log('Interest rates:', interestRates);
-
-                    // Calculate average interest rate of active loans
-                    const averageInterestRate = interestRates.length > 0 
-                        ? interestRates.reduce((sum, rate) => sum + rate, 0) / interestRates.length
-                        : 0;
-                    console.log('Average interest rate:', averageInterestRate);
 
                     const totalEarned = dealsData.reduce((sum, deal) => {
                         if (deal.lenderId?.email === tokenData.email && deal.isComplete) {
@@ -272,9 +323,10 @@ function Dashboard() {
                             active,
                             repaid,
                             defaulted,
-                            returnRate: averageInterestRate.toFixed(2),
                             activeInvested,
-                            totalInvested
+                            totalInvested,
+                            unrealizedReturns: totalUnrealizedReturns,
+                            realizedReturns: totalRealizedReturns
                         },
                         earningsToDate: totalEarned
                     }));
@@ -350,12 +402,23 @@ function Dashboard() {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div className={styles.metricsRow}>
                                 <div className={styles.metricBox}>
-                                    <span className={styles.metricIcon}>📈</span>
+                                    <span className={styles.metricIcon}>🎯</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Average Rate</div>
+                                        <div className={styles.metricNumber}>Unrealized Returns</div>
                                         <div className={styles.metricTitle}>
-                                            {loanStats.funded.returnRate}%
+                                            {(loanStats.funded.unrealizedReturns || 0).toFixed(8)} BTC
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>✅</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Realized Returns</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.realizedReturns || 0).toFixed(8)} BTC
                                         </div>
                                     </div>
                                 </div>
