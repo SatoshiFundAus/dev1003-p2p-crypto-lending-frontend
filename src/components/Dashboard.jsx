@@ -201,7 +201,7 @@ function Dashboard() {
                                 const principal = deal.loanDetails?.request_amount || 0;
                                 const totalInterest = principal * (interestRate / 100);
                                 return principal + totalInterest; // Total amount to repay (principal + interest)
-                            } catch (error) {
+                            } catch {
                                 return 0;
                             }
                         }
@@ -331,9 +331,9 @@ function Dashboard() {
                     }, 0);
 
                     // Calculate total collateral for active loans
-                    const activeCollateral = activeDeals.reduce((sum, deal) => {
-                        return sum + (deal.loanDetails?.collateral_amount || 0);
-                    }, 0);
+                    // const activeCollateral = activeDeals.reduce((sum, deal) => {
+                    //     return sum + (deal.loanDetails?.collateral_amount || 0);
+                    // }, 0);
 
                     // Calculate unrealized and realized returns
                     const returns = await Promise.all(dealsData.map(async (deal) => {
@@ -401,7 +401,7 @@ function Dashboard() {
                                 };
                             }
                         } catch {
-                            return { unrealized: 0, realized: 0 };
+                            return 0;
                         }
                     }));
 
@@ -573,7 +573,7 @@ function Dashboard() {
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Next Payment</div>
                                         <div className={styles.metricTitle}>
-                                            {loanStats.borrowed?.nextPayment?.date ? 
+                                            {loanStats.borrowed.nextPayment?.date ? 
                                                 `Due in ${Math.ceil((loanStats.borrowed.nextPayment.date - new Date()) / (1000 * 60 * 60 * 24))} days` :
                                                 'No upcoming payments'}
                                         </div>
@@ -590,10 +590,10 @@ function Dashboard() {
                         </div>
                         <button 
                             className={styles.primaryButton}
-                            onClick={() => navigate('/my-loans')}
+                            onClick={() => navigate('/transactions')}
                         >
                             <i className={`${styles.icon} ${styles.iconViewLoans}`}></i>
-                            View My Loans
+                            View Transactions
                         </button>
                     </div>
 
