@@ -5,8 +5,9 @@ import DashboardHeader from './DashboardHeader';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
-    const [userEmail, setUserEmail] = useState('');
-    const [balance, setBalance] = useState(null);
+    const [userEmail, setUserEmail] = useState('')
+    const [balance, setBalance] = useState(null)
+    const [loading, setLoading] = useState(true)
     const [loanStats, setLoanStats] = useState({
         funded: {
             active: 0,
@@ -34,7 +35,7 @@ function Dashboard() {
             totalFunds: 0
         },
         earningsToDate: 0
-    });
+    })
 
     const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ function Dashboard() {
 
         // Fetch user data
         const fetchUserData = async () => {
+            setLoading(true)
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
@@ -361,11 +363,6 @@ function Dashboard() {
                         return sum;
                     }, 0);
 
-                    // Calculate total collateral for active loans
-                    // const activeCollateral = activeDeals.reduce((sum, deal) => {
-                    //     return sum + (deal.loanDetails?.collateral_amount || 0);
-                    // }, 0);
-
                     // Calculate unrealized and realized returns
                     const returns = await Promise.all(dealsData.map(async (deal) => {
                         if (deal.lenderId?.email !== tokenData.email) return { unrealized: 0, realized: 0 };
@@ -485,11 +482,27 @@ function Dashboard() {
                     localStorage.removeItem('token');
                     navigate('/login');
                 }
+            } finally {
+                setLoading(false)
             }
         };
 
         fetchUserData();
     }, [navigate])
+
+    if (loading) {
+        return (
+            <div className={styles.dashboardContainer}>
+                <DashboardHeader userEmail={userEmail} />
+                <main className={styles.dashboardContent}>
+                    <div className={styles.loadingContainer}>
+                        <div className={styles.loadingSpinner}></div>
+                        <div className={styles.loadingText}>Loading dashboard data...</div>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.dashboardContainer}>
