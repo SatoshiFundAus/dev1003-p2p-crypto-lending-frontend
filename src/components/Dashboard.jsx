@@ -100,13 +100,16 @@ function Dashboard() {
                     const collateralData = await collateralResponse.json();
                     
                     // Calculate total locked collateral
-                    const totalCollateral = collateralData
+                    const lockedCollateral = collateralData
                         .filter(c => c.status === 'locked')
                         .reduce((sum, c) => sum + c.amount, 0);
                     
                     setLoanStats(prev => ({
                         ...prev,
-                        collateralHeld: totalCollateral
+                        wallet: {
+                            ...prev.wallet,
+                            lockedCollateral
+                        }
                     }));
                 }
 
@@ -589,7 +592,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{balance !== null ? (balance + loanStats.funded.collateralValue).toFixed(8) : 'Loading...'} BTC</div>
+                                    <div className={styles.statNumber}>{balance !== null ? (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) : 'Loading...'} BTC</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
@@ -605,7 +608,7 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>🔒</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Locked</div>
-                                        <div className={styles.metricTitle}>{loanStats.funded.collateralValue} BTC</div>
+                                        <div className={styles.metricTitle}>{(loanStats.wallet?.lockedCollateral || 0).toFixed(8)} BTC</div>
                                     </div>
                                 </div>
                             </div>
