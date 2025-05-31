@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import DashboardHeader from './DashboardHeader';
+import Footer from './Footer';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
@@ -500,6 +501,7 @@ function Dashboard() {
                         <div className={styles.loadingText}>Loading dashboard data...</div>
                     </div>
                 </main>
+                <Footer />
             </div>
         );
     }
@@ -722,6 +724,7 @@ function Dashboard() {
                     </div>
                 </div>
             </main>
+            <Footer />
         </div>
     );
 }

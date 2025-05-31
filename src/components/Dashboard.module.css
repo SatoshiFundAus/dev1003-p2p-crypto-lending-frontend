@@ -33,6 +33,7 @@
 .dashboardContent {
     max-width: 1400px;
     margin: 3rem auto;
+    margin-bottom: 5rem;
     padding: 0 2rem;
     display: flex;
     flex-direction: column;
