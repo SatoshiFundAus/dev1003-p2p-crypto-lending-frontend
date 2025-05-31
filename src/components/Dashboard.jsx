@@ -13,7 +13,8 @@ function Dashboard() {
             repaid: 0,
             defaulted: 0,
             returnRate: 0,
-            collateralValue: 0
+            activeInvested: 0,
+            totalInvested: 0
         },
         requested: {
             pending: 0,
@@ -28,7 +29,7 @@ function Dashboard() {
         wallet: {
             totalFunds: 0
         },
-        earningsToDate: 0.05 
+        earningsToDate: 0
     });
 
     const navigate = useNavigate();
@@ -164,7 +165,7 @@ function Dashboard() {
                 }
 
                 // Fetch deals where user is lender
-                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/user-deals', {
+                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/lender-deals', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -175,28 +176,91 @@ function Dashboard() {
 
                 if (dealsResponse.ok) {
                     const dealsData = await dealsResponse.json();
-                    dealsData.forEach(deal => {
-                        console.log('Deal lenderId:', deal.lenderId);
+                    
+                    // Calculate metrics from the deals data
+                    const active = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        return isLender && isNotComplete && isNotExpired;
+                    }).length;
+
+                    const repaid = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        return isLender && deal.isComplete;
+                    }).length;
+
+                    const defaulted = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        const isExpired = new Date(deal.expectedCompletionDate) <= new Date();
+                        return isLender && !deal.isComplete && isExpired;
+                    }).length;
+                    
+                    // Calculate total invested and average interest rate
+                    const activeDeals = dealsData.filter(deal => {
+                        const isLender = deal.lenderId?.email === tokenData.email;
+                        const isNotComplete = !deal.isComplete;
+                        const isNotExpired = new Date(deal.expectedCompletionDate) > new Date();
+                        return isLender && isNotComplete && isNotExpired;
                     });
-                    // Filter for deals where the logged-in user is the lender (by email)
-                    const fundedDeals = dealsData.filter(deal => deal.lenderId && deal.lenderId.email === tokenData.email);
-                    const active = fundedDeals.filter(deal => deal.isComplete === false).length;
-                    const repaid = fundedDeals.filter(deal => deal.isComplete === true).length;
-                    // Defaulted, returnRate, collateralValue: set to 0 for now
+
+                    const activeInvested = activeDeals.reduce((sum, deal) => {
+                        return sum + (deal.loanDetails?.request_amount || 0);
+                    }, 0);
+
+                    // Calculate total lifetime invested (all loans)
+                    const totalInvested = dealsData.reduce((sum, deal) => {
+                        if (deal.lenderId?.email === tokenData.email) {
+                            return sum + (deal.loanDetails?.request_amount || 0);
+                        }
+                        return sum;
+                    }, 0);
+
+                    // Calculate average interest rate of active loans
+                    const averageInterestRate = activeDeals.length > 0 
+                        ? activeDeals.reduce((sum, deal) => {
+                            return sum + (deal.loanDetails?.interest_term?.interest_rate || 0);
+                        }, 0) / activeDeals.length
+                        : 0;
+
+                    const totalEarned = dealsData.reduce((sum, deal) => {
+                        if (deal.lenderId?.email === tokenData.email && deal.isComplete) {
+                            const principal = deal.loanDetails?.request_amount || 0;
+                            const interestRate = deal.loanDetails?.interest_term?.interest_rate || 0;
+                            const interest = principal * (interestRate / 100);
+                            return sum + interest;
+                        }
+                        return sum;
+                    }, 0);
+
+                    setLoanStats(prev => ({
+                        ...prev,
+                        funded: {
+                            active,
+                            repaid,
+                            defaulted,
+                            returnRate: averageInterestRate.toFixed(2),
+                            activeInvested,
+                            totalInvested
+                        },
+                        earningsToDate: totalEarned
+                    }));
+                } else if (dealsResponse.status === 404) {
+                    // No deals found for this lender
                     setLoanStats(prev => ({
                         ...prev,
                         funded: {
                             ...prev.funded,
-                            active,
-                            repaid,
+                            active: 0,
+                            repaid: 0,
                             defaulted: 0,
                             returnRate: 0,
                             collateralValue: 0
                         }
                     }));
-
-                } else if (dealsResponse.status === 404) {
-                    // Add that deals don't yet exist for this user.
+                } else {
+                    console.error('Error fetching lender deals:', dealsResponse.status);
+                    toast.error('Failed to fetch your funded loans data');
                 }
 
             } catch (error) {
@@ -236,17 +300,30 @@ function Dashboard() {
                             </div>
                             <div className={styles.metricsRow}>
                                 <div className={styles.metricBox}>
+                                    <span className={styles.metricIcon}>💎</span>
+                                    <div className={styles.metricContent}>
+                                        <div className={styles.metricNumber}>Active Invested</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.activeInvested || 0).toFixed(8)} BTC
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>💰</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Return Rate</div>
-                                        <div className={styles.metricTitle}>{loanStats.funded.returnRate}%</div>
+                                        <div className={styles.metricNumber}>Total Invested</div>
+                                        <div className={styles.metricTitle}>
+                                            {(loanStats.funded.totalInvested || 0).toFixed(8)} BTC
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
                                     <span className={styles.metricIcon}>📈</span>
                                     <div className={styles.metricContent}>
-                                        <div className={styles.metricNumber}>Total Earnings</div>
-                                        <div className={styles.metricTitle}>{loanStats.earningsToDate.toFixed(8)} BTC</div>
+                                        <div className={styles.metricNumber}>Return Rate</div>
+                                        <div className={styles.metricTitle}>
+                                            {loanStats.funded.returnRate}%
+                                        </div>
                                     </div>
                                 </div>
                             </div>
