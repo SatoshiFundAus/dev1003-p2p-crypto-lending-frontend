@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AdminDashboard.module.css';
+import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
@@ -260,9 +261,9 @@ const AdminDashboard = () => {
             <div className={styles.adminDashboard}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
                 <main>
-                    <div className={styles.loadingContainer}>
-                        <div className={styles.loadingSpinner}></div>
-                        <div className={styles.loadingText}>Loading...</div>
+                    <div className={loadingStyles.container}>
+                        <div className={loadingStyles.spinner}></div>
+                        <div className={loadingStyles.text}>Loading...</div>
                     </div>
                 </main>
                 <Footer />
@@ -284,7 +285,9 @@ const AdminDashboard = () => {
         );
     }
 
+
     return (
+
         <div className={styles.adminDashboard}>
             <DashboardHeader userEmail={userEmail} isAdmin={true} />
             <div className={styles.content}>
