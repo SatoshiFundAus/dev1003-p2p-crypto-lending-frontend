@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ViewLoans.module.css';
+import loadingStyles from './Loading.module.css';
 import { default as DashboardHeader } from './DashboardHeader';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
@@ -155,17 +156,18 @@ const ViewLoans = () => {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
-        <main className={styles.main}>
-          <div className={styles.content}>
-            <div className={styles.loading}>Loading loans...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+        <div className={loadingStyles.mainContainer}>
+            <DashboardHeader userEmail={userEmail} />
+            <main>
+                <div className={loadingStyles.container}>
+                    <div className={loadingStyles.spinner}></div>
+                    <div className={loadingStyles.text}>Loading loans...</div>
+                </div>
+            </main>
+            <Footer />
+        </div>
+    )
+}
 
   if (error) {
     return (

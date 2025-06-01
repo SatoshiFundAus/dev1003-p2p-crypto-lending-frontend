@@ -258,7 +258,7 @@ const AdminDashboard = () => {
 
     if (loading) {
         return (
-            <div className={styles.adminDashboard}>
+            <div className={loadingStyles.mainContainer}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
                 <main>
                     <div className={loadingStyles.container}>
