@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styles from './InterestTerms.module.css';
+import styles from './AdminDashboard.module.css';
+import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
@@ -122,98 +123,122 @@ const Transactions = () => {
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <DashboardHeader userEmail={userEmail} />
-        <div className={styles.loading}>Loading transactions...</div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.container}>
-        <DashboardHeader userEmail={userEmail} />
-        <div className={styles.error}>Error: {error}</div>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.container}>
-      <DashboardHeader userEmail={userEmail} />
-      <main className={styles.main}>
-        <div className={styles.content}>
-          <h1 className={styles.title}>Transactions</h1>
-          {outgoing.length === 0 && incoming.length === 0 && (
-            <div style={{ textAlign: 'center', color: '#aaa', margin: '2rem 0', fontSize: '1.2rem' }}>
-              User has no transactions.
-            </div>
-          )}
-          <div className={styles.termsContainer}>
-            <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Outgoing Transactions</h2>
-            <table className={styles.termsTable}>
-              <thead>
-                <tr>
-                  <th>To</th>
-                  <th>Currency</th>
-                  <th>Amount</th>
-                  <th>Due Date</th>
-                  <th>Paid?</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {outgoing.length === 0 ? (
-                  <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa' }}>No outgoing transactions</td></tr>
-                ) : outgoing.map((t, idx) => (
-                  <tr key={idx}>
-                    <td>{displayUser(t.toUser)}</td>
-                    <td>{displayCurrency(t)}</td>
-                    <td>{Number(t.amount).toFixed(8)}</td>
-                    <td>{displayDate(t.expectedPaymentDate)}</td>
-                    <td>{displayStatus(t.paymentStatus)}</td>
-                    <td>{displayType(t)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className={styles.termsContainer}>
-            <h2 style={{ color: '#f7931a', marginBottom: '1rem', fontSize: '1.3rem' }}>Incoming Transactions</h2>
-            <table className={styles.termsTable}>
-              <thead>
-                <tr>
-                  <th>From</th>
-                  <th>Currency</th>
-                  <th>Amount</th>
-                  <th>Due Date</th>
-                  <th>Received?</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {incoming.length === 0 ? (
-                  <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa' }}>No incoming transactions</td></tr>
-                ) : incoming.map((t, idx) => (
-                  <tr key={idx}>
-                    <td>{displayUser(t.fromUser)}</td>
-                    <td>{displayCurrency(t)}</td>
-                    <td>{Number(t.amount).toFixed(8)}</td>
-                    <td>{displayDate(t.expectedPaymentDate)}</td>
-                    <td>{displayStatus(t.paymentStatus)}</td>
-                    <td>{displayType(t)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className={loadingStyles.mainContainer}>
+            <DashboardHeader userEmail={userEmail} />
+            <main>
+                <div className={loadingStyles.container}>
+                    <div className={loadingStyles.spinner}></div>
+                    <div className={loadingStyles.text}>Loading transactions...</div>
+                </div>
+            </main>
+            <Footer />
         </div>
-      </main>
+    )
+}
+
+if (error) {
+  return (
+    <div className={styles.adminDashboard}>
+      <DashboardHeader userEmail={userEmail} />
+      <div className={styles.content}>
+        <div style={{ color: '#ff4757', textAlign: 'center', fontSize: '1.2rem' }}>
+          Error: {error}
+        </div>
+      </div>
       <Footer />
     </div>
   );
+}
+
+return (
+  <div className={styles.adminDashboard}>
+    <DashboardHeader userEmail={userEmail} />
+    <div className={styles.content}>
+      <h1>Transactions</h1>
+      
+      {outgoing.length === 0 && incoming.length === 0 && (
+        <div className={styles.tableContainer}>
+          <div style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.7)', margin: '2rem 0', fontSize: '1.2rem' }}>
+            User has no transactions.
+          </div>
+        </div>
+      )}
+
+      <div className={styles.tableContainer}>
+        <h2>Outgoing Transactions</h2>
+        <div className={styles.tableWrapper}>
+          <table className={styles.loansTable}>
+            <thead>
+              <tr>
+                <th>To</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Paid?</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {outgoing.length === 0 ? (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)' }}>No outgoing transactions</td></tr>
+              ) : outgoing.map((t, idx) => (
+                <tr key={idx}>
+                  <td>{displayUser(t.toUser)}</td>
+                  <td>{displayCurrency(t)}</td>
+                  <td>{Number(t.amount).toFixed(8)}</td>
+                  <td>{displayDate(t.expectedPaymentDate)}</td>
+                  <td>
+                    <span className={`${styles.status} ${t.paymentStatus ? styles.completed : styles.pending}`}>
+                      {displayStatus(t.paymentStatus)}
+                    </span>
+                  </td>
+                  <td>{displayType(t)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <h2>Incoming Transactions</h2>
+        <div className={styles.tableWrapper}>
+          <table className={styles.loansTable}>
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Received?</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {incoming.length === 0 ? (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)' }}>No incoming transactions</td></tr>
+              ) : incoming.map((t, idx) => (
+                <tr key={idx}>
+                  <td>{displayUser(t.fromUser)}</td>
+                  <td>{displayCurrency(t)}</td>
+                  <td>{Number(t.amount).toFixed(8)}</td>
+                  <td>{displayDate(t.expectedPaymentDate)}</td>
+                  <td>
+                    <span className={`${styles.status} ${t.paymentStatus ? styles.completed : styles.pending}`}>
+                      {displayStatus(t.paymentStatus)}
+                    </span>
+                  </td>
+                  <td>{displayType(t)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <Footer />
+  </div>
+);
 };
 
 export default Transactions; 

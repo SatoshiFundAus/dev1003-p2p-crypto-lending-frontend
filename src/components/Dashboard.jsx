@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
+import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 import { toast } from 'react-toastify';
@@ -496,9 +497,9 @@ function Dashboard() {
             <div className={styles.dashboardContainer}>
                 <DashboardHeader userEmail={userEmail} />
                 <main className={styles.dashboardContent}>
-                    <div className={styles.loadingContainer}>
-                        <div className={styles.loadingSpinner}></div>
-                        <div className={styles.loadingText}>Loading dashboard data...</div>
+                    <div className={loadingStyles.container}>
+                        <div className={loadingStyles.spinner}></div>
+                        <div className={loadingStyles.text}>Loading dashboard data...</div>
                     </div>
                 </main>
                 <Footer />

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './AdminDashboard.module.css';
+import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
+import Footer from './Footer';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -51,7 +53,7 @@ const AdminDashboard = () => {
                     'Content-Type': 'application/json'
                 };
 
-                
+
                 // Fetch admin dashboard data
                 const [completedRes, activeRes] = await Promise.all([
                     fetch(`${BACKEND_URL}/admin/deals-complete`, {
@@ -220,7 +222,7 @@ const AdminDashboard = () => {
         }).format(amount);
     };
 
-    
+
 
     // Get userEmail from localStorage for the header
     const userEmail = localStorage.getItem('userEmail');
@@ -239,13 +241,13 @@ const AdminDashboard = () => {
             <div className={styles.adminDashboard}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
                 <div className={styles.content}>
-                    <div style={{fontSize: '2rem'}}>This feature is under development</div>
+                    <div style={{ fontSize: '2rem' }}>This feature is under development</div>
                 </div>
 
                 <button
                     className={styles.actionButton}
                     onClick={() => setUnderDevelopment(false)}
-                    style={{marginTop: '20px'}}
+                    style={{ marginTop: '20px' }}
                 >
                     <i className='fas fa-arrow-left'></i>
                     Back to Dashboard
@@ -256,11 +258,15 @@ const AdminDashboard = () => {
 
     if (loading) {
         return (
-            <div className={styles.adminDashboard}>
+            <div className={loadingStyles.mainContainer}>
                 <DashboardHeader userEmail={userEmail} isAdmin={true} />
-                <div className={styles.content}>
-                    <div className={styles.loading}>Loading...</div>
-                </div>
+                <main>
+                    <div className={loadingStyles.container}>
+                        <div className={loadingStyles.spinner}></div>
+                        <div className={loadingStyles.text}>Loading...</div>
+                    </div>
+                </main>
+                <Footer />
             </div>
         )
     }
@@ -279,7 +285,9 @@ const AdminDashboard = () => {
         );
     }
 
+
     return (
+
         <div className={styles.adminDashboard}>
             <DashboardHeader userEmail={userEmail} isAdmin={true} />
             <div className={styles.content}>

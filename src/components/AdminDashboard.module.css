@@ -9,16 +9,6 @@
     margin: 0 auto;
 }
 
-.loading {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: #fff;
-    background: rgba(28, 30, 38, 0.95);
-}
-
 .adminDashboard h1 {
     color: #fff;
     margin-bottom: 2rem;

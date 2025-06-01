@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
+import loadingStyles from './Loading.module.css';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Footer from "./Footer";
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -415,9 +417,15 @@ function Wallet() {
 
     if (loading) {
         return (
-            <div className={styles.container}>
+            <div className={loadingStyles.mainContainer}>
                 <DashboardHeader userEmail={userEmail} />
-                <div className={styles.loading}>Loading wallet...</div>
+                <main>
+                    <div className={loadingStyles.container}>
+                        <div className={loadingStyles.spinner}></div>
+                        <div className={loadingStyles.text}>Loading wallet...</div>
+                    </div>
+                </main>
+                <Footer />
             </div>
         )
     }

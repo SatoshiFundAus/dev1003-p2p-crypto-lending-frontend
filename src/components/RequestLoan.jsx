@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './RequestLoan.module.css';
+import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 
@@ -133,7 +134,10 @@ const RequestLoan = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           <h1 className={styles.title}>Request a Loan</h1>
           {loading ? (
-            <div className={styles.loading}>Loading...</div>
+            <div className={loadingStyles.container}>
+              <div className={loadingStyles.spinner}></div>
+              <div className={loadingStyles.text}>Loading wallet...</div>
+            </div>
           ) : error ? (
             <div className={styles.error}>Error: {error}</div>
           ) : (
@@ -149,8 +153,8 @@ const RequestLoan = () => {
                       amountInputFocused
                         ? amount
                         : amount
-                        ? Number(amount).toFixed(8)
-                        : '0.00000000'
+                          ? Number(amount).toFixed(8)
+                          : '0.00000000'
                     }
                     onChange={e => setAmount(e.target.value)}
                     onFocus={() => setAmountInputFocused(true)}
