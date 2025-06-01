@@ -51,8 +51,18 @@ function LandingPage() {
                     </div>
 
                     <div className={styles.buttonGroup}>
-                        <button className={`${styles.btn} ${styles.primary}`}>Borrow BTC</button>
-                        <button className={`${styles.btn} ${styles.primary}`}>Lend BTC</button>
+                        <button 
+                            className={`${styles.btn} ${styles.primary}`}
+                            onClick={() => navigate('/login')}
+                        >
+                            Borrow BTC
+                        </button>
+                        <button 
+                            className={`${styles.btn} ${styles.primary}`}
+                            onClick={() => navigate('/login')}
+                        >
+                            Lend BTC
+                        </button>
                     </div>
 
                     <div className={styles.instructions}>
