@@ -380,6 +380,7 @@ const AdminDashboard = () => {
                     </button>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };
