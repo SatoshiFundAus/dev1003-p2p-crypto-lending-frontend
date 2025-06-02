@@ -1,238 +1,519 @@
 .container {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: #fff;
+  width: 100vw;
+  background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
+  color: white;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background effect */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+      radial-gradient(circle at 20% 80%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
+  animation: gradientShift 20s ease infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .main {
-  flex: 1;
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem 0;
+  padding: 3rem 2rem;
+  min-height: calc(100vh - 200px);
 }
 
 .form {
   width: 100%;
-  max-width: 1400px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 18px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
-  padding: 2.5rem 2rem;
-  margin: 0 1rem;
+  max-width: 1200px;
+  background: rgba(28, 30, 38, 0.85);
+  border-radius: 24px;
+  padding: 3rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+      0 16px 40px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(247, 147, 26, 0.1),
+      0 0 60px rgba(247, 147, 26, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.form::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, rgba(247, 147, 26, 0.6), transparent, rgba(247, 147, 26, 0.3));
+  border-radius: 24px;
+  z-index: -1;
+  opacity: 0.4;
 }
 
 .title {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   color: #fff;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #f7931a, transparent);
+  border-radius: 2px;
 }
 
 .formContent {
-  display: flex;
-  gap: 2.5rem;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  align-items: start;
 }
 
 .formFields {
-  flex: 2;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
+}
+
+.formGroup {
+  position: relative;
 }
 
 .formFields label {
-  display: flex;
-  flex-direction: column;
-  font-size: 1.1rem;
-  font-weight: 500;
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
   color: #f7931a;
-  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .formFields input,
 .formFields select {
-  padding: 0.9rem 1.1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(247, 147, 26, 0.2);
-  background: rgba(255,255,255,0.07);
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border-radius: 16px;
+  border: 2px solid rgba(247, 147, 26, 0.2);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  font-size: 1rem;
-  margin-top: 0.2rem;
-  transition: border-color 0.2s;
-}
-
-.formFields select option {
-  background: #1a1a1a;
-  color: #fff;
-  padding: 0.5rem;
-  border: none;
-}
-
-.formFields select option:hover {
-  background: #2d2d2d;
-  color: #f7931a;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .formFields input:focus,
 .formFields select:focus {
   outline: none;
   border-color: #f7931a;
-  background: rgba(255,255,255,0.13);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(247, 147, 26, 0.1);
+  transform: translateY(-2px);
+}
+
+.formFields input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.formFields select {
+  cursor: pointer;
+}
+
+.formFields select option {
+  background: #1a1c23;
+  color: #fff;
+  padding: 1rem;
+  border: none;
+}
+
+.formFields select option:hover,
+.formFields select option:checked {
+  background: rgba(247, 147, 26, 0.2);
+  color: #f7931a;
 }
 
 .submitBtn {
-  margin-top: 1.2rem;
-  padding: 1rem 0;
-  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
-  color: #fff;
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+  color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 1.15rem;
-  font-weight: 600;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(247, 147, 26, 0.3);
+}
+
+.submitBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.submitBtn:hover::before {
+  left: 100%;
+}
+
+.submitBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(247, 147, 26, 0.4);
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931a 100%);
+}
+
+.submitBtn:active {
+  transform: translateY(-1px);
 }
 
 .submitBtn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.success {
-  color: #4caf50;
-  background: rgba(76, 175, 80, 0.08);
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.error {
-  color: #ff4d4d;
-  background: rgba(255, 77, 77, 0.08);
-  border: 1px solid rgba(255, 77, 77, 0.2);
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.loading {
-  color: #fff;
-  text-align: center;
-  font-size: 1.2rem;
-  padding: 2rem 0;
+.submitBtn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
 }
 
 .collateralBox {
-  flex: 1;
-  background: rgba(255,255,255,0.06);
-  border-radius: 14px;
-  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.12);
-  padding: 1.5rem 1.2rem;
-  min-width: 220px;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(247, 147, 26, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  height: fit-content;
+  top: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.collateralBox::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f7931a, transparent);
+  animation: scanLine 4s linear infinite;
+}
+
+@keyframes scanLine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .collateralBox h2 {
-  font-size: 1.25rem;
-  color: #fff;
-  margin-bottom: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f7931a;
+  margin-bottom: 1.5rem;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .collateralValue {
-  font-size: 1.1rem;
-  margin-bottom: 0.7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(247, 147, 26, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(247, 147, 26, 0.2);
 }
 
 .collateralLabel {
-  color: #f7931a;
-  font-weight: 600;
-  margin-bottom: 0.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .collateralAmount {
-  font-size: 1.3rem;
-  color: #fff;
+  font-size: 1.6rem;
   font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  font-family: 'Monaco', 'Menlo', monospace;
+  letter-spacing: 1px;
 }
 
 .collateralDesc {
-  color: #e0e0e0;
-  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
   text-align: center;
-  margin-top: 0.5rem;
+  line-height: 1.5;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid #f7931a;
 }
 
-@media (max-width: 900px) {
-  .formContent {
-    flex-direction: column;
-    gap: 2.5rem;
-    align-items: stretch;
-  }
-  .collateralBox {
-    max-width: 100%;
-    min-width: 0;
-    margin-top: 1.5rem;
-  }
+.success {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(46, 213, 115, 0.1);
 }
 
-@media (max-width: 600px) {
-  .form {
-    padding: 1.2rem 0.5rem;
-  }
-  .title {
-    font-size: 1.4rem;
-    margin-bottom: 1.2rem;
-  }
+.error {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.1);
+}
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
   .main {
-    padding: 1rem 0;
+    padding: 2.5rem 1.5rem;
   }
-  .formFields label {
-    font-size: 1rem;
+  
+  .form {
+    padding: 2.5rem;
+    border-radius: 20px;
   }
+  
+  .title {
+    font-size: 2.4rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .formContent {
+    gap: 2.5rem;
+  }
+  
+  .formFields {
+    gap: 1.8rem;
+  }
+  
   .formFields input,
   .formFields select {
-    font-size: 0.98rem;
-    width: 100%;
-    box-sizing: border-box;
+    padding: 1rem 1.3rem;
+    font-size: 1rem;
   }
+  
+  .submitBtn {
+    padding: 1.3rem 1.8rem;
+    font-size: 1.1rem;
+  }
+  
+  .collateralBox {
+    padding: 1.8rem;
+  }
+  
+  .collateralBox h2 {
+    font-size: 1.3rem;
+  }
+  
+  .collateralAmount {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 576px) {
+  .main {
+    padding: 2rem 1.2rem;
+  }
+  
+  .form {
+    padding: 2rem;
+    border-radius: 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .formContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .formFields {
+    gap: 1.5rem;
+  }
+  
+  .formFields label {
+    font-size: 0.9rem;
+  }
+  
+  .formFields input,
+  .formFields select {
+    padding: 1rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+  
+  .submitBtn {
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 12px;
+  }
+  
+  .collateralBox {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .collateralBox h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .collateralValue {
+    padding: 1.2rem;
+  }
+  
+  .collateralAmount {
+    font-size: 1.3rem;
+  }
+  
+  .collateralDesc {
+    font-size: 0.9rem;
+  }
+}
+
+
+@media (max-width: 575px) {
+  .main {
+    padding: 1.5rem 1rem;
+  }
+  
+  .form {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .title::after {
+    width: 60px;
+    height: 2px;
+  }
+  
+  .formContent {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
   .formFields {
     gap: 1.2rem;
   }
+  
+  .formFields label {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .formFields input,
+  .formFields select {
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  
   .submitBtn {
-    width: 100%;
-    font-size: 1.05rem;
-    padding: 1rem 0.5rem;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    margin-top: 1.5rem;
   }
+  
   .collateralBox {
-    padding: 1.2rem 0.5rem;
-    min-width: 0;
-    max-width: 100%;
+    padding: 1.2rem;
+    border-radius: 12px;
   }
+  
   .collateralBox h2 {
-    font-size: 1.08rem;
-  }
-  .collateralAmount {
     font-size: 1.1rem;
+    margin-bottom: 1rem;
   }
+  
+  .collateralValue {
+    padding: 1rem;
+    gap: 0.6rem;
+  }
+  
+  .collateralLabel {
+    font-size: 0.8rem;
+  }
+  
+  .collateralAmount {
+    font-size: 1.2rem;
+  }
+  
   .collateralDesc {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    padding: 0.8rem;
+  }
+  
+  .success,
+  .error {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+    margin-top: 1rem;
   }
 }
 

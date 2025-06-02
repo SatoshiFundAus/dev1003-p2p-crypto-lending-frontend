@@ -718,6 +718,7 @@ function Wallet() {
 
                 </div>
             </main>
+            <Footer />
         </div>
     )
 
