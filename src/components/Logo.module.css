@@ -27,4 +27,80 @@
     font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: 0.5px;
+}
+
+/* ===============================================
+   RESPONSIVE MEDIA QUERIES
+   =============================================== */
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+    .logoContainer {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        gap: 0.4rem;
+    }
+    
+    .btcSymbol {
+        font-size: 1.5rem;
+    }
+    
+    .logoText {
+        font-size: 1.2rem;
+        letter-spacing: 0.4px;
+    }
+}
+
+/* Small Tablets / Large Phones (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+    .logoContainer {
+        padding: 0.5rem 0.8rem;
+        border-radius: 5px;
+        gap: 0.3rem;
+    }
+    
+    .btcSymbol {
+        font-size: 1.3rem;
+    }
+    
+    .logoText {
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+    }
+}
+
+/* Mobile Phones (320px - 575px) */
+@media (max-width: 575px) {
+    .logoContainer {
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        gap: 0.25rem;
+    }
+    
+    .btcSymbol {
+        font-size: 1.1rem;
+    }
+    
+    .logoText {
+        font-size: 0.9rem;
+        letter-spacing: 0.2px;
+    }
+}
+
+/* Ultra Small Devices (below 320px) */
+@media (max-width: 319px) {
+    .logoContainer {
+        padding: 0.3rem 0.5rem;
+        border-radius: 3px;
+        gap: 0.2rem;
+    }
+    
+    .btcSymbol {
+        font-size: 1rem;
+    }
+    
+    .logoText {
+        font-size: 0.8rem;
+        letter-spacing: 0.1px;
+    }
 } 
