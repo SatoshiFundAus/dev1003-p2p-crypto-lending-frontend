@@ -424,22 +424,12 @@
     padding: 12px;
     font-size: 0.95rem;
   }
-  
-  /* Reduce decorative elements on tablets */
-  .symbol {
-    font-size: 1.5rem !important;
-  }
-  
-  .block {
-    width: 30px;
-    height: 30px;
-  }
+
 }
 
 /* Mobile Phones (320px - 480px) */
 @media (max-width: 480px) {
   .pageContainer {
-    /* padding: 0.5rem; */
     justify-content: flex-start;
     padding-top: 20%;
   }
@@ -449,7 +439,6 @@
     justify-content: center;
     align-items: center;
     max-width: 70%;
-    /* padding: 1.2rem; */
     margin-top: 40px;
     border-radius: 12px;
     box-shadow: 
@@ -505,23 +494,4 @@
     font-size: 0.8rem;
     margin-top: 1rem;
   }
-  
-  /* Hide most decorative elements on mobile for performance
-  .symbol:nth-child(n+6) {
-    display: none;
-  }
-  
-  .symbol {
-    font-size: 1.2rem !important;
-    opacity: 0.3;
-  }
-  
-  .block:nth-child(n+4) {
-    display: none;
-  }
-  
-  .block {
-    width: 20px;
-    height: 20px;
-  } */
 }
