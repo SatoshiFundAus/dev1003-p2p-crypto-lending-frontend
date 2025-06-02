@@ -191,41 +191,43 @@ const ViewLoans = () => {
           <h1 className={styles.title}>Browse Loan Requests</h1>
 
           <div className={styles.tableWrapper}>
-            <table className={styles.loansTable}>
-              <thead>
-                <tr>
-                  {columns.map(col => (
-                    <th
-                      key={col.key}
-                      className={styles.sortable}
-                      onClick={() => handleSort(col.key)}
-                    >
-                      {col.label}{sortArrow(col.key)}
-                    </th>
-                  ))}
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedRows.map(row => (
-                  <tr key={row.id}>
-                    <td>{row.user}</td>
-                    <td>{row.currency}</td>
-                    <td>{row.amount}</td>
-                    <td>{row.term}</td>
-                    <td>{row.expiry}</td>
-                    <td>
-                      <button
-                        className={styles.learnMoreBtn}
-                        onClick={() => navigate(`/view-loans/${row.id}`)}
+            <div className={styles.tableContainer}>
+              <table className={styles.loansTable}>
+                <thead>
+                  <tr>
+                    {columns.map(col => (
+                      <th
+                        key={col.key}
+                        className={styles.sortable}
+                        onClick={() => handleSort(col.key)}
                       >
-                        Learn More
-                      </button>
-                    </td>
+                        {col.label}{sortArrow(col.key)}
+                      </th>
+                    ))}
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedRows.map(row => (
+                    <tr key={row.id}>
+                      <td>{row.user}</td>
+                      <td>{row.currency}</td>
+                      <td>{row.amount}</td>
+                      <td>{row.term}</td>
+                      <td>{row.expiry}</td>
+                      <td>
+                        <button
+                          className={styles.learnMoreBtn}
+                          onClick={() => navigate(`/view-loans/${row.id}`)}
+                        >
+                          Learn More
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>

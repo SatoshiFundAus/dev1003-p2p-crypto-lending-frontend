@@ -1,5 +1,6 @@
 .adminDashboard {
     min-height: 100vh;
+    width: 100vw;
     background: rgba(28, 30, 38, 0.95);
 }
 
@@ -189,20 +190,269 @@
     transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-    .adminDashboard {
-        padding: 1rem;
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+    .content {
+        padding: 1.5rem;
+        max-width: 100%;
     }
-
+    
+    .adminDashboard h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
     .statsGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
     }
-
+    
+    .statCard {
+        padding: 1.2rem;
+    }
+    
+    .statCard i {
+        font-size: 1.8rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .statCard h3 {
+        font-size: 0.9rem;
+    }
+    
+    .statCard p {
+        font-size: 1.3rem;
+    }
+    
+    .tableContainer {
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tableContainer h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .loansTable th,
+    .loansTable td {
+        padding: 0.8rem;
+    }
+    
     .adminActions {
         flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 1.5rem;
     }
-
+    
     .actionButton {
-        width: 100%;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .actionButton i {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 767px) and (min-width: 576px) {
+    .content {
+        padding: 1rem;
+    }
+    
+    .adminDashboard h1 {
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+    }
+    
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .statCard {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    
+    .statCard i {
+        font-size: 1.6rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .statCard h3 {
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .statCard p {
+        font-size: 1.2rem;
+    }
+    
+    .tableContainer {
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.2rem;
+    }
+    
+    .tableContainer h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .loansTable {
+        font-size: 0.9rem;
+    }
+    
+    .loansTable th,
+    .loansTable td {
+        padding: 0.6rem 0.4rem;
+    }
+    
+    .loansTable th:first-child,
+    .loansTable td:first-child {
+        min-width: 120px;
+    }
+    
+    .viewButton {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+    
+    .status {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .adminActions {
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 1.2rem;
+    }
+    
+    .actionButton {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+    
+    .actionButton i {
+        font-size: 1rem;
+    }
+}
+
+/* Mobile Phones (320px - 575px) */
+@media (max-width: 575px) {
+    .content {
+        padding: 0.8rem;
+    }
+    
+    .adminDashboard h1 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .statCard {
+        padding: 0.8rem;
+        border-radius: 10px;
+    }
+    
+    .statCard i {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .statCard h3 {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .statCard p {
+        font-size: 1.1rem;
+    }
+    
+    .tableContainer {
+        padding: 0.8rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+    
+    .tableContainer h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+        text-align: center;
+    }
+    
+    .tableWrapper {
+        overflow-x: auto;
+        margin: 0 -0.8rem;
+        padding: 0 0.8rem;
+    }
+    
+    .loansTable {
+        min-width: 500px;
+        font-size: 0.8rem;
+    }
+    
+    .loansTable th,
+    .loansTable td {
+        padding: 0.5rem 0.3rem;
+        white-space: nowrap;
+    }
+    
+    .loansTable th:first-child,
+    .loansTable td:first-child {
+        min-width: 100px;
+    }
+    
+    .loansTable th:nth-child(2),
+    .loansTable td:nth-child(2) {
+        min-width: 100px;
+    }
+    
+    .viewButton {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+        border-radius: 4px;
+    }
+    
+    .status {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    
+    .adminActions {
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-top: 1rem;
+    }
+    
+    .actionButton {
+        padding: 0.7rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+        text-align: center;
+    }
+    
+    .actionButton i {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+        display: block;
+    }
+    
+    .actionButton {
+        flex-direction: column;
+        gap: 0.3rem;
     }
 } 

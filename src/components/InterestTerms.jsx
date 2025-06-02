@@ -69,24 +69,26 @@ const InterestTerms = () => {
         <div className={styles.content}>
           <h1 className={styles.title}>Loan Terms</h1>
           <div className={styles.termsContainer}>
-            <table className={styles.termsTable}>
-              <thead>
-                <tr>
-                  <th>Term</th>
-                  <th>Interest Rate</th>
-                </tr>
-              </thead>
-              <tbody>
-                {interestTerms && interestTerms.map((term, idx) => (
-                  <tr key={idx}>
-                    <td>{term.loan_length} month{term.loan_length > 1 ? 's' : ''}</td>
-                    <td>{term.interest_rate.toFixed(1)}%</td>
+            <div className={styles.tableContainer}>
+              <table className={styles.termsTable}>
+                <thead>
+                  <tr>
+                    <th>Term</th>
+                    <th>Interest Rate</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {interestTerms && interestTerms.map((term, idx) => (
+                    <tr key={idx}>
+                      <td>{term.loan_length} month{term.loan_length > 1 ? 's' : ''}</td>
+                      <td className={styles.interestRate}>{term.interest_rate.toFixed(1)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <div className={styles.note}>
-              All loans are subject to monthly interest repayments.
+              💡 All loans are subject to monthly interest repayments.
             </div>
           </div>
         </div>

@@ -1,71 +1,207 @@
 .container {
     min-height: 100vh;
-    background: rgba(28, 30, 38, 0.95);
-    color: #fff;
+    width: 100vw;
+    background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
+    color: white;
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated background effect */
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
+    animation: gradientShift 25s ease infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .main {
     flex: 1;
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 2rem 0;
+    padding: 3rem 2rem;
+    min-height: calc(100vh - 200px);
 }
 
 .content {
-    padding: 2rem;
     max-width: 1400px;
-    margin: 0 auto;
     width: 100%;
+    margin: 0 auto;
+    background: rgba(28, 30, 38, 0.85);
+    border-radius: 24px;
+    padding: 3rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 
+        0 16px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(247, 147, 26, 0.1),
+        0 0 60px rgba(247, 147, 26, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.content::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.6), transparent, rgba(247, 147, 26, 0.3));
+    border-radius: 24px;
+    z-index: -1;
+    opacity: 0.4;
 }
 
 .title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
     color: #fff;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-    font-weight: 600;
+    text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+    position: relative;
+}
+
+.title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #f7931a, transparent);
+    border-radius: 2px;
 }
 
 .tableWrapper {
-    background: rgba(28, 30, 38, 0.8);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(247, 147, 26, 0.2);
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 20px;
+    padding: 2rem;
     backdrop-filter: blur(10px);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.tableWrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #f7931a, transparent);
+    animation: scanLine 6s linear infinite;
+}
+
+@keyframes scanLine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.tableContainer {
     overflow-x: auto;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .loansTable {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    border-radius: 16px;
+    overflow: hidden;
 }
 
 .loansTable th {
-    background: rgba(247, 147, 26, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 600;
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.2), rgba(247, 147, 26, 0.15));
+    color: #f7931a;
+    font-weight: 700;
     text-align: left;
-    padding: 1rem;
-    border-bottom: 2px solid rgba(247, 147, 26, 0.2);
+    padding: 1.5rem 1.2rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(247, 147, 26, 0.3);
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.loansTable th::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.loansTable th:hover::before {
+    left: 100%;
 }
 
 .loansTable th:hover {
-    background: rgba(247, 147, 26, 0.15);
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.3), rgba(247, 147, 26, 0.2));
+    color: #fff;
+    transform: translateY(-2px);
 }
 
 .loansTable td {
-    color: rgba(255, 255, 255, 0.7);
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.loansTable tr:hover td {
+.loansTable tbody tr {
+    transition: all 0.3s ease;
+}
+
+.loansTable tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(247, 147, 26, 0.1);
+}
+
+.loansTable tbody tr:hover td {
+    background: rgba(247, 147, 26, 0.05);
+    color: #fff;
+}
+
+.loansTable tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.loansTable tbody tr:nth-child(even):hover td {
     background: rgba(247, 147, 26, 0.05);
 }
 
@@ -75,26 +211,55 @@
 }
 
 .sortArrow {
-    margin-left: 0.5rem;
-    opacity: 0.7;
+    margin-left: 0.8rem;
+    font-size: 0.9rem;
     color: #f7931a;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
 .learnMoreBtn {
-    background: rgba(247, 147, 26, 0.1);
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.2), rgba(247, 147, 26, 0.1));
     color: #f7931a;
-    border: 1px solid rgba(247, 147, 26, 0.2);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border: 1px solid rgba(247, 147, 26, 0.3);
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.learnMoreBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.learnMoreBtn:hover::before {
+    left: 100%;
 }
 
 .learnMoreBtn:hover {
-    background: rgba(247, 147, 26, 0.2);
-    border-color: rgba(247, 147, 26, 0.4);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f7931a, rgba(247, 147, 26, 0.8));
+    color: #fff;
+    border-color: #f7931a;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(247, 147, 26, 0.3);
+}
+
+.learnMoreBtn:active {
+    transform: translateY(-1px);
 }
 
 .loading {
@@ -104,71 +269,237 @@
     justify-content: center;
     font-size: 1.5rem;
     color: #fff;
+    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
 }
 
 .error {
+    background: rgba(255, 71, 87, 0.15);
     color: #ff4757;
-    background: rgba(255, 71, 87, 0.1);
-    border: 1px solid rgba(255, 71, 87, 0.2);
-    padding: 1rem;
-    border-radius: 12px;
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
     margin: 2rem 0;
     text-align: center;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.1);
 }
 
-/* Status badges (if you want to add status indicators) */
+/* Status badges */
 .status {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     border-radius: 50px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
 }
 
 .active {
     background: rgba(46, 213, 115, 0.15);
     color: #2ed573;
+    border-color: rgba(46, 213, 115, 0.3);
+    box-shadow: 0 0 15px rgba(46, 213, 115, 0.1);
 }
 
 .pending {
     background: rgba(255, 171, 0, 0.15);
     color: #ffab00;
+    border-color: rgba(255, 171, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 171, 0, 0.1);
 }
 
 .completed {
     background: rgba(48, 51, 107, 0.15);
     color: #30336b;
+    border-color: rgba(48, 51, 107, 0.3);
+    box-shadow: 0 0 15px rgba(48, 51, 107, 0.1);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Empty state */
+.emptyState {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.emptyState h3 {
+    font-size: 1.5rem;
+    color: #f7931a;
+    margin-bottom: 1rem;
+}
+
+.emptyState p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* ===============================================
+   RESPONSIVE MEDIA QUERIES
+   =============================================== */
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+    .main {
+        padding: 2.5rem 1.5rem;
+    }
+    
     .content {
-        padding: 1rem;
+        padding: 2.5rem;
+        border-radius: 20px;
     }
-
+    
     .title {
-        font-size: 1.5rem;
+        font-size: 1.9rem;
+        margin-bottom: 2.5rem;
     }
-
-    .loansTable th,
-    .loansTable td {
-        padding: 0.75rem 0.5rem;
+    
+    .title::after {
+        width: 120px;
+    }
+    
+    .tableWrapper {
+        padding: 1.8rem;
+    }
+    
+    .loansTable th {
+        padding: 1.2rem 1rem;
         font-size: 0.9rem;
     }
-
-    .tableWrapper {
-        padding: 1rem;
+    
+    .loansTable td {
+        padding: 1rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .learnMoreBtn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
     }
 }
 
-@media (max-width: 480px) {
-    .loansTable th,
+/* Small Tablets / Large Phones (576px - 767px) */
+@media (max-width: 767px) and (min-width: 576px) {
+    .main {
+        padding: 2rem 1.2rem;
+    }
+    
+    .content {
+        padding: 2rem;
+        border-radius: 16px;
+    }
+    
+    .title {
+        font-size: 1.6rem;
+        margin-bottom: 2rem;
+    }
+    
+    .title::after {
+        width: 100px;
+        height: 2px;
+    }
+    
+    .tableWrapper {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .tableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .loansTable {
+        min-width: 700px;
+    }
+    
+    .loansTable th {
+        padding: 1rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
     .loansTable td {
-        padding: 0.5rem 0.25rem;
+        padding: 0.9rem 0.7rem;
+        font-size: 0.85rem;
+    }
+    
+    .learnMoreBtn {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Mobile Phones (320px - 575px) */
+@media (max-width: 575px) {
+    .main {
+        padding: 1.5rem 1rem;
+    }
+    
+    .content {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+    
+    .title {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .title::after {
+        width: 80px;
+        height: 2px;
+    }
+    
+    .tableWrapper {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    
+    .tableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .loansTable {
+        min-width: 600px;
+    }
+    
+    .loansTable th {
+        padding: 0.8rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .loansTable td {
+        padding: 0.7rem 0.5rem;
         font-size: 0.8rem;
     }
     
     .learnMoreBtn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+        border-radius: 8px;
+    }
+    
+    .sortArrow {
+        margin-left: 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .error {
+        padding: 1rem 1.2rem;
+        font-size: 0.9rem;
+        margin: 1rem 0;
+    }
+    
+    .emptyState {
+        padding: 2rem 1rem;
+    }
+    
+    .emptyState h3 {
+        font-size: 1.3rem;
+    }
+    
+    .emptyState p {
+        font-size: 1rem;
     }
 }

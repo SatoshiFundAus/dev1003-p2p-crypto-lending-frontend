@@ -67,22 +67,27 @@ const Cryptocurrencies = () => {
         <div className={styles.content}>
           <h1 className={styles.title}>Supported Cryptocurrencies</h1>
           <div className={styles.termsContainer}>
-            <table className={styles.termsTable}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Symbol</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cryptos && cryptos.map((crypto, idx) => (
-                  <tr key={idx}>
-                    <td>{crypto.name}</td>
-                    <td>{crypto.symbol}</td>
+            <div className={styles.tableContainer}>
+              <table className={styles.termsTable}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Symbol</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {cryptos && cryptos.map((crypto, idx) => (
+                    <tr key={idx}>
+                      <td>{crypto.name}</td>
+                      <td><span className={styles.cryptoSymbol}>{crypto.symbol}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className={styles.note}>
+              💡 These cryptocurrencies are available for lending and borrowing on our platform.
+            </div>
           </div>
         </div>
       </main>
