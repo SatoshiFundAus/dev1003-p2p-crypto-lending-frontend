@@ -10,6 +10,7 @@
   font-family: 'Inter', sans-serif;
   position: relative;
   color: #fff;
+  padding-bottom: 80px;
 }
 
 /* Animated background effect */
@@ -373,4 +374,154 @@
 .registerLink a:hover {
     color: #ff9f43;
     text-decoration: underline;
+}
+
+.footerWrapper {
+  position: fixed;
+  height: 65px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(19, 21, 26, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(247, 147, 26, 0.1);
+}
+
+@media (max-width: 768px) {
+  
+  .cardWrapper {
+    padding: 1.5rem;
+    margin-top: 60px;
+    border-radius: 16px;
+  }
+  
+  .topBar {
+    top: 15px;
+    left: 15px;
+    right: 15px;
+  }
+  
+  .logo {
+    width: 120px;
+  }
+  
+  .heading {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .formContainer {
+    gap: 1rem;
+  }
+  
+  .input {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .button {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+  
+  /* Reduce decorative elements on tablets */
+  .symbol {
+    font-size: 1.5rem !important;
+  }
+  
+  .block {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Mobile Phones (320px - 480px) */
+@media (max-width: 480px) {
+  .pageContainer {
+    /* padding: 0.5rem; */
+    justify-content: flex-start;
+    padding-top: 20%;
+  }
+  
+  .cardWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 70%;
+    /* padding: 1.2rem; */
+    margin-top: 40px;
+    border-radius: 12px;
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(247, 147, 26, 0.1);
+  }
+  
+  .topBar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+  
+  .logo {
+    width: 100px;
+  }
+  
+  .closeButton {
+    padding: 6px;
+  }
+  
+  .heading {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .formContainer {
+    gap: 0.8rem;
+  }
+  
+  .label {
+    font-size: 0.8rem;
+  }
+  
+  .input {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+  .button {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+  .error {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .registerLink {
+    font-size: 0.8rem;
+    margin-top: 1rem;
+  }
+  
+  /* Hide most decorative elements on mobile for performance
+  .symbol:nth-child(n+6) {
+    display: none;
+  }
+  
+  .symbol {
+    font-size: 1.2rem !important;
+    opacity: 0.3;
+  }
+  
+  .block:nth-child(n+4) {
+    display: none;
+  }
+  
+  .block {
+    width: 20px;
+    height: 20px;
+  } */
 }
