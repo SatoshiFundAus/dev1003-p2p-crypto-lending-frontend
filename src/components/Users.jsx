@@ -6,10 +6,6 @@ import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
-
-
-
-
 function Users() {
     const navigate = useNavigate();
     const [userEmail, setUserEmail] = useState('');
@@ -30,8 +26,6 @@ function Users() {
         }
     }, []);
 
-
-
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -40,9 +34,8 @@ function Users() {
 
                 // Get stored user data
                 const token = localStorage.getItem('token');
-                const userEmail = localStorage.getItem('userEmail');
+                // const userEmail = localStorage.getItem('userEmail');
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
-
 
                 if (!token || !isAdmin) {
                     console.log('Not authenticated or not admin:', { token: !!token, isAdmin });
@@ -56,7 +49,6 @@ function Users() {
                     'Content-Type': 'application/json'
                 };
 
-
                 // Try to fetch users data
                 let usersData = [];
                 try {
@@ -68,7 +60,6 @@ function Users() {
                     if (usersRes.ok) {
                         const incomingUsersData = await usersRes.json();
                         console.log('Users data fetched:', incomingUsersData);
-
 
                         // Transform the backend data to match our front end
                         usersData = incomingUsersData.map((user, index) => {
@@ -141,7 +132,7 @@ function Users() {
                 return;
             }
 
-            // First check if the user is trying to delete themself
+            // First check if the user is trying to delete themselves
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 const currentUserId = tokenData.id;
@@ -161,15 +152,12 @@ function Users() {
                     toast.error('You cannot delete your own account');
                     return
                 }
-
             }
 
             // Confirm deletion
             if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone')) {
                 return;
             }
-
-            // Check first if User is trying to delete themself
 
             //Send DELETE request with the user ID
             const response = await fetch(`${BACKEND_URL}/users/${userId}`, {
