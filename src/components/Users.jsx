@@ -106,7 +106,7 @@ function Users() {
         };
 
         fetchUsers();
-    }, []);
+    }, [navigate]);
 
     const handleEditClick = (userId) => {
         console.log('Edit user with ID:', userId);
