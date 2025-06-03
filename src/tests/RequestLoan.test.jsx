@@ -9,7 +9,7 @@ const TEST_USER_ID = '123'
 const TEST_TOKEN = 'fake-token'
 
 // Mock fetch and localStorage
-globalThis.fetch = jest.fn()
+globalThis.fetch = jest.fn();
 globalThis.localStorage = {
   getItem: jest.fn(() => TEST_TOKEN)
 }
@@ -32,8 +32,42 @@ describe('RequestLoan Component', () => {
   beforeEach(() => {
     // Reset all mocks before each test
     jest.clearAllMocks()
-    
-    // Mock successful API responses
+  })
+
+  // Test 1: Initial loading state
+  test('shows loading state initially', async () => {
+    // Mock a delayed response to ensure we can see the loading state
+    globalThis.fetch.mockImplementation((url) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (url.includes('interest-terms')) {
+            resolve({
+              ok: true,
+              json: () => Promise.resolve(mockInterestTerms)
+            })
+          }
+          if (url.includes('crypto')) {
+            resolve({
+              ok: true,
+              json: () => Promise.resolve(mockCryptos)
+            })
+          }
+        }, 100)
+      })
+    })
+
+    render(
+      <BrowserRouter>
+        <RequestLoan />
+      </BrowserRouter>
+    )
+
+    // Immediately check for loading state
+    expect(screen.getByText('Loading wallet...')).toBeInTheDocument();
+  })
+
+  // Test 2: Form renders after loading
+  test('renders form after loading', async () => {
     globalThis.fetch.mockImplementation((url) => {
       if (url.includes('interest-terms')) {
         return Promise.resolve({
@@ -52,20 +86,7 @@ describe('RequestLoan Component', () => {
         json: () => Promise.resolve([])
       })
     })
-  })
 
-  // Test 1: Initial loading state
-  test('shows loading state initially', () => {
-    render(
-      <BrowserRouter>
-        <RequestLoan />
-      </BrowserRouter>
-    )
-    expect(screen.getByText('Loading wallet...')).toBeInTheDocument();
-  })
-
-  // Test 2: Form renders after loading
-  test('renders form after loading', async () => {
     render(
       <BrowserRouter>
         <RequestLoan />
@@ -79,6 +100,25 @@ describe('RequestLoan Component', () => {
 
   // Test 3: Form fields are present
   test('renders all form fields', async () => {
+    globalThis.fetch.mockImplementation((url) => {
+      if (url.includes('interest-terms')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockInterestTerms)
+        })
+      }
+      if (url.includes('crypto')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockCryptos)
+        })
+      }
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([])
+      })
+    })
+
     render(
       <BrowserRouter>
         <RequestLoan />
@@ -94,6 +134,25 @@ describe('RequestLoan Component', () => {
 
   // Test 4: Collateral information is displayed
   test('displays collateral information', async () => {
+    globalThis.fetch.mockImplementation((url) => {
+      if (url.includes('interest-terms')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockInterestTerms)
+        })
+      }
+      if (url.includes('crypto')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockCryptos)
+        })
+      }
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([])
+      })
+    })
+
     render(
       <BrowserRouter>
         <RequestLoan />
