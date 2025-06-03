@@ -117,6 +117,9 @@ function Login(props) {
                 } else if (response.status >= 500) {
                     // Server error
                     errorMessage = 'Server error. Please try again later.';
+                } else if (data.error && data.error.includes('E11000')) {
+                    // MongoDB duplicate key error
+                    errorMessage = 'This email address is already registered. Please use a different email or try logging in.';
                 } else {
                     // Other errors
                     errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
