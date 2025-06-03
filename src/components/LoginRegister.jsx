@@ -132,7 +132,7 @@ function Login(props) {
         setShowTutorial(false);
         if (pendingNavigation) {
             navigate(pendingNavigation);
-            setPendingNavigation(null;)
+            setPendingNavigation(null);
         }
     };
 
