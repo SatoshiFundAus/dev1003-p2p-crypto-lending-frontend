@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './LoginRegisterPage.module.css'
 
@@ -153,7 +153,6 @@ function Login(props) {
 
     return (
         <>
-            <ToastContainer />
             <form onSubmit={handleSubmit} className={styles.formContainer}>
                 <h2 className={styles.heading}>{props.name}</h2>
                 {error && <div className={styles.error}>{error}</div>}

@@ -189,8 +189,16 @@ function Dashboard() {
                     const monthlyRepayments = await Promise.all(borrowerDealsData.map(async (deal) => {
                         if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
                             try {
+                                // Get the interest term ID
+                                const interestTermId = deal.loanDetails?.interest_term?._id || deal.loanDetails?.interest_term;
+                                
+                                if (!interestTermId) {
+                                    console.warn('No interest term ID found for deal:', deal);
+                                    return 0;
+                                }
+
                                 // Fetch interest term details
-                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${interestTermId}`, {
                                     method: 'GET',
                                     headers: {
                                         'Authorization': `Bearer ${token}`,
@@ -199,19 +207,23 @@ function Dashboard() {
                                     credentials: 'include'
                                 });
 
-                                if (!termResponse.ok) return 0;
-                                const termData = await termResponse.json();
-                                const interestRate = termData.interest_rate;
-                                const principal = deal.loanDetails?.request_amount || 0;
-                                const totalInterest = principal * (interestRate / 100);
-                                return principal + totalInterest; // Total amount to repay (principal + interest)
-                            } catch {
+                                if (termResponse.ok) {
+                                    const termData = await termResponse.json();
+                                    // Calculate repayment amount based on term data
+                                    return (deal.loanDetails?.request_amount || 0) * (termData.interest_rate / 100);
+                                } else {
+                                    console.warn('Failed to fetch interest term:', termResponse.status);
+                                    return 0;
+                                }
+                            } catch (error) {
+                                console.error('Error calculating repayment:', error);
                                 return 0;
                             }
                         }
                         return 0;
                     }));
 
+                    // Sum up all repayments
                     const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
 
                     // Calculate next payment
