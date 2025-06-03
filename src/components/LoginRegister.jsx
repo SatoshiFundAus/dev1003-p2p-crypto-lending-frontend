@@ -4,13 +4,13 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './LoginRegisterPage.module.css'
 
-// First time login Tutorial Modal
-function tutorialModal({ isOpen, onClose, onComplete }) {
+// Tutorial Modal Component (Note: Capital T for TutorialModal)
+function TutorialModal({ isOpen, onClose, onComplete }) {
     const [currentStep, setCurrentStep] = useState(0);
 
     const tutorialSteps = [
         {
-            title: "Welcome to SatoshiFund!",
+            title: "Welcome to SatoshiFund! 🎉",
             content: "We're excited to have you join our crypto lending platform. Let's take a quick tour to get you started.",
             icon: "🚀"
         },
@@ -43,20 +43,20 @@ function tutorialModal({ isOpen, onClose, onComplete }) {
 
     const nextStep = () => {
         if (currentStep < tutorialSteps.length - 1) {
-            setCurrentStep(currentStep + 1)
+            setCurrentStep(currentStep + 1);
         } else {
-            onComplete()
+            onComplete();
         }
     };
 
     const prevStep = () => {
         if (currentStep > 0) {
-            setCurrentStep(currentStep - 1)
+            setCurrentStep(currentStep - 1);
         }
     };
 
     const skipTutorial = () => {
-        onClose()
+        onClose();
     };
 
     if (!isOpen) return null;
@@ -129,6 +129,7 @@ function Login(props) {
     const navigate = useNavigate();
 
     const handleTutorialComplete = () => {
+        console.log('Tutorial completed');
         setShowTutorial(false);
         if (pendingNavigation) {
             navigate(pendingNavigation);
@@ -137,6 +138,7 @@ function Login(props) {
     };
 
     const handleTutorialClose = () => {
+        console.log('Tutorial closed/skipped');
         setShowTutorial(false);
         if (pendingNavigation) {
             navigate(pendingNavigation);
@@ -158,6 +160,9 @@ function Login(props) {
         const endpoint = `https://dev1003-p2p-crypto-lending-backend.onrender.com/${isRegistration ? 'register' : 'login'}`;
 
         try {
+            console.log('Sending request with data:', { ...userData, password: '***' });
+            console.log('Request endpoint:', endpoint);
+            
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -169,7 +174,9 @@ function Login(props) {
                 body: JSON.stringify(userData)
             });
 
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Full response data:', data);
 
             if (response.ok) {
                 if (isRegistration) {
@@ -185,16 +192,29 @@ function Login(props) {
                         navigate('/login');
                     }, 2000);
                 } else if (data.token) {
+                    // Handle login success
+                    console.log('Processing login data:', {
+                        email: data.email,
+                        isAdmin: data.isAdmin,
+                        isFirstLogin: data.isFirstLogin, // Add this debug log
+                        hasToken: Boolean(data.token)
+                    });
 
                     // Store user data in localStorage
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('userEmail', data.email);
                     localStorage.setItem('isAdmin', data.isAdmin);
 
-
-                    // Determin navigation destination
+                    // Determine navigation destination
                     const isAdminUser = data.isAdmin === true;
                     const destination = isAdminUser ? '/admin-dashboard' : '/dashboard';
+                    
+                    console.log('Navigation decision:', {
+                        isAdmin: isAdminUser,
+                        isFirstLogin: data.isFirstLogin,
+                        destination: destination,
+                        shouldShowTutorial: data.isFirstLogin && !isAdminUser
+                    });
 
                     toast.success('Login Successful', {
                         position: "top-right",
@@ -205,46 +225,52 @@ function Login(props) {
                         draggable: true,
                     });
 
-                    // Check if this is a first login for a regular user
+                    // Check if this is a first login for regular users (not admins)
                     if (data.isFirstLogin && !isAdminUser) {
-                        // Show tutorial
+                        console.log('Showing tutorial for first-time user');
+                        // Show tutorial for first-time users
                         setPendingNavigation(destination);
                         setShowTutorial(true);
                     } else {
+                        console.log('Navigating immediately - not first login or admin user');
                         // Navigate immediately for returning users or admins
                         setTimeout(() => {
                             navigate(destination);
                         }, 1000);
                     }
-
                 } else {
                     throw new Error('No token received from server');
                 }
             } else {
-                // Handle error responses (including 404 for invalid credentials)
+                // Handle error responses
                 let errorMessage;
-
+                
                 if (response.status === 404 && data.error) {
-                    // Backend returns 404 for invalid credentials
                     errorMessage = data.error;
                 } else if (response.status === 401) {
-                    // Standard unauthorized response
                     errorMessage = 'Invalid email or password. Please try again.';
                 } else if (response.status >= 500) {
-                    // Server error
                     errorMessage = 'Server error. Please try again later.';
                 } else if (data.error && data.error.includes('E11000')) {
-                    // MongoDB duplicate key error
                     errorMessage = 'This email address is already registered. Please use a different email or try logging in.';
                 } else {
-                    // Other errors
                     errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
                 }
-
+                
+                console.error('Error response:', {
+                    status: response.status,
+                    error: errorMessage,
+                    data: data
+                });
                 setError(errorMessage);
             }
         } catch (err) {
-
+            console.error('Request error details:', {
+                name: err.name,
+                message: err.message,
+                stack: err.stack
+            });
+            
             let errorMessage;
             if (err.name === 'TypeError' && err.message.includes('fetch')) {
                 errorMessage = `${isRegistration ? 'Registration' : 'Login'} failed. Network error - please check your internet connection and try again.`;
@@ -253,7 +279,7 @@ function Login(props) {
             } else {
                 errorMessage = `${isRegistration ? 'Registration' : 'Login'} failed. ${err.message}`;
             }
-
+            
             setError(errorMessage);
         } finally {
             setLoading(false);
@@ -302,6 +328,13 @@ function Login(props) {
                     )}
                 </div>
             </form>
+
+            {/* Add the TutorialModal component here */}
+            <TutorialModal 
+                isOpen={showTutorial}
+                onClose={handleTutorialClose}
+                onComplete={handleTutorialComplete}
+            />
         </>
     );
 }
