@@ -495,3 +495,266 @@
     margin-top: 1rem;
   }
 }
+
+/* Tutorial Modal Styles */
+.tutorialOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tutorialModal {
+  background: rgba(28, 30, 38, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(247, 147, 26, 0.2);
+  border: 1px solid rgba(247, 147, 26, 0.3);
+  animation: slideIn 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from { 
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+  }
+  to { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+  }
+}
+
+.tutorialModal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f7931a, transparent);
+  animation: scanLine 3s linear infinite;
+}
+
+@keyframes scanLine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.tutorialHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.tutorialIcon {
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.tutorialTitle {
+  color: #f7931a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.tutorialCloseBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.tutorialCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.tutorialContent {
+  margin-bottom: 2rem;
+}
+
+.tutorialContent p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tutorialFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tutorialProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tutorialProgress span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.progressBar {
+  background: rgba(255, 255, 255, 0.1);
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  background: linear-gradient(90deg, #f7931a, #ff6b35);
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.tutorialButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.tutorialBtnPrimary,
+.tutorialBtnSecondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.tutorialBtnPrimary {
+  background: linear-gradient(135deg, #f7931a, #ff6b35);
+  color: white;
+}
+
+.tutorialBtnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(247, 147, 26, 0.3);
+}
+
+.tutorialBtnSecondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tutorialBtnSecondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Tutorial Responsive Styles */
+@media (max-width: 576px) {
+  .tutorialModal {
+      width: 95%;
+      padding: 1.5rem;
+  }
+  
+  .tutorialTitle {
+      font-size: 1.3rem;
+  }
+  
+  .tutorialButtons {
+      justify-content: center;
+  }
+  
+  .tutorialBtnPrimary,
+  .tutorialBtnSecondary {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+  }
+  
+  .tutorialIcon {
+      font-size: 1.5rem;
+  }
+  
+  .tutorialContent p {
+      font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutorialModal {
+      width: 98%;
+      padding: 1.2rem;
+      max-height: 85vh;
+  }
+  
+  .tutorialHeader {
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+  }
+  
+  .tutorialTitle {
+      font-size: 1.2rem;
+  }
+  
+  .tutorialContent {
+      margin-bottom: 1.5rem;
+  }
+  
+  .tutorialFooter {
+      gap: 1.2rem;
+  }
+  
+  .tutorialButtons {
+      gap: 0.8rem;
+      flex-direction: column;
+  }
+  
+  .tutorialBtnPrimary,
+  .tutorialBtnSecondary {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      text-align: center;
+  }
+}
