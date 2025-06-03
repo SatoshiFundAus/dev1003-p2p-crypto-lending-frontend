@@ -26,29 +26,42 @@ describe('InterestTerms Component', () => {
 
   beforeEach(() => {
     // Reset all mocks before each test
-    jest.clearAllMocks()
-    
-    // Mock successful API response
+    jest.clearAllMocks();
+  })
+
+  // Test 1: Initial loading state
+  test('shows loading state initially', async () => {
+    // Mock a delayed response to ensure we can see the loading state
+    globalThis.fetch.mockImplementation(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ok: true,
+            json: () => Promise.resolve(mockInterestTerms)
+          })
+        }, 100)
+      })
+    })
+
+    render(
+      <BrowserRouter>
+        <InterestTerms />
+      </BrowserRouter>
+    )
+
+    // Immediately check for loading state
+    expect(screen.getByText('Loading interest terms...')).toBeInTheDocument();
+  })
+
+  // Test 2: Renders title and table after loading
+  test('renders title and table after loading', async () => {
     globalThis.fetch.mockImplementation(() => {
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockInterestTerms)
       })
     })
-  })
 
-  // Test 1: Initial loading state
-  test('shows loading state initially', () => {
-    render(
-      <BrowserRouter>
-        <InterestTerms />
-      </BrowserRouter>
-    )
-    expect(screen.getByText('Loading interest terms...')).toBeInTheDocument();
-  })
-
-  // Test 2: Renders title and table after loading
-  test('renders title and table after loading', async () => {
     render(
       <BrowserRouter>
         <InterestTerms />
@@ -63,6 +76,13 @@ describe('InterestTerms Component', () => {
 
   // Test 3: Displays interest term data
   test('displays interest term data', async () => {
+    globalThis.fetch.mockImplementation(() => {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockInterestTerms)
+      })
+    })
+
     render(
       <BrowserRouter>
         <InterestTerms />
@@ -77,6 +97,13 @@ describe('InterestTerms Component', () => {
 
   // Test 4: Shows informative note
   test('shows informative note about monthly repayments', async () => {
+    globalThis.fetch.mockImplementation(() => {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockInterestTerms)
+      })
+    })
+
     render(
       <BrowserRouter>
         <InterestTerms />
