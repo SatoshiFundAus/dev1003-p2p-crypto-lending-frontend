@@ -85,6 +85,9 @@ function Dashboard() {
                             setBalance(newWalletData.balance);
                         }
                     }
+                } else if (balanceResponse.status === 404) {
+                    console.info('No wallet found for this user');
+                    setBalance(null); // No wallet for this user
                 } else if (balanceResponse.status === 401) {
                     localStorage.removeItem('token');
                     navigate('/login');
@@ -317,7 +320,7 @@ function Dashboard() {
                         }
                     }));
                 } else if (borrowerDealsResponse.status === 404) {
-                    // No deals found for this borrower
+                    console.info('No borrower deals found for this user');
                     setLoanStats(prev => ({
                         ...prev,
                         borrowed: {
@@ -474,7 +477,7 @@ function Dashboard() {
                         earningsToDate: totalEarned
                     }));
                 } else if (dealsResponse.status === 404) {
-                    // No deals found for this lender
+                    console.info('No lender deals found for this user');
                     setLoanStats(prev => ({
                         ...prev,
                         funded: {
@@ -662,7 +665,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{balance !== null ? (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) : 'Loading...'} BTC</div>
+                                    <div className={styles.statNumber}>{balance === null ? 'Create Wallet' : balance === undefined ? 'Loading...' : (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) + ' BTC'}</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
@@ -671,7 +674,7 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Available</div>
-                                        <div className={styles.metricTitle}>{balance !== null ? balance.toFixed(8) : 'Loading...'} BTC</div>
+                                        <div className={styles.metricTitle}>{balance === null ? '0.00000000 BTC' : balance === undefined ? 'Loading...' : balance.toFixed(8) + ' BTC'}</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>
