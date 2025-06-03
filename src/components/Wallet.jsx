@@ -121,8 +121,14 @@ function Wallet() {
                     localStorage.removeItem('token');
                     toast.error("Please login again, you are being redirected")
                     navigate('/login');
-                } else {
-                    console.log('Wallet data not available (Status:', walletRes.status, ')');
+                } else if (walletRes.status === 404) {
+                    toast.info("You don't currently have a wallet, please create one.")
+                    setWalletBalance(0);
+                } else if (walletRes.status === 403) {
+                    // Session expired - show countdown before redirect
+                    setSessionExpired(true);
+                    setError('Session expired. Redirecting to login...');
+                    localStorage.removeItem('token');
 
                     if (walletRes.status === 403) {
                         // Session expired - show countdown before redirect
@@ -144,9 +150,14 @@ function Wallet() {
 
                         return;
 
+                    } else {
+                        console.log('Wallet data not available (Status:', walletRes.status, ')');
+                        // For other unexpected errors, just set balance to 0 
+                        setWalletBalance(0);
+                        toast.info('Unable to load wallet data. Please try refreshing the page.');
                     }
 
-                    toast.info('You need to create a wallet!')
+
 
                 }
 
@@ -654,7 +665,7 @@ function Wallet() {
                             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                                 <div className={styles.modalHeader}>
                                     <h3>Withdraw Bitcoin</h3>
-                                    <button 
+                                    <button
                                         className={styles.closeButton}
                                         onClick={closeModals}
                                     >
