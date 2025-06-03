@@ -1,4 +1,4 @@
-import { describe, test, expect, jest, beforeEach } from '@jest/globals'
+import { describe, test, expect, jest, beforeEach, afterEach } from '@jest/globals'
 import { render, screen, waitFor } from '@testing-library/react'
 import BTCPrice from '../components/BitcoinLivePrice'
 
@@ -11,25 +11,45 @@ describe('BitcoinLivePrice Component', () => {
   beforeEach(() => {
     // Reset all mocks before each test
     jest.clearAllMocks();
-    
-    // Mock successful API response
+    // Mock console.error to prevent error output in tests
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    // Restore console.error after each test
+    console.error.mockRestore()
+  })
+
+  // Test 1: Initial loading state
+  test('shows loading state initially', async () => {
+    // Mock a delayed response to ensure we can see the loading state
+    globalThis.fetch = jest.fn().mockImplementation(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ok: true,
+            json: () => Promise.resolve(mockPriceData)
+          })
+        }, 100)
+      })
+    })
+
+    render(<BTCPrice />)
+
+    // Immediately check for loading state
+    expect(screen.getByText('Loading Bitcoin price...')).toBeInTheDocument();
+  })
+
+  // Test 2: Displays price after loading
+  test('displays price after loading', async () => {
     globalThis.fetch = jest.fn().mockImplementation(() => {
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockPriceData)
       })
     })
-  })
 
-  // Test 1: Initial loading state
-  test('shows loading state initially', () => {
-    render(<BTCPrice />);
-    expect(screen.getByText('Loading Bitcoin price...')).toBeInTheDocument();
-  })
-
-  // Test 2: Displays price after loading
-  test('displays price after loading', async () => {
-    render(<BTCPrice />);
+    render(<BTCPrice />)
     
     await waitFor(() => {
       expect(screen.getByText('$50000')).toBeInTheDocument();
@@ -38,6 +58,13 @@ describe('BitcoinLivePrice Component', () => {
 
   // Test 3: Shows last updated time
   test('shows last updated time', async () => {
+    globalThis.fetch = jest.fn().mockImplementation(() => {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockPriceData)
+      })
+    })
+
     render(<BTCPrice />)
     
     await waitFor(() => {
@@ -58,7 +85,7 @@ describe('BitcoinLivePrice Component', () => {
     render(<BTCPrice />)
     
     await waitFor(() => {
-      expect(screen.getByText('Unable to retrieve current Bitcoin price.')).toBeInTheDocument();
+      expect(screen.getByText('Unable to retrieve current Bitcoin price.')).toBeInTheDocument()
     })
   })
 })
