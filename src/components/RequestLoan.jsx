@@ -3,6 +3,7 @@ import styles from './RequestLoan.module.css';
 import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
 
 const RequestLoan = () => {
   const [amount, setAmount] = useState('');
@@ -18,6 +19,8 @@ const RequestLoan = () => {
   const [success, setSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userId, setUserId] = useState('');
+  const [showWalletButton, setShowWalletButton] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +84,7 @@ const RequestLoan = () => {
     setSubmitting(true);
     setSubmitError(null);
     setSuccess(false);
+    setShowWalletButton(false);
     let cryptoToUse = selectedCrypto;
     if (!cryptoToUse && cryptos.length > 0) {
       cryptoToUse = cryptos[0]._id;
@@ -114,14 +118,28 @@ const RequestLoan = () => {
         body: JSON.stringify(payload)
       });
       if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Backend error response:', errorText);
-        throw new Error('Failed to submit loan request');
+        let errorMessage;
+        try {
+          const errorData = await res.json();
+          if (errorData.error && errorData.error.includes('insufficient funds')) {
+            errorMessage = 'Insufficient funds in your wallet. Please add more funds to your wallet to request this loan.';
+            setShowWalletButton(true);
+          } else if (errorData.error && errorData.error.includes('does not have a wallet')) {
+            errorMessage = 'Please create a wallet first to request a loan.';
+            setShowWalletButton(true);
+          } else {
+            errorMessage = errorData.error || 'Failed to submit loan request';
+          }
+        } catch {
+          errorMessage = 'Failed to submit loan request';
+        }
+        throw new Error(errorMessage);
       }
       setSuccess(true);
       setAmount('');
     } catch (err) {
-      setSubmitError(err.message || 'Submission failed');
+      console.error('Submission error:', err);
+      setSubmitError(err.message || 'Failed to submit loan request');
     } finally {
       setSubmitting(false);
     }
@@ -204,7 +222,21 @@ const RequestLoan = () => {
                 <button type="submit" className={styles.submitBtn} disabled={submitting || !amount || !selectedTerm || !selectedCrypto}>
                   {submitting ? 'Submitting...' : 'Submit Request'}
                 </button>
-                {submitError && <div className={styles.error}>{submitError}</div>}
+                {submitError && (
+                  <div className={styles.error}>
+                    {submitError}
+                    {showWalletButton && (
+                      <div style={{ marginTop: '1rem' }}>
+                        <button 
+                          onClick={() => navigate('/wallet')}
+                          className={styles.walletButton}
+                        >
+                          Go to Wallet
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {success && <div className={styles.success}>Loan request submitted!</div>}
               </div>
               <div className={styles.collateralBox}>
