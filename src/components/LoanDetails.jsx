@@ -35,6 +35,7 @@ const LoanDetails = () => {
   const [funding, setFunding] = useState(false);
   const [fundError, setFundError] = useState(null);
   const [fundSuccess, setFundSuccess] = useState(null);
+  const [showWalletButton, setShowWalletButton] = useState(false);
 
   useEffect(() => {
     // Extract user email and id from JWT token
@@ -92,6 +93,7 @@ const LoanDetails = () => {
     setFunding(true);
     setFundError(null);
     setFundSuccess(null);
+    setShowWalletButton(false);
     try {
       const token = localStorage.getItem('token');
       if (!userId) throw new Error('User not logged in');
@@ -116,13 +118,16 @@ const LoanDetails = () => {
         let errorMessage;
         try {
           const errorData = await res.json();
-          errorMessage = JSON.stringify(errorData);
-
+          if (errorData.error && errorData.error.includes('Lender does not have sufficient funds')) {
+            errorMessage = 'Insufficient funds in your wallet. Please add more funds to your wallet to fund this loan.';
+            setShowWalletButton(true);
+          } else {
+            errorMessage = errorData.error || 'Failed to fund loan';
+          }
         } catch {
-          errorMessage = await res.text();
+          errorMessage = 'Failed to fund loan';
         }
-
-        throw new Error(errorMessage || 'Failed to fund loan');
+        throw new Error(errorMessage);
       }
       setFundSuccess('Loan funded!');
 
@@ -168,7 +173,21 @@ const LoanDetails = () => {
           >
             &larr; Back to Browse Loans
           </button>
-          {fundError && <div className={styles.error}>Error: {fundError}</div>}
+          {fundError && (
+            <div className={styles.error}>
+              {fundError}
+              {showWalletButton && (
+                <div style={{ marginTop: '1rem' }}>
+                  <button 
+                    onClick={() => navigate('/wallet')}
+                    className={styles.walletButton}
+                  >
+                    Go to Wallet
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           {fundSuccess && <div className={styles.success}>{fundSuccess}</div>}
           {loading ? (
             <div className={styles.loading}>Loading...</div>
