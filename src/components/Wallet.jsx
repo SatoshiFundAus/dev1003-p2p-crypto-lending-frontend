@@ -385,9 +385,8 @@ function Wallet() {
             } else if (response.status === 400) {
                 const errorData = await response.json();
 
-                if (errorData.error && errorData.error.includes('insufficient')) {
-                    toast.error('Insufficient funds for withdrawal');
-
+                if (errorData.error && errorData.error.includes('less than or equal to')) {
+                    toast.error('Insufficient funds in your wallet for this withdrawal.');
                 } else {
                     toast.error(errorData.error || 'Failed to withdraw funds');
                 }
@@ -670,7 +669,6 @@ function Wallet() {
                                             placeholder="0.00000000"
                                             step="0.00000001"
                                             min="0"
-                                            max={walletBalance}
                                             required
                                             className={styles.amountInput}
                                         />
