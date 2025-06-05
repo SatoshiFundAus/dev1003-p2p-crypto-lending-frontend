@@ -12,6 +12,7 @@ function Wallet() {
     const navigate = useNavigate();
     const [walletBalance, setWalletBalance] = useState(0)
     const [userEmail, setUserEmail] = useState('');
+    const [userId, setUserId] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [depositAmount, setDepositAmount] = useState('');
@@ -30,6 +31,64 @@ function Wallet() {
     const [sessionExpired, setSessionExpired] = useState(false);
     const [redirectCountdown, setRedirectCountdown] = useState(3);
 
+
+    //Updated userId whenever userId changes
+    useEffect(() => {
+        console.log('UserId state updated to:', userId);
+        console.log('UserId type:', typeof userId);
+        if (typeof userId === 'object') {
+            console.log('UserId object contents:', userId);
+        }
+    }, [userId]); // This runs whenever userId changes
+
+    
+    // Creating a seperate authenticated helper function to keep the code DRY
+    const getAuthenticatedRequest = async () => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.log('Not authenticated');
+            localStorage.removeItem('token');
+            toast.error("You are being redirected to the login page")
+            navigate('/login');
+            throw new Error("No authentication token")
+        }
+
+        let tokenData;
+        try {
+            tokenData = JSON.parse(atob(token.split('.')[1]));
+
+            if (!userEmail && tokenData.email) {
+                setUserEmail(tokenData.email)
+            }
+
+            // console.log(tokenData.id)
+
+            if (!userId && tokenData.id) {
+                setUserId(tokenData.id)
+            }
+
+            console.log("Your UserId is: ", userId)
+
+        } catch (err) {
+            console.log("Error parsing token: ", err);
+            localStorage.removeItem('token');
+            toast.error("You are being redirected to the login page");
+            navigate('/login');
+            throw new Error("Invalid token format");
+        }
+
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        console.log(tokenData)
+
+        return { token, tokenData, headers, userId };
+
+    }
+
+    // Get BTC Live price for working out portfolio balance
     const getBTCLivePrice = async () => {
         try {
             const res = await fetch('https://pricing.bitcoin.block.xyz/current-price');
@@ -54,19 +113,6 @@ function Wallet() {
     };
 
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const tokenData = JSON.parse(atob(token.split('.')[1]));
-                setUserEmail(tokenData.email)
-            } catch (err) {
-                console.error('Error parsing token:', err);
-                setUserEmail('')
-            }
-        }
-    }, []);
-
     // BTC price fetching
     useEffect(() => {
         getBTCLivePrice();
@@ -77,34 +123,18 @@ function Wallet() {
 
 
     useEffect(() => {
+
+
         // Access API to get User's wallet balance
         const fetchWalletData = async () => {
             try {
+
                 setLoading(true);
                 setError(null);
 
-                // Get stored user data
-                const token = localStorage.getItem('token');
+                // Check if authorised first
+                const { headers } = await getAuthenticatedRequest();
 
-                if (!token) {
-                    console.log('Not authenticated', { token: !!token });
-                    navigate('/login');
-                    return;
-                }
-
-                try {
-                    const tokenData = JSON.parse(atob(token.split('.')[1]));
-                    console.log('Token payload:', tokenData);
-                    console.log('Token expiry:', new Date(tokenData.exp * 1000));
-                } catch (err) {
-                    console.error('Error parsing token for debug:', err);
-                }
-
-                // Common headers for all requests
-                const headers = {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
 
                 const walletRes = await fetch(BACKEND_URL + '/wallet-balance', {
                     headers,
@@ -169,8 +199,69 @@ function Wallet() {
             }
         };
 
+        const fetchOtherData = async () => {
+            try {
+
+                setLoading(true);
+                setError(null)
+
+                const { headers } = await getAuthenticatedRequest();
+
+                // Fetching Borrower Deals
+                const borrowerRes = await fetch(BACKEND_URL + '/borrower-deals', {
+                    headers,
+                    credentials: 'include'
+                });
+
+                if (borrowerRes.ok) {
+                    const incomingBorrowerData = await borrowerRes.json();
+                    console.log("Borrowed loans data fetched:", incomingBorrowerData)
+
+                } else if (borrowerRes.status === 404) {
+                    // Check if its a proper JSON response (no data) or HTML response (route not found)
+                    const contentType = borrowerRes.headers.get('content-type')
+
+                    if (contentType && contentType.includes('application/json')) {
+                        console.info('No borrower deals found for this user');
+                        const errorData = await borrowerRes.json();
+                        console.log('404 Response:', errorData)
+
+                    } else {
+                        // This is likely a route not found 404
+                        const responseText = await borrowerRes.text();
+                        console.error("Route not found - Response: ", responseText)
+                        toast.error('Borrower deals endpoint not available on server')
+                    }
+                } else if (borrowerRes.status === 401) {
+                    localStorage.removeItem('token');
+                    toast.error('Session expired. Please login again')
+                    navigate('/login');
+                } else {
+                    console.error('Unexpected response status: ', borrowerRes.status);
+                    toast.error('failed to fetch borrower deals')
+                }
+
+                console.log('Your UserId is:', tokenData.id)
+
+                // Fetching Transaction History
+                // First need to get User's userId
+                // const userId = 
+                // const transactionRes = async fetch(BACKEND_URL + '/')
+
+
+
+            } catch (err) {
+                console.error("Error fetching all API data");
+                toast.error("Error fetching API data, please try again later")
+            };
+        }
+
         fetchWalletData();
+        fetchOtherData();
     }, []);
+
+
+
 
     // Creating of a wallet through button click
     const handleCreateClick = async () => {
