@@ -32,6 +32,7 @@ function Wallet() {
     // Session expiry
     const [sessionExpired, setSessionExpired] = useState(false);
     const [redirectCountdown, setRedirectCountdown] = useState(3);
+    const hasShownWalletMessage = useRef(false);
 
 
     //Updated userId whenever userId changes
