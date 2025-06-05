@@ -156,14 +156,6 @@ return (
     <div className={styles.content}>
       <h1>Transactions</h1>
       
-      {outgoing.length === 0 && incoming.length === 0 && (
-        <div className={styles.tableContainer}>
-          <div style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.7)', margin: '2rem 0', fontSize: '1.2rem' }}>
-            User has no transactions.
-          </div>
-        </div>
-      )}
-
       <div className={styles.tableContainer}>
         <h2>Outgoing Transactions</h2>
         <div className={styles.tableWrapper}>

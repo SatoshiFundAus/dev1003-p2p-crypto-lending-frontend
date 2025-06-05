@@ -126,6 +126,7 @@ function Login(props) {
     const [loading, setLoading] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState(null);
+    const [validationErrors, setValidationErrors] = useState({});
     const navigate = useNavigate();
 
     const handleTutorialComplete = () => {
@@ -146,9 +147,39 @@ function Login(props) {
         }
     };
 
+    const validateForm = () => {
+        const errors = {};
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            errors.email = 'Please enter a valid email address';
+        }
+
+        // Password validation
+        if (password.length < 8) {
+            errors.password = 'Password must be at least 8 characters';
+        } else if (!/(?=.*[A-Z])/.test(password)) {
+            errors.password = 'Password must include at least one uppercase letter';
+        } else if (!/(?=.*[a-z])/.test(password)) {
+            errors.password = 'Password must include at least one lowercase letter';
+        } else if (!/(?=.*\d)/.test(password)) {
+            errors.password = 'Password must include at least one number';
+        }
+
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
+        setValidationErrors({});
+        
+        if (!validateForm()) {
+            return;
+        }
+
         setLoading(true);
 
         const userData = {
@@ -253,6 +284,16 @@ function Login(props) {
                     errorMessage = 'Server error. Please try again later.';
                 } else if (data.error && data.error.includes('E11000')) {
                     errorMessage = 'This email address is already registered. Please use a different email or try logging in.';
+                } else if (data.error && data.error.includes('User validation failed')) {
+                    // Handle validation errors from the server
+                    const validationError = data.error;
+                    if (validationError.includes('email')) {
+                        setValidationErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+                    }
+                    if (validationError.includes('password')) {
+                        setValidationErrors(prev => ({ ...prev, password: 'Password must include upper/lowercase letters and a number' }));
+                    }
+                    errorMessage = 'Please fix the validation errors above';
                 } else {
                     errorMessage = data.error || data.message || `${isRegistration ? 'Registration' : 'Login'} failed. Please try again.`;
                 }
@@ -294,23 +335,29 @@ function Login(props) {
 
                 <label className={styles.label} htmlFor="email">Email:</label>
                 <input
-                    className={styles.input}
+                    className={`${styles.input} ${validationErrors.email ? styles.inputError : ''}`}
                     type="email"
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
+                {validationErrors.email && (
+                    <div className={styles.validationError}>{validationErrors.email}</div>
+                )}
 
                 <label className={styles.label} htmlFor="password">Password:</label>
                 <input
-                    className={styles.input}
+                    className={`${styles.input} ${validationErrors.password ? styles.inputError : ''}`}
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+                {validationErrors.password && (
+                    <div className={styles.validationError}>{validationErrors.password}</div>
+                )}
 
                 <button
                     type="submit"

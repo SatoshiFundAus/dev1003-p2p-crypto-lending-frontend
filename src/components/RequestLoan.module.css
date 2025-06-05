@@ -529,4 +529,24 @@
   text-decoration: underline;
   display: block;
   text-align: left;
+}
+
+.walletButton {
+  display: inline-block;
+  margin-top: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.walletButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 147, 26, 0.3);
 } 
