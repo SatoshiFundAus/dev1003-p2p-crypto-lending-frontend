@@ -312,17 +312,21 @@ function Wallet() {
                 setDepositAmount('');
                 setDepositWalletModal(false);
                 toast.success(`Successfully deposited ₿${depositAmount} to your wallet!`)
-
             } else if (response.status === 401) {
                 localStorage.removeItem('token');
                 toast.error('Session expired. Please log in again');
                 navigate('/login')
-
+            } else if (response.status === 404) {
+                toast.error("You don't have a wallet yet. Please create one first.");
+                setDepositWalletModal(false);
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.error || 'Failed to deposit funds');
+                if (errorData.error && errorData.error.includes('wallet')) {
+                    toast.error("You don't have a wallet yet. Please create one first.");
+                } else {
+                    toast.error(errorData.error || 'Failed to deposit funds');
+                }
             }
-
         } catch (err) {
             console.error('Deposit failed', err);
             toast.error('An error occurred while depositing funds');
