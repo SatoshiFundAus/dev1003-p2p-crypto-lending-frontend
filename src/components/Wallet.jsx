@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DashboardHeader from "./DashboardHeader";
 import styles from './Wallet.module.css'
 import loadingStyles from './Loading.module.css';
@@ -29,6 +29,7 @@ function Wallet() {
     // Session expiry
     const [sessionExpired, setSessionExpired] = useState(false);
     const [redirectCountdown, setRedirectCountdown] = useState(3);
+    const hasShownWalletMessage = useRef(false);
 
     const getBTCLivePrice = async () => {
         try {
@@ -87,17 +88,16 @@ function Wallet() {
                 const token = localStorage.getItem('token');
 
                 if (!token) {
-                    console.log('Not authenticated', { token: !!token });
                     navigate('/login');
                     return;
                 }
 
                 try {
                     const tokenData = JSON.parse(atob(token.split('.')[1]));
-                    console.log('Token payload:', tokenData);
-                    console.log('Token expiry:', new Date(tokenData.exp * 1000));
+                    setUserEmail(tokenData.email);
                 } catch (err) {
-                    console.error('Error parsing token for debug:', err);
+                    console.error('Error parsing token:', err);
+                    setUserEmail('');
                 }
 
                 // Common headers for all requests
@@ -113,52 +113,35 @@ function Wallet() {
 
                 if (walletRes.ok) {
                     const incomingWalletData = await walletRes.json();
-                    console.log('Wallet data fetched:', incomingWalletData)
-
                     setWalletBalance(incomingWalletData.walletBalance || 0);
-
+                    hasShownWalletMessage.current = false;
+                } else if (walletRes.status === 404) {
+                    setWalletBalance(0);
+                    if (!hasShownWalletMessage.current) {
+                        toast.info("You don't currently have a wallet, please create one.");
+                        hasShownWalletMessage.current = true;
+                    }
                 } else if (walletRes.status === 401) {
                     localStorage.removeItem('token');
                     toast.error("Please login again, you are being redirected")
                     navigate('/login');
-                } else if (walletRes.status === 404) {
-                    toast.info("You don't currently have a wallet, please create one.")
-                    setWalletBalance(0);
                 } else if (walletRes.status === 403) {
-                    // Session expired - show countdown before redirect
                     setSessionExpired(true);
                     setError('Session expired. Redirecting to login...');
                     localStorage.removeItem('token');
 
-                    if (walletRes.status === 403) {
-                        // Session expired - show countdown before redirect
-                        setSessionExpired(true);
-                        setError('Session expired. Redirecting to login...');
-                        localStorage.removeItem('token');
+                    let countdown = 3;
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        setRedirectCountdown(countdown);
 
-                        // Start countdown
-                        let countdown = 3;
-                        const countdownInterval = setInterval(() => {
-                            countdown--;
-                            setRedirectCountdown(countdown);
-
-                            if (countdown <= 0) {
-                                clearInterval(countdownInterval);
-                                navigate('/login');
-                            }
-                        }, 1000);
-
-                        return;
-
-                    } else {
-                        console.log('Wallet data not available (Status:', walletRes.status, ')');
-                        // For other unexpected errors, just set balance to 0 
-                        setWalletBalance(0);
-                        toast.info('Unable to load wallet data. Please try refreshing the page.');
-                    }
-
-
-
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            navigate('/login');
+                        }
+                    }, 1000);
+                } else {
+                    setWalletBalance(0);
                 }
 
             } catch (err) {
