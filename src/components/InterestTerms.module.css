@@ -3,8 +3,8 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
-  color: white;
+  background: #181a20;
+  color: #fff;
   position: relative;
   overflow-x: hidden;
 }
@@ -46,15 +46,12 @@
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  background: rgba(28, 30, 38, 0.85);
+  background: rgba(30, 32, 40, 0.97);
   border-radius: 24px;
   padding: 3rem;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 
-    0 16px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(247, 147, 26, 0.1),
-    0 0 60px rgba(247, 147, 26, 0.05);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(247, 147, 26, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -78,7 +75,7 @@
   text-align: center;
   margin-bottom: 3rem;
   color: #fff;
-  text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+  text-shadow: 0 0 20px rgba(0,0,0,0.18);
   position: relative;
 }
 
@@ -95,8 +92,8 @@
 }
 
 .termsContainer {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(247, 147, 26, 0.2);
+  background: rgba(24, 26, 32, 0.98);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px;
   padding: 2.5rem;
   backdrop-filter: blur(10px);
@@ -124,8 +121,9 @@
 .tableContainer {
   overflow-x: auto;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(24, 26, 32, 0.96);
   margin-bottom: 2rem;
+  /* border: 1px solid rgba(255,255,255,0.07); */
 }
 
 .termsTable {
@@ -140,49 +138,40 @@
 }
 
 .termsTable th {
-  background: linear-gradient(135deg, rgba(247, 147, 26, 0.25), rgba(247, 147, 26, 0.15));
-  color: #f7931a;
+  background: #23242a;
+  color: #fff;
   font-weight: 700;
   text-align: center;
   padding: 1.5rem 2rem;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  border-bottom: 2px solid rgba(247, 147, 26, 0.3);
+  border-bottom: 2px solid #f7931a;
   position: relative;
   overflow: hidden;
 }
 
-.termsTable th::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.6s ease;
-}
-
+.termsTable th::before,
 .termsTable th:hover::before {
-  left: 100%;
+  transition: none;
+  left: -100% !important;
 }
 
 .termsTable th:hover {
-  background: linear-gradient(135deg, rgba(247, 147, 26, 0.35), rgba(247, 147, 26, 0.25));
+  background: #23242a;
   color: #fff;
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
+  transform: none;
+  transition: none;
 }
 
 .termsTable td {
-  color: rgba(255, 255, 255, 0.9);
+  color: #f5f6fa;
   padding: 1.3rem 2rem;
   font-size: 1.1rem;
   font-weight: 600;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255,255,255,0.01);
   transition: all 0.3s ease;
 }
 
@@ -196,12 +185,12 @@
 }
 
 .termsTable tbody tr:hover td {
-  background: rgba(247, 147, 26, 0.05);
+  background: rgba(247, 147, 26, 0.08);
   color: #fff;
 }
 
 .termsTable tbody tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.01);
+  background: rgba(255,255,255,0.03);
 }
 
 .termsTable tbody tr:nth-child(even):hover td {
@@ -209,26 +198,22 @@
 }
 
 .note {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
-  padding: 1.5rem;
-  background: rgba(247, 147, 26, 0.05);
-  border-radius: 12px;
+  background: rgba(30,32,40,0.92);
+  color: #f5f6fa;
   border-left: 4px solid #f7931a;
-  position: relative;
-  line-height: 1.6;
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 2.5rem;
+  font-size: 1.08rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
 .note::before {
   content: '💡';
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
 }
 
 .loading {
@@ -261,12 +246,12 @@
 /* Crypto symbol styling for Cryptocurrencies component */
 .cryptoSymbol {
   font-family: 'Monaco', 'Menlo', monospace;
-  background: rgba(247, 147, 26, 0.1);
   color: #f7931a;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
+  background: rgba(247,147,26,0.08);
+  border-radius: 6px;
+  padding: 2px 8px;
   font-weight: 700;
-  border: 1px solid rgba(247, 147, 26, 0.2);
+  font-size: 1rem;
 }
 
 /* Interest rate styling for InterestTerms component */

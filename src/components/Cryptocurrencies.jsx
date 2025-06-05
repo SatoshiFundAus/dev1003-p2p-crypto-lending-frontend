@@ -86,7 +86,7 @@ const Cryptocurrencies = () => {
               </table>
             </div>
             <div className={styles.note}>
-              💡 These cryptocurrencies are available for lending and borrowing on our platform.
+              These cryptocurrencies are available for lending and borrowing on our platform.
             </div>
           </div>
         </div>

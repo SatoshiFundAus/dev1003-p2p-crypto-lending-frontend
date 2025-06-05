@@ -88,7 +88,7 @@ const InterestTerms = () => {
               </table>
             </div>
             <div className={styles.note}>
-              💡 All loans are subject to monthly interest repayments.
+              All loans are subject to monthly interest repayments.
             </div>
           </div>
         </div>
