@@ -21,6 +21,8 @@ function Wallet() {
     const [withdrawing, setWithdrawing] = useState(false);
     const [depositWalletModal, setDepositWalletModal] = useState(false);
     const [withdrawWalletModal, setWithdrawWalletModal] = useState(false);
+    const [transactions, setTransactions] = useState([])
+    const [transactionsLoading, setTransactionsLoading] = useState(false)
 
     const [btcPrice, setBtcPrice] = useState(null);
     const [priceLastUpdated, setPriceLastUpdated] = useState(null);
@@ -41,7 +43,7 @@ function Wallet() {
         }
     }, [userId]); // This runs whenever userId changes
 
-    
+
     // Creating a seperate authenticated helper function to keep the code DRY
     const getAuthenticatedRequest = async () => {
         const token = localStorage.getItem('token');
@@ -55,20 +57,20 @@ function Wallet() {
         }
 
         let tokenData;
+        let extractedUserId;
         try {
             tokenData = JSON.parse(atob(token.split('.')[1]));
+            console.log('tokenData.id directly:', tokenData.id)
+
+            extractedUserId = tokenData.id
 
             if (!userEmail && tokenData.email) {
                 setUserEmail(tokenData.email)
             }
 
-            // console.log(tokenData.id)
-
             if (!userId && tokenData.id) {
                 setUserId(tokenData.id)
             }
-
-            console.log("Your UserId is: ", userId)
 
         } catch (err) {
             console.log("Error parsing token: ", err);
@@ -82,9 +84,9 @@ function Wallet() {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
-        console.log(tokenData)
 
-        return { token, tokenData, headers, userId };
+
+        return { token, tokenData, headers, userId: extractedUserId };
 
     }
 
@@ -205,7 +207,7 @@ function Wallet() {
                 setLoading(true);
                 setError(null)
 
-                const { headers } = await getAuthenticatedRequest();
+                const { headers, userId: currentUserId } = await getAuthenticatedRequest();
 
                 // Fetching Borrower Deals
                 const borrowerRes = await fetch(BACKEND_URL + '/borrower-deals', {
@@ -241,17 +243,44 @@ function Wallet() {
                     toast.error('failed to fetch borrower deals')
                 }
 
-                console.log('Your UserId is:', tokenData.id)
+                console.log('Your UserId is:', currentUserId)
 
                 // Fetching Transaction History
-                // First need to get User's userId
-                // const userId = 
-                // const transactionRes = async fetch(BACKEND_URL + '/')
+
+                if (currentUserId) {
+                    setTransactionsLoading(true)
+                    try {
+                        const transactionRes = await fetch(`${BACKEND_URL}/transactions/user/${currentUserId}`, {
+                            headers,
+                            credentials: 'include'
+                        });
+
+                        if (transactionRes.ok) {
+                            const transactionData = await transactionRes.json();
+                            console.log('Transaction data:', transactionData)
+                            setTransactions(transactionData);
+
+                        } else if (transactionRes.status === 404) {
+                            console.info('No transactions found for this user');
+                            setTransactions([])
+
+                        } else {
+                            console.error('Failed to fetch transactions:', transactionRes.status)
+                            toast.error('Failed to load transaction history');
+                        }
+                    } catch (transactionError) {
+                        console.error('Error fetching transactions', transactionError);
+                        toast.error('Error loading transaction history')
+                    } finally {
+                        setTransactionsLoading(false)
+                    }
+                }
+
 
 
 
             } catch (err) {
-                console.error("Error fetching all API data");
+                console.error("Error fetching all API data:", err);
                 toast.error("Error fetching API data, please try again later")
             };
         }
@@ -266,23 +295,11 @@ function Wallet() {
     // Creating of a wallet through button click
     const handleCreateClick = async () => {
         try {
-
-            // Get the token for authentication
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                toast.error("You are not authenticated, please login again")
-                setError('Not authenticated');
-                navigate('/login');
-                return
-            }
+            const { headers } = await getAuthenticatedRequest();
 
             const response = await fetch(`${BACKEND_URL}/wallets`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 credentials: 'include'
                 // Note: No body needed since backend gets UserId from token
             });
@@ -385,6 +402,36 @@ function Wallet() {
         }
     };
 
+    // Function to refetch transactions after deposit/withdrawal
+    const refetchTransactions = async () => {
+        try {
+            const { headers, userId: currentUserId } = await getAuthenticatedRequest();
+            
+            if (currentUserId) {
+                setTransactionsLoading(true);
+                const transactionRes = await fetch(`${BACKEND_URL}/transactions/user/${currentUserId}`, {
+                    headers,
+                    credentials: 'include'
+                });
+
+                if (transactionRes.ok) {
+                    const transactionData = await transactionRes.json();
+                    console.log('Transaction data refreshed:', transactionData);
+                    setTransactions(transactionData);
+                } else if (transactionRes.status === 404) {
+                    console.info('No transactions found for this user after refresh');
+                    setTransactions([]);
+                } else {
+                    console.error('Failed to refresh transactions:', transactionRes.status);
+                }
+            }
+        } catch (err) {
+            console.error('Error refreshing transactions:', err);
+        } finally {
+            setTransactionsLoading(false);
+        }
+    };
+
     // Handle deposits with positive values
     const handleDepositSubmit = async (e) => {
         e.preventDefault();
@@ -395,19 +442,11 @@ function Wallet() {
 
         setDepositing(true);
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                localStorage.removeItem('token');
-                navigate('/login');
-                return;
-            }
+            const { headers } = await getAuthenticatedRequest();
 
             const response = await fetch(`${BACKEND_URL}/wallets`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 credentials: 'include',
                 body: JSON.stringify({
                     fundsDeposited: parseFloat(depositAmount)
@@ -419,12 +458,15 @@ function Wallet() {
                 setWalletBalance(updatedWallet.balance);
                 setDepositAmount('');
                 setDepositWalletModal(false);
-                toast.success(`Successfully deposited ₿${depositAmount} to your wallet!`)
+                toast.success(`Successfully deposited ₿${depositAmount} to your wallet!`);
+                
+                // Refresh transactions to show the new deposit
+                await refetchTransactions();
 
             } else if (response.status === 401) {
                 localStorage.removeItem('token');
                 toast.error('Session expired. Please log in again');
-                navigate('/login')
+                navigate('/login');
 
             } else {
                 const errorData = await response.json();
@@ -432,12 +474,15 @@ function Wallet() {
             }
 
         } catch (err) {
+            if (err.message === 'No authentication token' || err.message === 'Invalid token format') {
+                return; // Already handled in getAuthenticatedRequest
+            }
             console.error('Deposit failed', err);
             toast.error('An error occurred while depositing funds');
         } finally {
             setDepositing(false);
         }
-    }
+    };
 
     // Handle withdrawals with negative values
     const handleWithdrawSubmit = async (e) => {
@@ -449,25 +494,16 @@ function Wallet() {
 
         if (parseFloat(withdrawAmount) > walletBalance) {
             toast.error('Insufficient funds for withdrawal');
-            return
+            return;
         }
 
         setWithdrawing(true);
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                localStorage.removeItem('token');
-                toast.error('You are being redirected back to login');
-                navigate('/login');
-                return;
-            }
+            const { headers } = await getAuthenticatedRequest();
 
             const response = await fetch(`${BACKEND_URL}/wallets`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 credentials: 'include',
                 body: JSON.stringify({
                     fundsDeposited: -parseFloat(withdrawAmount) // Negative value for withdrawal
@@ -480,6 +516,9 @@ function Wallet() {
                 setWithdrawAmount('');
                 setWithdrawWalletModal(false);
                 toast.success(`Successfully withdrew ₿${withdrawAmount} from your wallet!`);
+                
+                // Refresh transactions to show the new withdrawal
+                await refetchTransactions();
 
             } else if (response.status === 401) {
                 localStorage.removeItem('token');
@@ -501,6 +540,9 @@ function Wallet() {
             }
 
         } catch (err) {
+            if (err.message === 'No authentication token' || err.message === 'Invalid token format') {
+                return; // Already handled in getAuthenticatedRequest
+            }
             console.error('Withdrawal failed:', err);
             toast.error('An error occurred while withdrawing funds');
 
@@ -517,7 +559,7 @@ function Wallet() {
     };
 
 
-    if (loading) {
+    if (loading || transactionsLoading) {
         return (
             <div className={loadingStyles.mainContainer}>
                 <DashboardHeader userEmail={userEmail} />
@@ -553,6 +595,74 @@ function Wallet() {
 
     const currentBtcPrice = btcPrice || 100000; // Fallback to 100,000
     const usdBalance = walletBalance * currentBtcPrice;
+
+    // Add helper functions
+    const getTransactionDirection = (transaction, currentUserId) => {
+        if (!transaction.fromUser || !transaction.toUser) return 'Unknown';
+        
+        const fromUserId = transaction.fromUser._id || transaction.fromUser;
+        const toUserId = transaction.toUser._id || transaction.toUser;
+        
+        if (fromUserId === currentUserId) return 'outgoing';
+        if (toUserId === currentUserId) return 'incoming';
+        return 'unknown';
+    };
+
+    const getOtherParty = (transaction, currentUserId) => {
+        const direction = getTransactionDirection(transaction, currentUserId);
+        
+        if (direction === 'outgoing') {
+            return transaction.toUser?.email || transaction.toUser?.name || 'Unknown User';
+        } else if (direction === 'incoming') {
+            return transaction.fromUser?.email || transaction.fromUser?.name || 'Unknown User';
+        }
+        return 'Unknown';
+    };
+
+    const getTransactionType = (transaction, currentUserId) => {
+        const direction = getTransactionDirection(transaction, currentUserId);
+        
+        // Check if it's a loan-related transaction
+        if (transaction.dealId) {
+            if (direction === 'outgoing') {
+                return transaction.isLoanRepayment ? 'Loan Repayment' : 'Loan Funding';
+            } else {
+                return transaction.isLoanRepayment ? 'Repayment Received' : 'Loan Received';
+            }
+        }
+        
+        // Regular wallet transactions
+        if (direction === 'outgoing') {
+            return transaction.isWithdrawal ? 'Withdrawal' : 'Transfer Out';
+        } else if (direction === 'incoming') {
+            return transaction.isDeposit ? 'Deposit' : 'Transfer In';
+        }
+        
+        // Fallback
+        return transaction.type || (transaction.amount > 0 ? 'Credit' : 'Debit');
+    };
+
+    const getTransactionAmount = (transaction, currentUserId) => {
+        const direction = getTransactionDirection(transaction, currentUserId);
+        const amount = Math.abs(transaction.amount || 0);
+        
+        return {
+            amount,
+            isPositive: direction === 'incoming',
+            displayAmount: direction === 'incoming' ? `+${amount.toFixed(8)}` : `-${amount.toFixed(8)}`
+        };
+    };
+
+    // Sort transactions by date (most recent first)
+    const getSortedTransactions = (transactions) => {
+        return [...transactions].sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.date || a.timestamp || 0);
+            const dateB = new Date(b.createdAt || b.date || b.timestamp || 0);
+            
+            // Sort in descending order (most recent first)
+            return dateB - dateA;
+        });
+    };
 
     return (
         // Header section
@@ -666,24 +776,87 @@ function Wallet() {
                     <div className={styles.transactionContainer}>
                         <h2>Recent Transactions</h2>
                         <div className={styles.transactionList}>
-                            <div className={styles.transactionItem}>
-                                <div className={styles.transactionInfo}>
-                                    <div className={styles.transactionType}>Initial Deposit</div>
-                                    <div className={styles.transactionDate}>2024-01-15</div>
+                            {transactionsLoading ? (
+                                <div className={styles.transactionItem}>
+                                    <div className={styles.transactionInfo}>
+                                        <div className={styles.transactionType}>Loading transactions...</div>
+                                    </div>
                                 </div>
-                                <div className={`${styles.transactionAmount} ${styles.positive}`}>
-                                    +{walletBalance.toFixed(8)} BTC
+                            ) : transactions.length > 0 ? (
+                                getSortedTransactions(transactions).slice(0, 10).map((transaction, index) => {
+                                    const currentUserId = userId;
+                                    const transactionType = getTransactionType(transaction, currentUserId);
+                                    const otherParty = getOtherParty(transaction, currentUserId);
+                                    const { amount, isPositive, displayAmount } = getTransactionAmount(transaction, currentUserId);
+                                    const direction = getTransactionDirection(transaction, currentUserId);
+                                    
+                                    return (
+                                        <div key={transaction._id || index} className={styles.transactionItem}>
+                                            <div className={styles.transactionInfo}>
+                                                <div className={styles.transactionHeader}>
+                                                    <div className={styles.transactionType}>
+                                                        <i className={`fas ${
+                                                            transaction.dealId ? 'fa-handshake' : 
+                                                            direction === 'incoming' ? 'fa-arrow-down' : 'fa-arrow-up'
+                                                        }`} style={{ marginRight: '0.5rem' }}></i>
+                                                        {transactionType}
+                                                    </div>
+                                                    {transaction.dealId && (
+                                                        <div className={styles.dealBadge}>
+                                                            <i className="fas fa-link"></i>
+                                                            Loan Deal
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className={styles.transactionDetails}>
+                                                    <div className={styles.transactionDate}>
+                                                        {new Date(transaction.createdAt || transaction.date || transaction.timestamp).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </div>
+                                                    {otherParty !== 'Unknown' && (
+                                                        <div className={styles.otherParty}>
+                                                            {direction === 'incoming' ? 'From: ' : 'To: '}
+                                                            <span className={styles.partyEmail}>{otherParty}</span>
+                                                        </div>
+                                                    )}
+                                                    {transaction.description && (
+                                                        <div className={styles.transactionDescription}>
+                                                            {transaction.description}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className={styles.transactionAmountSection}>
+                                                <div className={`${styles.transactionAmount} ${
+                                                    isPositive ? styles.positive : styles.negative
+                                                }`}>
+                                                    {displayAmount} BTC
+                                                </div>
+                                                {transaction.dealId && (
+                                                    <div className={styles.dealId}>
+                                                        Deal: {transaction.dealId.slice(-6)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className={styles.transactionItem}>
+                                    <div className={styles.transactionInfo}>
+                                        <div className={styles.transactionType}>No transactions yet</div>
+                                        <div className={styles.transactionDate}>Start by making a deposit!</div>
+                                    </div>
+                                    <div className={styles.transactionAmount}>
+                                        --
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={styles.transactionItem}>
-                                <div className={styles.transactionInfo}>
-                                    <div className={styles.transactionType}>Loan Interest</div>
-                                    <div className={styles.transactionDate}>2024-01-10</div>
-                                </div>
-                                <div className={`${styles.transactionAmount} ${styles.positive}`}>
-                                    +0.00125000 BTC
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                     {/* Deposit Modal */}
