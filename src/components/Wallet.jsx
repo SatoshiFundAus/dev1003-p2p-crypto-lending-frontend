@@ -243,7 +243,7 @@ function Wallet() {
 
             } else if (response.status === 409) {
                 // Funds in wallet still
-                toast.warning('There are still funds in your wallet, withdraw them first')
+                toast.warning('Please withdraw all funds before deleting your wallet.')
 
             } else if (response.status === 404) {
                 const responseText = await response.text();
