@@ -23,6 +23,7 @@ function Wallet() {
     const [withdrawWalletModal, setWithdrawWalletModal] = useState(false);
     const [transactions, setTransactions] = useState([])
     const [transactionsLoading, setTransactionsLoading] = useState(false)
+    const [collateral, setCollateral] = useState(0)
 
     const [btcPrice, setBtcPrice] = useState(null);
     const [priceLastUpdated, setPriceLastUpdated] = useState(null);
@@ -33,16 +34,6 @@ function Wallet() {
     const [sessionExpired, setSessionExpired] = useState(false);
     const [redirectCountdown, setRedirectCountdown] = useState(3);
     const hasShownWalletMessage = useRef(false);
-
-
-    //Updated userId whenever userId changes
-    useEffect(() => {
-        console.log('UserId state updated to:', userId);
-        console.log('UserId type:', typeof userId);
-        if (typeof userId === 'object') {
-            console.log('UserId object contents:', userId);
-        }
-    }, [userId]); // This runs whenever userId changes
 
 
     // Creating a seperate authenticated helper function to keep the code DRY
@@ -260,7 +251,50 @@ function Wallet() {
                     }
                 }
 
+                // Fetching Collateral Amount
+                if (currentUserId) {
+                    setTransactionsLoading(true);
+                    try {
+                        const collateralRes = await fetch(`${BACKEND_URL}/collateral`, {
+                            headers,
+                            credentials: 'include'
+                        });
 
+                        if (collateralRes.ok) {
+                            const collateralData = await collateralRes.json();
+                            
+                            let collateralAmount = 0;
+                            if (Array.isArray(collateralData)) {
+                                // It's an array - sum up all the amounts
+                                collateralAmount = collateralData.reduce((total, item) => {
+
+                                    const itemAmount = item.amount || 0;
+                                    return total + itemAmount
+                                }, 0);
+
+                            } else {
+                                collateralAmount = collateralData?.amount || 0;
+                            }
+
+
+                            setCollateral(collateralAmount)
+
+                        } else if (collateralRes.status === 404) {
+                            console.info("No collateral is held for this user")
+                            setCollateral(0)
+                        } else if (collateralRes.status === 401) {
+                            localStorage.removeItem('token');
+                            toast.error('You need to log in again');
+                            navigate('/login')
+                        }
+
+                    } catch (err) {
+                        console.log("An error has occured fetching Collateral Data: ", err)
+                        toast.error("An error has occured fetching collateral data")
+                    } finally {
+                        setTransactionsLoading(false)
+                    }
+                }
 
 
             } catch (err) {
@@ -390,7 +424,7 @@ function Wallet() {
     const refetchTransactions = async () => {
         try {
             const { headers, userId: currentUserId } = await getAuthenticatedRequest();
-            
+
             if (currentUserId) {
                 setTransactionsLoading(true);
                 const transactionRes = await fetch(`${BACKEND_URL}/transactions/user/${currentUserId}`, {
@@ -443,7 +477,7 @@ function Wallet() {
                 setDepositAmount('');
                 setDepositWalletModal(false);
                 toast.success(`Successfully deposited ₿${depositAmount} to your wallet!`);
-                
+
                 // Refresh transactions to show the new deposit
                 await refetchTransactions();
 
@@ -451,7 +485,7 @@ function Wallet() {
                 localStorage.removeItem('token');
                 toast.error('Session expired. Please log in again');
                 navigate('/login');
-            
+
             } else if (response.status === 404) {
                 toast.error("You don't have a wallet yet. Please create one first.");
                 setDepositWalletModal(false);
@@ -508,7 +542,7 @@ function Wallet() {
                 setWithdrawAmount('');
                 setWithdrawWalletModal(false);
                 toast.success(`Successfully withdrew ₿${withdrawAmount} from your wallet!`);
-                
+
                 // Refresh transactions to show the new withdrawal
                 await refetchTransactions();
 
@@ -590,10 +624,10 @@ function Wallet() {
     // Add helper functions
     const getTransactionDirection = (transaction, currentUserId) => {
         if (!transaction.fromUser || !transaction.toUser) return 'Unknown';
-        
+
         const fromUserId = transaction.fromUser._id || transaction.fromUser;
         const toUserId = transaction.toUser._id || transaction.toUser;
-        
+
         if (fromUserId === currentUserId) return 'outgoing';
         if (toUserId === currentUserId) return 'incoming';
         return 'unknown';
@@ -601,7 +635,7 @@ function Wallet() {
 
     const getOtherParty = (transaction, currentUserId) => {
         const direction = getTransactionDirection(transaction, currentUserId);
-        
+
         if (direction === 'outgoing') {
             return transaction.toUser?.email || transaction.toUser?.name || 'Unknown User';
         } else if (direction === 'incoming') {
@@ -612,7 +646,7 @@ function Wallet() {
 
     const getTransactionType = (transaction, currentUserId) => {
         const direction = getTransactionDirection(transaction, currentUserId);
-        
+
         // Check if it's a loan-related transaction
         if (transaction.dealId) {
             if (direction === 'outgoing') {
@@ -621,14 +655,14 @@ function Wallet() {
                 return transaction.isLoanRepayment ? 'Repayment Received' : 'Loan Received';
             }
         }
-        
+
         // Regular wallet transactions
         if (direction === 'outgoing') {
             return transaction.isWithdrawal ? 'Withdrawal' : 'Transfer Out';
         } else if (direction === 'incoming') {
             return transaction.isDeposit ? 'Deposit' : 'Transfer In';
         }
-        
+
         // Fallback
         return transaction.type || (transaction.amount > 0 ? 'Credit' : 'Debit');
     };
@@ -636,7 +670,7 @@ function Wallet() {
     const getTransactionAmount = (transaction, currentUserId) => {
         const direction = getTransactionDirection(transaction, currentUserId);
         const amount = Math.abs(transaction.amount || 0);
-        
+
         return {
             amount,
             isPositive: direction === 'incoming',
@@ -649,7 +683,7 @@ function Wallet() {
         return [...transactions].sort((a, b) => {
             const dateA = new Date(a.createdAt || a.date || a.timestamp || 0);
             const dateB = new Date(b.createdAt || b.date || b.timestamp || 0);
-            
+
             // Sort in descending order (most recent first)
             return dateB - dateA;
         });
@@ -701,11 +735,11 @@ function Wallet() {
                             <div className={styles.statLabel}>Active Loans</div>
                         </div>
                         <div className={styles.statItem}>
-                            <div className={styles.statValue}>12</div>
+                            <div className={styles.statValue}>{transactions.length}</div>
                             <div className={styles.statLabel}>Transactions</div>
                         </div>
                         <div className={styles.statItem}>
-                            <div className={styles.statValue}>0.00</div>
+                            <div className={styles.statValue}>{collateral} BTC</div>
                             <div className={styles.statLabel}>Locked Funds</div>
                         </div>
                         <div className={styles.statItem}>
@@ -780,16 +814,15 @@ function Wallet() {
                                     const otherParty = getOtherParty(transaction, currentUserId);
                                     const { amount, isPositive, displayAmount } = getTransactionAmount(transaction, currentUserId);
                                     const direction = getTransactionDirection(transaction, currentUserId);
-                                    
+
                                     return (
                                         <div key={transaction._id || index} className={styles.transactionItem}>
                                             <div className={styles.transactionInfo}>
                                                 <div className={styles.transactionHeader}>
                                                     <div className={styles.transactionType}>
-                                                        <i className={`fas ${
-                                                            transaction.dealId ? 'fa-handshake' : 
+                                                        <i className={`fas ${transaction.dealId ? 'fa-handshake' :
                                                             direction === 'incoming' ? 'fa-arrow-down' : 'fa-arrow-up'
-                                                        }`} style={{ marginRight: '0.5rem' }}></i>
+                                                            }`} style={{ marginRight: '0.5rem' }}></i>
                                                         {transactionType}
                                                     </div>
                                                     {transaction.dealId && (
@@ -823,9 +856,8 @@ function Wallet() {
                                                 </div>
                                             </div>
                                             <div className={styles.transactionAmountSection}>
-                                                <div className={`${styles.transactionAmount} ${
-                                                    isPositive ? styles.positive : styles.negative
-                                                }`}>
+                                                <div className={`${styles.transactionAmount} ${isPositive ? styles.positive : styles.negative
+                                                    }`}>
                                                     {displayAmount} BTC
                                                 </div>
                                                 {transaction.dealId && (
