@@ -74,7 +74,7 @@ const InterestTerms = () => {
                 <thead>
                   <tr>
                     <th>Term</th>
-                    <th>Interest Rate</th>
+                    <th>Interest Rate P.A.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,7 +88,7 @@ const InterestTerms = () => {
               </table>
             </div>
             <div className={styles.note}>
-              All loans are subject to monthly interest repayments.
+              All loans are subject to monthly interest repayments. Interest rates are per annum.
             </div>
           </div>
         </div>
