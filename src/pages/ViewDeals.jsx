@@ -8,6 +8,22 @@ import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
+function maskEmail(email) {
+    if (!email) return '';
+    const [user, domainFull] = email.split('@');
+    const [domain, ...tldParts] = domainFull.split('.');
+    const tld = tldParts.length ? '.' + tldParts.join('.') : '';
+    const maskedUser = user.slice(0, 2) + '*'.repeat(Math.max(1, user.length - 2));
+    const maskedDomain = domain.slice(0, 2) + '*'.repeat(Math.max(1, domain.length - 2));
+    return maskedUser + '@' + maskedDomain + tld;
+}
+
+// Add a maskId function for masking borrowerId
+function maskId(id) {
+    if (!id) return '';
+    return id.slice(0, 2) + '*'.repeat(Math.max(1, id.length - 4)) + id.slice(-2);
+}
+
 const ViewDeals = () => {
     const navigate = useNavigate();
     const [deals, setDeals] = useState([]);
@@ -87,9 +103,10 @@ const ViewDeals = () => {
 
                 // Transform the data for display - handle both API response formats
                 const transformedDeals = uniqueDeals.map((deal, index) => {
+                    console.log('Deal object:', deal); // Inspect deal structure for borrower email
                     return {
                         id: deal._id || deal.dealId || `temp-${index}`,
-                        borrowerId: deal.borrowerEmail || deal.loanDetails?.borrower_id || 'N/A',
+                        borrowerId: deal.loanDetails?.borrower_id || '',
                         lenderEmail: deal.lenderEmail || deal.lenderId?.email || 'N/A',
                         amount: deal.amount || deal.loanDetails?.request_amount || 0,
                         status: deal.dealStatus || deal.loanDetails?.status || 'active',
@@ -219,7 +236,7 @@ const ViewDeals = () => {
                                                 Borrower
                                             </span>
                                             <span className={styles.value}>
-                                                {deal.borrowerId || 'N/A'}
+                                                {deal.borrowerId ? maskId(deal.borrowerId) : 'N/A'}
                                             </span>
                                         </div>
 
@@ -229,7 +246,7 @@ const ViewDeals = () => {
                                                 Lender
                                             </span>
                                             <span className={styles.value}>
-                                                {deal.lenderEmail || 'N/A'}
+                                                {deal.lenderEmail ? maskEmail(deal.lenderEmail) : 'N/A'}
                                             </span>
                                         </div>
 
