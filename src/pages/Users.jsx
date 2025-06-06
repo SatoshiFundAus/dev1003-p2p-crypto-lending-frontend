@@ -185,9 +185,7 @@ function Users() {
             });
 
             if (response.ok) {
-                const updatedUser = await response.json();
-
-                //Update the user in local state
+                // Update the user in local state
                 setUsers(prevUsers =>
                     prevUsers.map(user =>
                         user.id === editingUser.id
