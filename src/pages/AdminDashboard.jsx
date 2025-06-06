@@ -32,7 +32,6 @@ const AdminDashboard = () => {
 
                 // Get stored user data
                 const token = localStorage.getItem('token');
-                const userEmail = localStorage.getItem('userEmail');
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 
@@ -119,7 +118,7 @@ const AdminDashboard = () => {
                     }
                 } catch (err) {
                     console.log('Error fetching total collateral value:', err.message);
-                    setError('An error occured while loading Collateral Value')
+                    setError('An error occurred while loading Collateral Value')
                     totalCollateralValue = 2500000;
                 }
 
