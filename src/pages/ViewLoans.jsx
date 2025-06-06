@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import styles from './ViewLoans.module.css';
-import loadingStyles from './Loading.module.css';
-import { default as DashboardHeader } from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/ViewLoans.module.css';
+import loadingStyles from '../styles/Loading.module.css';
+import { default as DashboardHeader } from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 
 const columns = [

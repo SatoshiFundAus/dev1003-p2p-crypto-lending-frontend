@@ -1,9 +1,9 @@
 import React from 'react';
-import styles from './LoginRegisterPage.module.css';
-import LoginRegister from './LoginRegister';
+import styles from '../styles/LoginRegisterPage.module.css';
+import LoginRegister from '../components/LoginRegister';
 import { useNavigate } from 'react-router-dom';
-import Logo from './Logo';
-import Footer from './Footer';
+import Logo from '../components/Logo';
+import Footer from '../components/Footer';
 
 function LoginRegisterPage(props) {
     const navigate = useNavigate();

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import styles from './LoginRegisterPage.module.css'
+import styles from '../styles/LoginRegisterPage.module.css'
 
 // Tutorial Modal Component (Note: Capital T for TutorialModal)
 function TutorialModal({ isOpen, onClose, onComplete }) {

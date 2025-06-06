@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import styles from './LandingPage.module.css';
+import styles from '../styles/LandingPage.module.css';
 import BTCPrice from './BitcoinLivePrice';
 import Logo from './Logo';
 

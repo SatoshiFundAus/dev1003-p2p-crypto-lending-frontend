@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from './RequestLoan.module.css';
-import loadingStyles from './Loading.module.css';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/RequestLoan.module.css';
+import loadingStyles from '../styles/Loading.module.css';
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 
 const RequestLoan = () => {

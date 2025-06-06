@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import styles from './InterestTerms.module.css';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/InterestTerms.module.css';
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 
 const Cryptocurrencies = () => {
   const [cryptos, setCryptos] = useState(null);

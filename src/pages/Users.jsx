@@ -1,7 +1,7 @@
-import DashboardHeader from './DashboardHeader';
+import DashboardHeader from '../components/DashboardHeader';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './AdminDashboard.module.css';
+import styles from '../styles/AdminDashboard.module.css';
 import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';

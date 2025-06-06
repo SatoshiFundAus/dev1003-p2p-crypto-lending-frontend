@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
-import styles from './DealDetails.module.css'; // Use dedicated styles
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
+import styles from '../styles/DealDetails.module.css'; // Use dedicated styles
 import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';

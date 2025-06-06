@@ -1,5 +1,5 @@
 import { useNavigate, NavLink } from 'react-router-dom';
-import styles from './DashboardHeader.module.css';
+import styles from '../styles/DashboardHeader.module.css';
 import Logo from './Logo';
 import { useState, useEffect } from 'react';
 

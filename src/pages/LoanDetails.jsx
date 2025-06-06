@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import styles from './LoanDetails.module.css';
-import Footer from './Footer';
-import DashboardHeader from './DashboardHeader';
+import styles from '../styles/LoanDetails.module.css';
+import Footer from '../components/Footer';
+import DashboardHeader from '../components/DashboardHeader';
 
 function maskName(name) {
   if (!name) return '';

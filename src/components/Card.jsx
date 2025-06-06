@@ -1,4 +1,4 @@
-import styles from './LandingPage.module.css'
+import styles from '../styles/LandingPage.module.css'
 
 function Card(props) {
     return (
