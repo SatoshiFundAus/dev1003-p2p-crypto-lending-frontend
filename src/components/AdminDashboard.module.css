@@ -398,6 +398,115 @@
     animation: spin 1s linear infinite;
 }
 
+/* Checkbox Styles */
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+    appearance: none;
+    position: relative;
+}
+
+.checkbox:checked {
+    background-color: #f7931a;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox:focus {
+    outline: none;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.checkboxText {
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.helpText {
+    color: #6b7280;
+    font-size: 0.825rem;
+    font-style: italic;
+    margin-top: 0.25rem;
+    margin-left: 0;
+    display: block;
+}
+
+/* Form Input Styles */
+.formInput {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 4px rgba(247, 147, 26, 0.1);
+}
+
+/* Primary Button Style for Update User */
+.modalActions .actionButton.primary {
+    background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+    color: white;
+    border: 2px solid #f7931a;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+}
+
+.modalActions .actionButton.primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e8831a 0%, #f7931a 100%);
+    border-color: #e8831a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(247, 147, 26, 0.3);
+}
+
+.modalActions .actionButton.primary:disabled {
+    background: #d1d5db;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    transform: none;
+    box-shadow: none;
+}
 
 /* Tablets (768px - 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
