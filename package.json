@@ -10,6 +10,12 @@
     "preview": "vite preview",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
+  "author": "Tyson Williams & Adrian Gidaro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend/issues"
+  },
+  "homepage": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend#readme",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "react": "^19.1.0",
