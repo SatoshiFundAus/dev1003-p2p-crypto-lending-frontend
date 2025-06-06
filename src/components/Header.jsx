@@ -8,14 +8,20 @@ function Header() {
 
     return (
         <header className={styles.navbar}>
-            <Logo />
-            <BTCPrice />
-            <button
-                className={styles.loginBtn}
-                onClick={() => navigate('/login')}
-            >
-                Login
-            </button>
+            <div className={styles.navbarLeft}>
+                <Logo />
+            </div>
+            <div className={styles.navbarCenter}>
+                <BTCPrice />
+            </div>
+            <div className={styles.navbarRight}>
+                <button
+                    className={styles.loginBtn}
+                    onClick={() => navigate('/login')}
+                >
+                    Login
+                </button>
+            </div>
         </header>
     )
 }
