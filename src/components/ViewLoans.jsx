@@ -156,18 +156,18 @@ const ViewLoans = () => {
 
   if (loading) {
     return (
-        <div className={loadingStyles.mainContainer}>
-            <DashboardHeader userEmail={userEmail} />
-            <main>
-                <div className={loadingStyles.container}>
-                    <div className={loadingStyles.spinner}></div>
-                    <div className={loadingStyles.text}>Loading loans...</div>
-                </div>
-            </main>
-            <Footer />
-        </div>
+      <div className={loadingStyles.mainContainer}>
+        <DashboardHeader userEmail={userEmail} />
+        <main>
+          <div className={loadingStyles.container}>
+            <div className={loadingStyles.spinner}></div>
+            <div className={loadingStyles.text}>Loading loans...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
     )
-}
+  }
 
   if (error) {
     return (

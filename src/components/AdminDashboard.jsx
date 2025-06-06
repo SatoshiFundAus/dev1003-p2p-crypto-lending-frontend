@@ -4,6 +4,7 @@ import styles from './AdminDashboard.module.css';
 import loadingStyles from './Loading.module.css';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
+import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -33,13 +34,6 @@ const AdminDashboard = () => {
                 const userEmail = localStorage.getItem('userEmail');
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-                // Debug log to check token value
-                console.log('Current auth state:', {
-                    hasToken: !!token,
-                    tokenValue: token,
-                    isAdmin: isAdmin,
-                    email: userEmail
-                });
 
                 if (!token || !isAdmin) {
                     console.log('Not authenticated or not admin:', { token: !!token, isAdmin });
@@ -66,13 +60,7 @@ const AdminDashboard = () => {
                     })
                 ]);
 
-                // Check if either request failed
                 if (!completedRes.ok || !activeRes.ok) {
-                    // Log response details for debugging
-                    console.log('Response details:', {
-                        completedStatus: completedRes.status,
-                        activeStatus: activeRes.status
-                    });
 
                     // If unauthorized, redirect to login
                     if (completedRes.status === 401 || activeRes.status === 401) {
@@ -105,8 +93,7 @@ const AdminDashboard = () => {
                         console.log('Average interest rate fetched:', avgInterestRate);
                     } else {
                         console.log('Average interest rate endpoint not available yet (Status:', avgInterestRes.status, ')');
-                        // TODO: Remove this fallback once backend endpoint is implemented
-                        avgInterestRate = 12.5; // Temporary fallback
+                        toast.error('Error trying to fetch data')
                     }
                 } catch (err) {
                     console.log('Average interest rate endpoint not implemented yet:', err.message);
@@ -127,21 +114,13 @@ const AdminDashboard = () => {
                         console.log('Total collateral value fetched:', totalCollateralValue);
                     } else {
                         console.log('Total collateral endpoint not available yet (Status:', totalCollateralRes.status, ')');
-                        // TODO: Remove this fallback once backend endpoint is implemented
-                        totalCollateralValue = 2500000; // Temporary fallback
+                        
                     }
                 } catch (err) {
                     console.log('Error fetching total collateral value:', err.message);
                     setError('An error occured while loading Collateral Value')
                     totalCollateralValue = 2500000;
                 }
-
-                console.log('Deals data:', {
-                    completed: completedData,
-                    active: activeData,
-                    avgInterest: avgInterestRate,
-                    totalCollateral: totalCollateralValue
-                });
 
                 setStats(prevStats => ({
                     ...prevStats,
@@ -162,19 +141,19 @@ const AdminDashboard = () => {
 
                     if (loansRes.ok) {
                         const activeDealsData = await loansRes.json();
-                        console.log('Active data fetched:', activeDealsData);
 
                         // Transform the backend data to match our frontend table structure
-                        loansData = activeDealsData.map(deal => ({
-                            id: deal.dealId,
-                            borrower: deal.borrowerEmail,
-                            lender: deal.lenderEmail,
-                            amount: deal.amount,
-                            status: deal.dealStatus,
-                            expectedCompletion: deal.expectedCompletionDate
-                        }))
+                        loansData = activeDealsData.map(deal => {
+                            return {
+                                id: deal.dealId,
+                                borrower: deal.borrowerEmail,
+                                lender: deal.lenderEmail,
+                                amount: deal.amount,
+                                status: deal.dealStatus,
+                                expectedCompletion: deal.expectedCompletionDate
+                            }
+                        })
 
-                        console.log('Processed loans data:', loansData);
                     } else {
                         console.log('Active deals endpoint not available yet (Status:', loansRes.status, ')');
                     }
@@ -199,7 +178,6 @@ const AdminDashboard = () => {
             } catch (err) {
                 console.error('Error fetching admin data:', err);
                 setError(err.message);
-                // Set fallback data
                 setStats({
                     totalLoansFunded: 0,
                     activeLoans: 0,
@@ -231,7 +209,7 @@ const AdminDashboard = () => {
         return <div className={styles.loading}>Loading...</div>;
     }
 
-    // Try and develop a constant that will activate when the flag suspicious accounts button is pressed
+    // Flag Suspicious Accounts under development
     const buttonDevelopment = () => {
         setUnderDevelopment(true)
     }
@@ -351,7 +329,7 @@ const AdminDashboard = () => {
                                             {/* Currently the button is not correctly loading the loan*/}
                                             <button
                                                 className={styles.viewButton}
-                                                onClick={() => navigate(`/view-loans/${loan.id}`)}
+                                                onClick={() => navigate(`/deals/${loan.id}`)}
                                             >
                                                 View Details
                                             </button>
