@@ -7,6 +7,7 @@ import LoginRegisterPage from './components/LoginRegisterPage';
 import InterestTerms from './components/InterestTerms';
 import RequestLoan from './components/RequestLoan';
 import Dashboard from './components/Dashboard';
+import DealDetails from './components/DealDetails';
 import ViewLoans from './components/ViewLoans';
 import LoanDetails from './components/LoanDetails';
 import Cryptocurrencies from './components/Cryptocurrencies';
@@ -27,6 +28,7 @@ function App() {
         <Route path="/request-loan" element={<RequestLoan />} />
         <Route path="/view-loans" element={<ViewLoans />} />
         <Route path="/view-loans/:loanId" element={<LoanDetails />} />
+        <Route path="/deals/:dealId" element={<DealDetails />} />
         <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />

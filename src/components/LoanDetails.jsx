@@ -129,7 +129,7 @@ const LoanDetails = () => {
         }
         throw new Error(errorMessage);
       }
-      setFundSuccess('Loan funded!');
+      setFundSuccess('Loan funded successfully!');
 
     } catch (err) {
       console.error('Funding error:', err);
@@ -146,7 +146,74 @@ const LoanDetails = () => {
   } else if (loan?.borrower_id?.email) {
     userDisplay = maskEmail(loan.borrower_id.email);
   } else {
-    userDisplay = 'User';
+    userDisplay = 'Anonymous User';
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+        <main className={styles.main}>
+          <div className={styles.content}>
+            <div className={styles.loadingContainer}>
+              <div className={styles.spinner}></div>
+              <div className={styles.loadingText}>Loading loan details...</div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+        <main className={styles.main}>
+          <div className={styles.content}>
+            <button
+              onClick={() => navigate('/view-loans')}
+              className={styles.backButton}
+            >
+              <i className="fas fa-arrow-left"></i>
+              Back to Browse Loans
+            </button>
+            <div className={styles.errorCard}>
+              <i className="fas fa-exclamation-triangle"></i>
+              <h3>Error Loading Loan</h3>
+              <p>{error}</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!loan) {
+    return (
+      <div className={styles.container}>
+        <DashboardHeader userEmail={userEmail} onLogout={handleLogout} />
+        <main className={styles.main}>
+          <div className={styles.content}>
+            <button
+              onClick={() => navigate('/view-loans')}
+              className={styles.backButton}
+            >
+              <i className="fas fa-arrow-left"></i>
+              Back to Browse Loans
+            </button>
+            <div className={styles.notFoundCard}>
+              <i className="fas fa-search"></i>
+              <h3>Loan Not Found</h3>
+              <p>This loan request may have been removed or is no longer available.</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -156,63 +223,231 @@ const LoanDetails = () => {
         <div className={styles.content}>
           <button
             onClick={() => navigate('/view-loans')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#f7931a',
-              fontWeight: 600,
-              fontSize: '1.05rem',
-              cursor: 'pointer',
-              padding: 0,
-              marginBottom: '1.2rem',
-              textDecoration: 'underline',
-              display: 'block',
-              textAlign: 'left',
-            }}
-            aria-label="Back to Browse Loans"
+            className={styles.backButton}
           >
-            &larr; Back to Browse Loans
+            <i className="fas fa-arrow-left"></i>
+            Back to Browse Loans
           </button>
+          
           {fundError && (
-            <div className={styles.error}>
-              {fundError}
-              {showWalletButton && (
-                <div style={{ marginTop: '1rem' }}>
-                  <button 
-                    onClick={() => navigate('/wallet')}
-                    className={styles.walletButton}
-                  >
-                    Go to Wallet
-                  </button>
+            <div className={styles.alertCard}>
+              <div className={styles.alertContent}>
+                <i className="fas fa-exclamation-triangle"></i>
+                <div>
+                  <h4>Funding Error</h4>
+                  <p>{fundError}</p>
+                  {showWalletButton && (
+                    <button 
+                      onClick={() => navigate('/wallet')}
+                      className={styles.walletButton}
+                    >
+                      <i className="fas fa-wallet"></i>
+                      Go to Wallet
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           )}
-          {fundSuccess && <div className={styles.success}>{fundSuccess}</div>}
-          {loading ? (
-            <div className={styles.loading}>Loading...</div>
-          ) : error ? (
-            <div className={styles.error}>Error: {error}</div>
-          ) : !loan ? (
-            <div className={styles.notFound}>Loan not found.</div>
-          ) : (
-            <div className={styles.loanCard}>
-              <h1 className={styles.title}>Loan Details</h1>
-              <div className={styles.detailRow}><span className={styles.label}>User:</span> {userDisplay}</div>
-              <div className={styles.detailRow}><span className={styles.label}>Currency:</span> {loan.cryptocurrency ? `${loan.cryptocurrency.name} (${loan.cryptocurrency.symbol})` : ''}</div>
-              <div className={styles.detailRow}><span className={styles.label}>Amount:</span> {loan.request_amount}</div>
-              <div className={styles.detailRow}><span className={styles.label}>Term:</span> {loan.interest_term ? `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''} / ${loan.interest_term.interest_rate}%` : ''}</div>
-              <div className={styles.detailRow}><span className={styles.label}>Expiry:</span> {loan.expiry_date ? new Date(loan.expiry_date).toLocaleDateString() : ''}</div>
-              <div className={styles.detailRow}><span className={styles.label}>Status:</span> {loan.status.charAt(0).toUpperCase() + loan.status.slice(1)}</div>
-              {loan.status === 'pending' && (
-                <button
-                  className={styles.fundBtn}
-                  onClick={handleFundLoan}
-                  disabled={funding}
-                >
-                  {funding ? 'Funding...' : 'Fund Loan'}
-                </button>
-              )}
+          
+          {fundSuccess && (
+            <div className={styles.successCard}>
+              <div className={styles.alertContent}>
+                <i className="fas fa-check-circle"></i>
+                <div>
+                  <h4>Success!</h4>
+                  <p>{fundSuccess}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.headerCard}>
+            <div className={styles.loanHeader}>
+              <div className={styles.titleSection}>
+                <h1 className={styles.title}>
+                  <i className="fas fa-hand-holding-usd"></i>
+                  Loan Request Details
+                </h1>
+                <div className={styles.loanId}>ID: {loan._id}</div>
+              </div>
+              <div className={styles.statusBadge}>
+                <span className={`${styles.status} ${styles[loan.status?.toLowerCase()]}`}>
+                  {loan.status?.charAt(0).toUpperCase() + loan.status?.slice(1)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.detailsGrid}>
+            {/* Borrower Information Card */}
+            <div className={styles.detailCard}>
+              <div className={styles.cardHeader}>
+                <i className="fas fa-user"></i>
+                <h3>Borrower Information</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-user-circle"></i>
+                    Borrower
+                  </span>
+                  <span className={styles.value}>{userDisplay}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-calendar-alt"></i>
+                    Request Date
+                  </span>
+                  <span className={styles.value}>
+                    {loan.request_date ? 
+                      new Date(loan.request_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      }) : 'N/A'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Financial Details Card */}
+            <div className={styles.detailCard}>
+              <div className={styles.cardHeader}>
+                <i className="fab fa-bitcoin"></i>
+                <h3>Financial Details</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-coins"></i>
+                    Amount Requested
+                  </span>
+                  <span className={styles.value}>₿{loan.request_amount}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-money-bill-wave"></i>
+                    Cryptocurrency
+                  </span>
+                  <span className={styles.value}>
+                    {loan.cryptocurrency ? 
+                      `${loan.cryptocurrency.name} (${loan.cryptocurrency.symbol})` : 
+                      'N/A'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Loan Terms Card */}
+            <div className={styles.detailCard}>
+              <div className={styles.cardHeader}>
+                <i className="fas fa-percentage"></i>
+                <h3>Loan Terms</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-clock"></i>
+                    Duration
+                  </span>
+                  <span className={styles.value}>
+                    {loan.interest_term ? 
+                      `${loan.interest_term.loan_length} month${loan.interest_term.loan_length > 1 ? 's' : ''}` : 
+                      'N/A'
+                    }
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-chart-line"></i>
+                    Interest Rate
+                  </span>
+                  <span className={styles.value}>
+                    {loan.interest_term ? 
+                      `${loan.interest_term.interest_rate}%` : 
+                      'N/A'
+                    }
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-calendar-times"></i>
+                    Expiry Date
+                  </span>
+                  <span className={styles.value}>
+                    {loan.expiry_date ? 
+                      new Date(loan.expiry_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      }) : 'N/A'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Status Information Card */}
+            <div className={styles.detailCard}>
+              <div className={styles.cardHeader}>
+                <i className="fas fa-info-circle"></i>
+                <h3>Status Information</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-flag"></i>
+                    Current Status
+                  </span>
+                  <span className={styles.value}>
+                    <span className={`${styles.statusIndicator} ${styles[loan.status?.toLowerCase()]}`}>
+                      {loan.status?.charAt(0).toUpperCase() + loan.status?.slice(1)}
+                    </span>
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>
+                    <i className="fas fa-handshake"></i>
+                    Availability
+                  </span>
+                  <span className={`${styles.value} ${loan.status === 'pending' ? styles.successText : styles.warningText}`}>
+                    {loan.status === 'pending' ? 'Available for Funding' : 'Not Available'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          {loan.status === 'pending' && (
+            <div className={styles.actionSection}>
+              <button
+                className={styles.primaryButton}
+                onClick={handleFundLoan}
+                disabled={funding}
+              >
+                {funding ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Funding...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-hand-holding-usd"></i>
+                    Fund This Loan
+                  </>
+                )}
+              </button>
+              <button
+                className={styles.secondaryButton}
+                onClick={() => navigate('/view-loans')}
+              >
+                <i className="fas fa-arrow-left"></i>
+                Back to Browse
+              </button>
             </div>
           )}
         </div>

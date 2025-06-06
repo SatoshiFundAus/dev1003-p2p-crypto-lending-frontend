@@ -165,14 +165,18 @@ const AdminDashboard = () => {
                         console.log('Active data fetched:', activeDealsData);
 
                         // Transform the backend data to match our frontend table structure
-                        loansData = activeDealsData.map(deal => ({
-                            id: deal.dealId,
-                            borrower: deal.borrowerEmail,
-                            lender: deal.lenderEmail,
-                            amount: deal.amount,
-                            status: deal.dealStatus,
-                            expectedCompletion: deal.expectedCompletionDate
-                        }))
+                        loansData = activeDealsData.map(deal => {
+                            console.log('Deal data strucutre:', deal);
+                            console.log('Deal keys:', Object.keys(deal));
+                            return {
+                                id: deal.dealId,
+                                borrower: deal.borrowerEmail,
+                                lender: deal.lenderEmail,
+                                amount: deal.amount,
+                                status: deal.dealStatus,
+                                expectedCompletion: deal.expectedCompletionDate
+                            }
+                        })
 
                         console.log('Processed loans data:', loansData);
                     } else {
@@ -351,7 +355,7 @@ const AdminDashboard = () => {
                                             {/* Currently the button is not correctly loading the loan*/}
                                             <button
                                                 className={styles.viewButton}
-                                                onClick={() => navigate(`/view-loans/${loan.id}`)}
+                                                onClick={() => navigate(`/deals/${loan.id}`)}
                                             >
                                                 View Details
                                             </button>
