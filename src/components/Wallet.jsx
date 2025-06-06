@@ -305,7 +305,7 @@ function Wallet() {
 
         fetchWalletData();
         fetchOtherData();
-    }, []);
+    }, [navigate]);
 
 
 
