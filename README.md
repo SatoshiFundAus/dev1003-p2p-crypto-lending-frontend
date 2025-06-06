@@ -1,82 +1,310 @@
 # P2P Crypto Lending Frontend
 
-A modern, responsive frontend for the SatoshiFund peer-to-peer cryptocurrency lending platform, built with React.
+A responsive and modular React frontend for the SatoshiFund peer-to-peer cryptocurrency lending platform, built as part of Coder Academy’s Advanced Applications subject (DEV1003).
+
+---
 
 ## Overview
 
-SatoshiFund’s frontend provides a seamless user experience for lending and borrowing crypto assets, managing wallets, and tracking transactions. The app is designed for clarity, accessibility, and security, integrating tightly with the backend API to deliver real-time data and robust workflows.
-Developed with React, the frontend leverages modular components, secure authentication (via JWT), and modern UI/UX best practices. The platform uses RESTful API calls to interact with the backend and supports all major lending and borrowing features.
+This application allows users to interact with a secure, blockchain-inspired crypto lending service. Users can manage wallets, request and fund loans, and view transactions — all in real time. It integrates with a RESTful backend to provide dynamic, authenticated experiences.
 
-## Features
+### Features
 
-- User Authentication: Secure login and registration with JWT.
-- Wallet Management: View balances, deposit, withdraw, and create/delete wallets.
-- Loan Requests: Request loans with customizable terms and collateral.
-- Lending: Browse, fund, and track loan requests.
-- Transactions: View incoming and outgoing transaction history.
-- Interest Terms: View current loan terms and interest rates.
-- Supported Cryptocurrencies: See which cryptocurrencies are available for lending and borrowing.
-- Responsive Design: Fully responsive for desktop, tablet, and mobile.
-- User-Friendly Error Handling: Clear, actionable error messages throughout the app.
+- 🔐 Authentication: Secure login and registration with JWT.
+- 👛 Wallet Management: View balances, deposit/withdraw funds, and manage wallets.
+- 💸 Loan Lifecycle: Request, browse, and fund loans.
+- 🔄 Transactions: View full transaction history with type and timestamp.
+- 📱 Responsive Design: Fully functional on desktop, tablet and mobile.
+- ⚙️ Error Handling: Graceful, user-friendly feedback for invalid operations.
+- 🧪 Testing: Component-level testing with Jest and React Testing Library.
 
-## Technology Stack
+### Github
+This project can be found on [GitHub at the SatoshiFund organisation repo](https://github.com/orgs/SatoshiFundAus/repositories).
 
-| Category | Tool/Library | Rationale |
-|------------------|----------------------------|--------------------------------------------------------------------------|
-| Frontend | React | Component-based, fast, and widely adopted. |
-| State Management | React Hooks | Simple, local state management. |
-| Routing | React Router | Declarative routing for SPA navigation. |
-| Styling | CSS Modules | Scoped, maintainable styles per component. |
-| Notifications | react-toastify | User-friendly toast notifications. |
-| HTTP Requests | fetch API | Native, promise-based HTTP requests. |
-| Authentication | JWT | Secure, stateless authentication. |
-| Testing | Jest + React Testing Library | Modern, robust testing for React components. |
+### Live Frontend
+The frontend is live and available for use at: [https://satoshifund.netlify.app/](https://satoshifund.netlify.app/)
+
+## API Integration
+This frontend communicates with the SatoshiFund backend via RESTful API endpoints. The backend is currently live and available at: [https://dev1003-p2p-crypto-lending-backend.onrender.com](https://dev1003-p2p-crypto-lending-backend.onrender.com)
+
+### Current Limitations
+While the system provides a complete flow from user registration through deal acceptance and transaction generation, please note the following limitations:
+
+- Loan repayment functionality is not implemented in the current version
+- Real cryptocurrency transactions are not implemented (simulated for demonstration)
+
+### Future Plans
+- Implementation of loan repayment functionality
+- Addition of user hot wallet functionality and real cryptocurrency transaction support, starting with Bitcoin
+- Enhanced security features, appropriate to a web3 decentralised finance platform
+- Comprehensive logging
+- Implementation of rate limiting
+
+---
+
+## Tech Stack
+
+### Core Dependencies
+
+**React (v19.1.0)**  
+A popular JavaScript library for building user interfaces. Chosen for its declarative, component-based architecture and broad industry adoption.
+
+**React DOM (v19.1.0)**  
+Enables rendering of React components into the DOM, managing efficient UI updates through virtual DOM diffing.
+
+**React Router DOM (v7.6.0)**  
+Handles client-side routing within the app, supporting dynamic nested routes and SPA navigation.
+
+**React Toastify (v11.0.5)**  
+Lightweight notification system for displaying toast messages. Used for success/error alerts throughout the app.
+
+**@fortawesome/fontawesome-free (v6.7.2)**  
+Provides scalable vector icons used across the UI to enhance visual clarity and user feedback.
+
+### Development Dependencies
+
+**Vite (v6.3.5)**  
+Next-generation frontend build tool and dev server. Offers lightning-fast HMR, native ES modules, and faster builds compared to Webpack.
+
+**@vitejs/plugin-react (v4.4.1)**  
+Official Vite plugin that enables React Fast Refresh and JSX transformation.
+
+**Jest (v29.7.0) & babel-jest (v30.0.0-beta.3)**  
+Jest serves as the primary testing framework, with Babel support for modern JavaScript and JSX.
+
+**@testing-library/react (v16.3.0) & @testing-library/jest-dom (v6.6.3)**  
+Encourages writing tests that reflect user behavior and accessibility best practices in React components.
+
+**ESLint (v9.25.0)**  
+Linter for JavaScript used to enforce consistent code style. Configured with Airbnb-style conventions and integrated with Prettier.
+
+**Prettier**  
+Code formatter used in conjunction with ESLint to ensure readable, consistent code. Applied via IDE plugins and ESLint rules.
+
+**Babel Presets**  
+Includes `@babel/preset-env` and `@babel/preset-react` to support modern JavaScript and JSX features in the test environment.
+
+**TypeScript Definitions**  
+`@types/react` and `@types/react-dom` provide improved type safety and IDE support, even in a JavaScript-based codebase.
+
+---
+
+## Hardware Requirements
+
+This frontend project is lightweight and optimised for modern development workflows using React and Vite.
+
+### Local Development
+
+- **CPU:** Dual-core processor (Intel i5/Ryzen 3 or equivalent)
+- **RAM:** Minimum 4 GB (8 GB recommended for multitasking)
+- **Disk:** 500 MB free space for node modules and project files
+- **OS:** macOS, Linux, or Windows
+- **Node.js:** v18 or later
+- **Browser:** Chrome, Firefox, or Edge (latest stable release)
+
+### Development/Test Server
+
+- **vCPU:** 1 virtual core (shared or dedicated)
+- **RAM:** 512 MB – 1 GB
+- **Disk:** 1 GB storage for CI/CD artifacts and cache
+- **Node.js Runtime:** v18 or higher
+
+### Production Hosting (Static Frontend)
+
+- **Hosting Platforms:** Netlify (used), Vercel, GitHub Pages, or Cloudflare Pages
+- **RAM:** 128 MB+
+- **vCPU:** Shared CPU sufficient for static site serving
+- **Disk:** 100–300 MB for built static assets
+
+Note: This frontend requires a running backend API for full functionality. CORS and JWT token headers must be correctly configured on the backend.
+
+---
+
+## Code Style
+
+This project uses a custom ESLint configuration built on top of the **ESLint Recommended Rules**, along with plugins tailored for React and modern development best practices.
+
+### Style Guide
+
+- **Base Rules:** Built on [`@eslint/js`](https://eslint.org/docs/latest/use/configure/configuration-files-new#eslintjs) recommended rules
+- **React Hooks:** Enforced with [`eslint-plugin-react-hooks`](https://www.npmjs.com/package/eslint-plugin-react-hooks) to ensure correct hook usage and prevent common mistakes
+- **Vite Integration:** Includes [`eslint-plugin-react-refresh`](https://www.npmjs.com/package/eslint-plugin-react-refresh) to prevent unsafe exports during fast refresh
+- **Globals:** Browser-specific globals enabled via [`globals`](https://www.npmjs.com/package/globals)
+- **Parser:** ECMAScript 2020+ with JSX support
+
+### Key Rules Enforced
+
+- No unused variables (`no-unused-vars`) — ignores variables that match constants or uppercase patterns (e.g. `CAPITAL_CASE`)
+- React hooks rules strictly followed (`react-hooks/rules-of-hooks`, `react-hooks/exhaustive-deps`)
+- Restricts export patterns that can break hot module reloads (`react-refresh/only-export-components`)
+
+This configuration ensures consistency across the codebase, encourages safe React practices, and aligns with modern JavaScript standards.
+
+Note: Formatting (e.g. spacing, indentation) is managed through ESLint rules and Prettier integrations in local IDEs.
+
+---
 
 ## Getting Started
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
-
 ### Installation
-Clone the repository:
+
+These instructions will help you get a copy of the frontend project up and running on your local machine for development and testing purposes.
+
+1. Prerequisites
+
+Before installing, ensure the following are installed on your system:
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+
+You will also need access to the [SatoshiFund Backend API](https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-backend) running locally or hosted remotely.
+
+2. Clone the Repository
+
 ```bash
-    git clone https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend.git
-    cd dev1003-p2p-crypto-lending-frontend
+git clone https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend.git
+cd dev1003-p2p-crypto-lending-frontend
 ```
 
-Install dependencies:
+3. Install Dependencies
+
 ```bash
    npm install
    # or
    yarn install
 ```
 
-Start the development server:
+4. Start the Development Server
+
 ```bash
    npm start
    # or
    yarn start
 ```
 
-Open your browser:
-Visit http://localhost:3000
+Then open your browser and visit: http://localhost:3000
 
-### Running Tests
+---
+
+## Testing
+
+To run the test suite:
 ```bash
 npm test
 # or
 yarn test
 ```
-## Project Structure
-src/
-  components/         # React components (pages, UI, forms, etc.)
-  styles/             # Global and shared styles
-  App.jsx             # Main app component and routes
-  index.js            # Entry point
+The src/tests/ folder contains tests for key components and features of the application. These tests are written using Jest and React Testing Library to ensure reliability and maintainability.
 
-## API Integration
-This frontend communicates with the SatoshiFund Backend via RESTful API endpoints. Ensure the backend is running and accessible for full functionality.
+1. `InterestTerms.test.jsx`
+**Purpose:**  
+Tests the Interest Terms page/component.
+**Coverage:**
+- Renders the loading state.
+- Renders the title and table after loading.
+- Verifies that interest term data (e.g., "3 months", "5.0%") is displayed.
+- Checks that the informative note about monthly repayments is shown.
+
+2. `Cryptocurrencies.test.jsx`
+**Purpose:**  
+Tests the Supported Cryptocurrencies page/component.
+**Coverage:**
+- Renders the loading state.
+- Renders the title and table after loading.
+- Verifies that cryptocurrency data (e.g., "Bitcoin", "BTC") is displayed.
+- Checks that the informative note about supported cryptocurrencies is shown.
+
+3. `RequestLoan.test.jsx`
+**Purpose:**  
+Tests the Request Loan page/component.
+**Coverage:**
+- Renders the loading state.
+- Renders the loan request form after loading.
+- Verifies that all form fields are present.
+- Checks that collateral information is displayed.
+
+4. `LoginRegister.test.jsx`
+**Purpose:**  
+Tests the Login and Register page/component.
+**Coverage:**
+- Renders login and register forms with correct headings.
+- Verifies presence of required input fields and submit buttons.
+- Checks for the existence of navigation links between login and register forms.
+
+5. `Dashboard.test.jsx`
+**Purpose:**  
+Tests the Dashboard page/component.
+**Coverage:**
+- Renders the dashboard header, footer, and logo.
+- Shows the loading state initially.
+- Verifies the presence of the Bitcoin symbol and user icon in the header.
+
+6. `BitcoinLivePrice.test.jsx`
+**Purpose:**  
+Tests the Bitcoin Live Price component.
+**Coverage:**
+- Renders the loading state.
+- Displays the Bitcoin price after loading.
+- Shows the last updated time.
+- Handles and displays an error message if the API call fails.
+
+---
+
+## Project Structure
+
+This frontend project follows a modular structure using React and Vite. It separates components, assets, test files, and config into clearly defined folders to support scalability and maintainability.
+
+### Directory Tree
+.
+├── mocks/
+│   ├── fileMock.js
+│   ├── react-route-dom.js
+│   └── styleMock.js
+├── docs/
+│   ├── assignment-1/
+│   ├── assignment-2/
+│   ├── assignment-3/
+│   └── LICENSE.md
+├── eslint.config.js
+├── index.html
+├── jest.config.js
+├── node_modules/
+├── package-lock.json
+├── package.json
+├── public/
+│   └── favicon.svg
+├── README.md
+├── src/
+│   ├── App.css
+│   ├── App.jsx
+│   ├── assets/
+│   ├── components/
+│   ├── index.css
+│   ├── main.jsx
+│   ├── setupTests.js
+│   └── tests/
+└── vite.config.js
+
+### Folder and File Descriptions
+
+- **`src/`** – Main source directory for the React app
+  - `App.jsx` – Root component that defines routes and high-level structure
+  - `main.jsx` – React entry point, renders the app into the DOM
+  - `components/` – Reusable UI elements and views
+  - `assets/` – Static files like images, icons, etc.
+  - `tests/` – Contains test suites for components
+  - `setupTests.js` – Configures Jest and React Testing Library
+  - `App.css`, `index.css` – Styling files (component-level and global)
+- **`public/`** – Public static assets served as-is, like the site favicon
+- **`__mocks__/`** – Mock modules for testing (e.g., static assets, styles, or libraries)
+- **`docs/`** – Contains past assignment documentation and project license
+- **`eslint.config.js`** – ESLint configuration defining code style and linting rules
+- **`jest.config.js`** – Jest configuration for unit testing
+- **`vite.config.js`** – Vite build tool config, including plugin and alias setup
+- **`index.html`** – Root HTML file into which the app is injected by Vite
+- **`package.json`** – Project metadata and dependency management
+
+---
 
 ## Contributing
 
@@ -87,6 +315,8 @@ This frontend communicates with the SatoshiFund Backend via RESTful API endpoint
 5. Push to the branch (git push origin feature/AmazingFeature)
 6. Open a Pull Request
 
+---
+
 ## Technology Decisions and Alternatives
 | Category | Chosen Tool | Alternatives | Rationale |
 |------------------|---------------------------|----------------------|----------------------------------------------------------------|
@@ -96,6 +326,8 @@ This frontend communicates with the SatoshiFund Backend via RESTful API endpoint
 | Notifications | react-toastify | Notistack, Snackbar | Simple, customizable, and widely used. |
 | Testing | Jest + RTL | Mocha, Enzyme | Modern, robust, and well-documented for React. |
 
+---
+
 ## Team
 Developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - Assessment 2, as a collaboration between:
 Tyson Williams
@@ -103,10 +335,16 @@ GitHub | LinkedIn
 Adrian Gidaro
 GitHub | LinkedIn
 
+---
+
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
+This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE.md) file for details.
+
+---
 
 ## References
+
 Jest. (n.d.) Testing React Apps. Available at: https://jestjs.io/docs/tutorial-react (Accessed: 1 June 2025).
 
 BrowserStack. (n.d.) React Testing Tutorial: A Complete Guide. Available at: https://www.browserstack.com/guide/react-testing-tutorial (Accessed: 1 June 2025).
