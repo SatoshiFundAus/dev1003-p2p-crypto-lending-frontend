@@ -318,28 +318,82 @@ This frontend project follows a modular structure using React and Vite. It separ
 ---
 
 ## Technology Decisions and Alternatives
-| Category | Chosen Tool | Alternatives | Rationale |
-|------------------|---------------------------|----------------------|----------------------------------------------------------------|
-| Frontend | React | Vue, Angular | React’s ecosystem, flexibility, and learning goals. |
-| Styling | CSS Modules | Styled Components | CSS Modules offer scoping and simplicity. |
-| Routing | React Router | Reach Router | React Router is the standard for SPA navigation. |
-| Notifications | react-toastify | Notistack, Snackbar | Simple, customizable, and widely used. |
-| Testing | Jest + RTL | Mocha, Enzyme | Modern, robust, and well-documented for React. |
+
+This frontend project builds on the architectural and design principles outlined in our [Planning & Design Documentation](docs/assignment-1/DEV1003_Assessment_01.pdf). We proposed a React + Vite stack, justified by its developer experience, speed, and alignment with modern frontend best practices.
+
+Below is a summary comparing our chosen technologies with alternatives that were considered:
+
+| Category             | Chosen Tool                 | Alternatives                   | Rationale                                                                 |
+|----------------------|-----------------------------|--------------------------------|---------------------------------------------------------------------------|
+| Frontend Framework   | React                       | Vue, Angular                   | React is widely adopted, modular, and aligned with our learning goals.   |
+| Build Tool           | Vite                        | Webpack, Parcel                | Vite is faster, simpler, and offers out-of-the-box HMR and modern syntax.|
+| Routing              | React Router DOM            | Reach Router                   | React Router is the standard choice for SPAs and is well-documented.     |
+| Styling              | CSS Modules                 | Styled Components, Sass        | CSS Modules offer simple scoping without runtime overhead.               |
+| Icons                | Font Awesome                | Material Icons, Heroicons      | Font Awesome provided consistent styling and broad icon coverage.        |
+| Notifications        | react-toastify              | Notistack, Snackbar            | react-toastify is simple, flexible, and integrates easily with React.    |
+| Testing Framework    | Jest + React Testing Library| Mocha + Enzyme                 | Jest + RTL encourages user-centric testing and is well-supported.        |
+| Code Quality         | ESLint + Prettier           | StandardJS, XO                 | This pairing enforces modern JavaScript standards and automatic formatting. |
+| Development Hosting  | Netlify                     | Vercel, GitHub Pages           | Netlify supports CI/CD, environment variables, and React routing out of the box. |
+
+These decisions reflect a balance between performance, team familiarity, and the educational scope of the project. Where possible, we chose tools that simplified setup while encouraging best practices in component design, testing, and code quality. For full justification of our architectural and planning choices, see the linked design documentation.
 
 ---
 
 ## Team
-Developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - Assessment 2, as a collaboration between:
-Tyson Williams
-GitHub | LinkedIn
-Adrian Gidaro
-GitHub | LinkedIn
+Project developed as part of Coder Academy's Advanced Applications Subject (DEV1003) - Assessment 3, as a collaboration between:
+
+### Tyson Williams
+- [GitHub Profile](https://github.com/TysonPWilliams)
+- [LinkedIn](https://www.linkedin.com/in/tysonpwilliams/)
+
+### Adrian Gidaro
+- [GitHub Profile](https://github.com/adriangcodes)
+- [LinkedIn](https://www.linkedin.com/in/adriangidaro)
 
 ---
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE.md) file for details.
+
+---
+
+## Package Licensing
+
+This project relies on a number of open-source packages, each governed by their respective licenses. Below is a summary of licenses for key dependencies:
+
+### Core Dependencies
+
+- [**react (v19.1.0)**](https://github.com/facebook/react/blob/main/LICENSE) – MIT License  
+- [**react-dom (v19.1.0)**](https://github.com/facebook/react/blob/main/LICENSE) – MIT License  
+- [**react-router-dom (v7.6.0)**](https://github.com/remix-run/react-router/blob/main/LICENSE) – MIT License  
+- [**react-toastify (v11.0.5)**](https://github.com/fkhadra/react-toastify/blob/main/LICENSE) – MIT License  
+- [**@fortawesome/fontawesome-free (v6.7.2)**](https://github.com/FortAwesome/Font-Awesome/blob/6.x/LICENSE.txt) – CC BY 4.0 License  
+
+### Development Dependencies
+
+- [**vite (v6.3.5)**](https://github.com/vitejs/vite/blob/main/LICENSE) – MIT License  
+- [**@vitejs/plugin-react (v4.4.1)**](https://github.com/vitejs/vite-plugin-react/blob/main/LICENSE) – MIT License  
+- [**eslint (v9.25.0)**](https://github.com/eslint/eslint/blob/main/LICENSE) – MIT License  
+- [**@eslint/js (v9.25.0)**](https://github.com/eslint/eslint/blob/main/LICENSE) – MIT License  
+- [**eslint-plugin-react-hooks (v5.2.0)**](https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/LICENSE) – MIT License  
+- [**eslint-plugin-react-refresh (v0.4.19)**](https://github.com/vitejs/vite-plugin-react-swc/blob/main/packages/eslint-plugin-react-refresh/LICENSE) – MIT License  
+- [**globals (v16.0.0)**](https://github.com/sindresorhus/globals/blob/main/license) – MIT License  
+- [**jest (v29.7.0)**](https://github.com/jestjs/jest/blob/main/LICENSE) – MIT License  
+- [**@jest/globals (v30.0.0-beta.3)**](https://github.com/jestjs/jest/blob/main/LICENSE) – MIT License  
+- [**babel-jest (v30.0.0-beta.3)**](https://github.com/facebook/jest/blob/main/LICENSE) – MIT License  
+- [**@testing-library/react (v16.3.0)**](https://github.com/testing-library/react-testing-library/blob/main/LICENSE) – MIT License  
+- [**@testing-library/jest-dom (v6.6.3)**](https://github.com/testing-library/jest-dom/blob/main/LICENSE) – MIT License  
+- [**@babel/preset-env (v7.27.2)**](https://github.com/babel/babel/blob/main/LICENSE) – MIT License  
+- [**@babel/preset-react (v7.27.1)**](https://github.com/babel/babel/blob/main/LICENSE) – MIT License  
+- [**@types/react (v19.1.2)**](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE) – MIT License  
+- [**@types/react-dom (v19.1.2)**](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE) – MIT License  
+
+Please consult each package’s official repository for full license details.
+
+This project benefits from using open-source packages with permissive licenses such as **MIT**, which grant broad rights to use, modify, and distribute the software with minimal obligations — typically just crediting the original authors. This flexibility is ideal for academic, experimental, and commercial development alike.
+
+One exception is **Font Awesome**, which is licensed under **Creative Commons Attribution 4.0 (CC BY 4.0)**. This allows for wide use and modification, provided appropriate attribution is given. Icons are used in accordance with this license for UI enhancement purposes only.
 
 ---
 
