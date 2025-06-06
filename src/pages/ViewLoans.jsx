@@ -208,23 +208,31 @@ const ViewLoans = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedRows.map(row => (
-                    <tr key={row.id}>
-                      <td>{row.user}</td>
-                      <td>{row.currency}</td>
-                      <td>{row.amount}</td>
-                      <td>{row.term}</td>
-                      <td>{row.expiry}</td>
-                      <td>
-                        <button
-                          className={styles.learnMoreBtn}
-                          onClick={() => navigate(`/view-loans/${row.id}`)}
-                        >
-                          Learn More
-                        </button>
+                  {sortedRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={columns.length + 1} style={{ textAlign: 'center', color: '#aaa', padding: '2rem' }}>
+                        No loan requests available at this time.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    sortedRows.map(row => (
+                      <tr key={row.id}>
+                        <td>{row.user}</td>
+                        <td>{row.currency}</td>
+                        <td>{row.amount}</td>
+                        <td>{row.term}</td>
+                        <td>{row.expiry}</td>
+                        <td>
+                          <button
+                            className={styles.learnMoreBtn}
+                            onClick={() => navigate(`/view-loans/${row.id}`)}
+                          >
+                            Learn More
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
