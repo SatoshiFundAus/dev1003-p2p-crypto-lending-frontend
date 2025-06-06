@@ -77,13 +77,13 @@ function Users() {
                         usersData = [
                             {
                                 id: 1,
-                                email: "tysonwilliams@hotmail.com",
+                                email: "bananamuffins@coder.com",
                                 isAdmin: false,
                                 isActive: true
                             },
                             {
                                 id: 2,
-                                email: "adriangcodes@coder.com",
+                                email: "carrotcake@coder.com",
                                 isAdmin: true,
                                 isActive: true
                             }
