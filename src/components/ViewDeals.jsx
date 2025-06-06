@@ -37,44 +37,76 @@ const ViewDeals = () => {
             setError(null);
             try {
                 const token = localStorage.getItem('token');
-                
+
                 if (!token) {
                     toast.error('You are not authenticated. Please log in');
                     navigate('/login');
                     return;
                 }
 
-                // Fetch active deals
-                const res = await fetch(`${BACKEND_URL}/admin/deals-active`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
-                });
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
 
-                if (!res.ok) {
-                    throw new Error('Failed to fetch deals');
+                // Fetch deals where user is lender and borrower in parallel
+                const [lenderRes, borrowerRes] = await Promise.all([
+                    fetch(`${BACKEND_URL}/lender-deals`, {
+                        headers,
+                        credentials: 'include'
+                    }).catch(() => ({ ok: false, status: 404 })), // Handle network errors gracefully
+
+                    fetch(`${BACKEND_URL}/borrower-deals`, {
+                        headers,
+                        credentials: 'include'
+                    }).catch(() => ({ ok: false, status: 404 })) // Handle network errors gracefully
+                ]);
+
+                let allDeals = [];
+
+                // Process lender deals
+                if (lenderRes.ok) {
+                    const lenderDeals = await lenderRes.json();
+                    allDeals = [...allDeals, ...lenderDeals];
+                } else if (lenderRes.status !== 404) {
+                    console.warn('Failed to fetch lender deals:', lenderRes.status);
                 }
 
-                const dealsData = await res.json();
-                
-                // Transform the data for display
-                const transformedDeals = dealsData.map((deal, index) => {
+                // Process borrower deals  
+                if (borrowerRes.ok) {
+                    const borrowerDeals = await borrowerRes.json();
+                    allDeals = [...allDeals, ...borrowerDeals];
+                } else if (borrowerRes.status !== 404) {
+                    console.warn('Failed to fetch borrower deals:', borrowerRes.status);
+                }
+
+                // Remove duplicates based on deal ID
+                const uniqueDeals = allDeals.filter((deal, index, self) =>
+                    index === self.findIndex(d => (d._id || d.dealId) === (deal._id || deal.dealId))
+                );
+
+                // Transform the data for display - handle both API response formats
+                const transformedDeals = uniqueDeals.map((deal, index) => {
                     return {
-                        id: deal.dealId || deal._id || `temp-${index}`,
-                        borrowerId: deal.borrowerEmail, // Use borrowerEmail since that's what we have
-                        lenderEmail: deal.lenderEmail,
-                        amount: deal.amount,
-                        status: deal.dealStatus || 'active', // Use dealStatus from API
+                        id: deal._id || deal.dealId || `temp-${index}`,
+                        borrowerId: deal.borrowerEmail || deal.loanDetails?.borrower_id || 'N/A',
+                        lenderEmail: deal.lenderEmail || deal.lenderId?.email || 'N/A',
+                        amount: deal.amount || deal.loanDetails?.request_amount || 0,
+                        status: deal.dealStatus || deal.loanDetails?.status || 'active',
                         expectedCompletion: deal.expectedCompletionDate,
                         isComplete: deal.isComplete || false,
-                        interestTermId: deal.interestTermId,
-                        cryptocurrencyId: deal.cryptocurrencyId
+                        interestTermId: deal.interestTermId || deal.loanDetails?.interest_term,
+                        cryptocurrencyId: deal.cryptocurrencyId || deal.loanDetails?.cryptocurrency
                     };
                 });
 
                 setDeals(transformedDeals);
+
+                // Update subtitle to reflect what we're showing
+                if (transformedDeals.length === 0) {
+                    toast.info('No active deals found. You can browse loan requests to start lending.');
+                }
+
             } catch (err) {
                 console.error('Error fetching deals:', err);
                 setError(err.message || 'Error loading deals');
@@ -118,7 +150,7 @@ const ViewDeals = () => {
                         <div className={styles.errorCard}>
                             <h2>Error Loading Deals</h2>
                             <p>{error}</p>
-                            <button 
+                            <button
                                 onClick={() => window.location.reload()}
                                 className={styles.retryButton}
                             >
@@ -139,7 +171,7 @@ const ViewDeals = () => {
                 <div className={styles.content}>
                     <div className={styles.headerSection}>
                         <h1 className={styles.title}>
-                            
+
                             Active Deals
                         </h1>
                         <p className={styles.subtitle}>
@@ -152,7 +184,7 @@ const ViewDeals = () => {
                             <i className="fas fa-handshake"></i>
                             <h3>No Active Deals</h3>
                             <p>There are currently no active deals to display.</p>
-                            <button 
+                            <button
                                 onClick={() => navigate('/view-loans')}
                                 className={styles.primaryButton}
                             >
@@ -163,8 +195,8 @@ const ViewDeals = () => {
                     ) : (
                         <div className={styles.dealsGrid}>
                             {deals.map(deal => (
-                                <div 
-                                    key={deal.id || Math.random()} 
+                                <div
+                                    key={deal.id || Math.random()}
                                     className={styles.dealCard}
                                     onClick={() => navigate(`/deals/${deal.id || 'unknown'}`)}
                                 >
@@ -179,7 +211,7 @@ const ViewDeals = () => {
                                             ₿{deal.amount || '0'}
                                         </div>
                                     </div>
-                                    
+
                                     <div className={styles.cardContent}>
                                         <div className={styles.detail}>
                                             <span className={styles.label}>
@@ -190,7 +222,7 @@ const ViewDeals = () => {
                                                 {deal.borrowerId || 'N/A'}
                                             </span>
                                         </div>
-                                        
+
                                         <div className={styles.detail}>
                                             <span className={styles.label}>
                                                 <i className="fas fa-user-plus"></i>
@@ -200,14 +232,14 @@ const ViewDeals = () => {
                                                 {deal.lenderEmail || 'N/A'}
                                             </span>
                                         </div>
-                                        
+
                                         <div className={styles.detail}>
                                             <span className={styles.label}>
                                                 <i className="fas fa-calendar-check"></i>
                                                 Expected Completion
                                             </span>
                                             <span className={styles.value}>
-                                                {deal.expectedCompletion ? 
+                                                {deal.expectedCompletion ?
                                                     new Date(deal.expectedCompletion).toLocaleDateString('en-US', {
                                                         month: 'short',
                                                         day: 'numeric',
@@ -216,7 +248,7 @@ const ViewDeals = () => {
                                                 }
                                             </span>
                                         </div>
-                                        
+
                                         <div className={styles.detail}>
                                             <span className={styles.label}>
                                                 <i className="fas fa-info-circle"></i>
@@ -227,7 +259,7 @@ const ViewDeals = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className={styles.cardFooter}>
                                         <button className={styles.viewButton}>
                                             <i className="fas fa-eye"></i>
