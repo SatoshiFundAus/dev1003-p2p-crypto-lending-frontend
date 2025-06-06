@@ -7,8 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
+  "author": "Tyson Williams & Adrian Gidaro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend/issues"
+  },
+  "homepage": "https://github.com/SatoshiFundAus/dev1003-p2p-crypto-lending-frontend#readme",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "react": "^19.1.0",
@@ -17,14 +24,22 @@
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.25.0",
+    "@jest/globals": "^30.0.0-beta.3",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "babel-jest": "^30.0.0-beta.3",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.0-beta.3",
     "vite": "^6.3.5"
   }
 }

@@ -1,5 +1,5 @@
 import { useNavigate, NavLink } from 'react-router-dom';
-import styles from './DashboardHeader.module.css';
+import styles from '../styles/DashboardHeader.module.css';
 import Logo from './Logo';
 import { useState, useEffect } from 'react';
 
@@ -85,6 +85,14 @@ const DashboardHeader = ({ userEmail }) => {
                             >
                                 <i className="fas fa-list-ul"></i>
                                 <span>View Loans</span>
+                            </NavLink>
+                            <NavLink 
+                                to="/view-deals" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-handshake"></i>
+                                <span>View Deals</span>
                             </NavLink>
                             <NavLink 
                                 to="/transactions" 

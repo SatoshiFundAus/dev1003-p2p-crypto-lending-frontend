@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Dashboard.module.css';
-import loadingStyles from './Loading.module.css';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/Dashboard.module.css';
+import loadingStyles from '../styles/Loading.module.css';
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
@@ -85,6 +85,9 @@ function Dashboard() {
                             setBalance(newWalletData.balance);
                         }
                     }
+                } else if (balanceResponse.status === 404) {
+                    console.info('No wallet found for this user');
+                    setBalance(null); // No wallet for this user
                 } else if (balanceResponse.status === 401) {
                     localStorage.removeItem('token');
                     navigate('/login');
@@ -189,8 +192,16 @@ function Dashboard() {
                     const monthlyRepayments = await Promise.all(borrowerDealsData.map(async (deal) => {
                         if (!deal.isComplete && new Date(deal.expectedCompletionDate) > new Date()) {
                             try {
+                                // Get the interest term ID
+                                const interestTermId = deal.loanDetails?.interest_term?._id || deal.loanDetails?.interest_term;
+                                
+                                if (!interestTermId) {
+                                    console.warn('No interest term ID found for deal:', deal);
+                                    return 0;
+                                }
+
                                 // Fetch interest term details
-                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${interestTermId}`, {
                                     method: 'GET',
                                     headers: {
                                         'Authorization': `Bearer ${token}`,
@@ -199,19 +210,23 @@ function Dashboard() {
                                     credentials: 'include'
                                 });
 
-                                if (!termResponse.ok) return 0;
-                                const termData = await termResponse.json();
-                                const interestRate = termData.interest_rate;
-                                const principal = deal.loanDetails?.request_amount || 0;
-                                const totalInterest = principal * (interestRate / 100);
-                                return principal + totalInterest; // Total amount to repay (principal + interest)
-                            } catch {
+                                if (termResponse.ok) {
+                                    const termData = await termResponse.json();
+                                    // Calculate repayment amount based on term data
+                                    return (deal.loanDetails?.request_amount || 0) * (termData.interest_rate / 100);
+                                } else {
+                                    console.warn('Failed to fetch interest term:', termResponse.status);
+                                    return 0;
+                                }
+                            } catch (error) {
+                                console.error('Error calculating repayment:', error);
                                 return 0;
                             }
                         }
                         return 0;
                     }));
 
+                    // Sum up all repayments
                     const totalRepayments = monthlyRepayments.reduce((sum, amount) => sum + amount, 0);
 
                     // Calculate next payment
@@ -305,7 +320,7 @@ function Dashboard() {
                         }
                     }));
                 } else if (borrowerDealsResponse.status === 404) {
-                    // No deals found for this borrower
+                    console.info('No borrower deals found for this user');
                     setLoanStats(prev => ({
                         ...prev,
                         borrowed: {
@@ -462,7 +477,7 @@ function Dashboard() {
                         earningsToDate: totalEarned
                     }));
                 } else if (dealsResponse.status === 404) {
-                    // No deals found for this lender
+                    console.info('No lender deals found for this user');
                     setLoanStats(prev => ({
                         ...prev,
                         funded: {
@@ -650,7 +665,7 @@ function Dashboard() {
                         <div className={styles.statsContainer}>
                             <div className={styles.statsRow}>
                                 <div className={`${styles.statBox} ${styles.fullWidthStat}`}>
-                                    <div className={styles.statNumber}>{balance !== null ? (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) : 'Loading...'} BTC</div>
+                                    <div className={styles.statNumber}>{balance === null ? 'Create Wallet' : balance === undefined ? 'Loading...' : (balance + (loanStats.wallet?.lockedCollateral || 0)).toFixed(8) + ' BTC'}</div>
                                     <div className={styles.statTitle}>Total Balance</div>
                                 </div>
                             </div>
@@ -659,7 +674,7 @@ function Dashboard() {
                                     <span className={styles.metricIcon}>💸</span>
                                     <div className={styles.metricContent}>
                                         <div className={styles.metricNumber}>Available</div>
-                                        <div className={styles.metricTitle}>{balance !== null ? balance.toFixed(8) : 'Loading...'} BTC</div>
+                                        <div className={styles.metricTitle}>{balance === null ? '0.00000000 BTC' : balance === undefined ? 'Loading...' : balance.toFixed(8) + ' BTC'}</div>
                                     </div>
                                 </div>
                                 <div className={styles.metricBox}>

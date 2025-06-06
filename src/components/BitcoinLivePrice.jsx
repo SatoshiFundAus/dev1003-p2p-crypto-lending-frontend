@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import './BitcoinLivePrice.css'
+import '../styles/BitcoinLivePrice.css'
 
 
 function BTCPrice() {

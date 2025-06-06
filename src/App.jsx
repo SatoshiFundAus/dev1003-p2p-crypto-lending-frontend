@@ -1,19 +1,23 @@
-import { Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
-import './App.css';
-import LandingPage from './components/LandingPage';
-import LoginRegisterPage from './components/LoginRegisterPage';
-import InterestTerms from './components/InterestTerms';
-import RequestLoan from './components/RequestLoan';
-import Dashboard from './components/Dashboard';
-import ViewLoans from './components/ViewLoans';
-import LoanDetails from './components/LoanDetails';
-import Cryptocurrencies from './components/Cryptocurrencies';
-import AdminDashboard from './components/AdminDashboard';
-import Transactions from './components/Transactions';
-import Users from './components/Users';
-import Wallet from './components/Wallet';
+import { Route, Routes } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+
+import './styles/App.css'
+
+import LandingPage from './pages/LandingPage'
+import LoginRegisterPage from './pages/LoginRegisterPage'
+import InterestTerms from './pages/InterestTerms'
+import RequestLoan from './pages/RequestLoan'
+import Dashboard from './pages/Dashboard'
+import ViewLoans from './pages/ViewLoans'
+import LoanDetails from './pages/LoanDetails'
+import Cryptocurrencies from './pages/Cryptocurrencies'
+import AdminDashboard from './pages/AdminDashboard'
+import Transactions from './pages/Transactions'
+import Users from './pages/Users'
+import Wallet from './pages/Wallet'
+import ViewDeals from './pages/ViewDeals'
+import DealDetails from './pages/DealDetails'
 
 function App() {
   return (
@@ -27,12 +31,14 @@ function App() {
         <Route path="/request-loan" element={<RequestLoan />} />
         <Route path="/view-loans" element={<ViewLoans />} />
         <Route path="/view-loans/:loanId" element={<LoanDetails />} />
+        <Route path="/deals/:dealId" element={<DealDetails />} />
         <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/view-deals" element={<ViewDeals />} />
       </Routes>
 
       {/* Toast Container for notifications */}

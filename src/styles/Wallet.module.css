@@ -295,41 +295,50 @@
 }
 
 .transactionItem {
+    background: rgba(28, 30, 38, 0.6);
+    border: 1px solid rgba(247, 147, 26, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    align-items: flex-start;
+    backdrop-filter: blur(5px);
 }
 
 .transactionItem:hover {
-    background: rgba(247, 147, 26, 0.05);
-    border-color: rgba(247, 147, 26, 0.1);
+    background: rgba(28, 30, 38, 0.8);
+    border-color: rgba(247, 147, 26, 0.3);
+    transform: translateX(5px);
 }
 
 .transactionInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex: 1;
+    margin-right: 1rem;
 }
 
 .transactionType {
     color: #fff;
-    font-weight: 500;
-    font-size: 0.9rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
 }
 
 .transactionDate {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.8rem;
+    font-weight: 400;
 }
 
 .transactionAmount {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1rem;
     font-family: 'Courier New', monospace;
+    text-align: right;
+    min-width: 120px;
 }
 
 .transactionAmount.positive {
@@ -656,4 +665,111 @@
 
 .balanceAmount.updating {
     animation: balanceUpdate 0.5s ease-in-out;
+}
+
+/* Enhanced Transaction Styles */
+.transactionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.transactionDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.dealBadge {
+    background: rgba(247, 147, 26, 0.15);
+    color: #f7931a;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: 1px solid rgba(247, 147, 26, 0.3);
+}
+
+.dealBadge i {
+    font-size: 0.7rem;
+}
+
+.otherParty {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.partyEmail {
+    color: #f7931a;
+    font-weight: 500;
+}
+
+.transactionDescription {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 0.25rem;
+}
+
+.transactionAmountSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.dealId {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    font-family: 'Courier New', monospace;
+    text-align: right;
+}
+
+/* Responsive adjustments for enhanced layout */
+@media (max-width: 768px) {
+    .transactionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .dealBadge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+    }
+    
+    .transactionAmountSection {
+        align-items: flex-start;
+        margin-top: 0.5rem;
+    }
+    
+    .transactionItem {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .transactionInfo {
+        margin-right: 0;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .transactionType {
+        font-size: 0.9rem;
+    }
+    
+    .transactionAmount {
+        font-size: 0.95rem;
+        min-width: 100px;
+    }
+    
+    .otherParty {
+        font-size: 0.8rem;
+    }
 }

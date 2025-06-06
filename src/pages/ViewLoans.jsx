@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import styles from './ViewLoans.module.css';
-import loadingStyles from './Loading.module.css';
-import { default as DashboardHeader } from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/ViewLoans.module.css';
+import loadingStyles from '../styles/Loading.module.css';
+import { default as DashboardHeader } from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 
 const columns = [
@@ -156,18 +156,18 @@ const ViewLoans = () => {
 
   if (loading) {
     return (
-        <div className={loadingStyles.mainContainer}>
-            <DashboardHeader userEmail={userEmail} />
-            <main>
-                <div className={loadingStyles.container}>
-                    <div className={loadingStyles.spinner}></div>
-                    <div className={loadingStyles.text}>Loading loans...</div>
-                </div>
-            </main>
-            <Footer />
-        </div>
+      <div className={loadingStyles.mainContainer}>
+        <DashboardHeader userEmail={userEmail} />
+        <main>
+          <div className={loadingStyles.container}>
+            <div className={loadingStyles.spinner}></div>
+            <div className={loadingStyles.text}>Loading loans...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
     )
-}
+  }
 
   if (error) {
     return (
@@ -208,23 +208,31 @@ const ViewLoans = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedRows.map(row => (
-                    <tr key={row.id}>
-                      <td>{row.user}</td>
-                      <td>{row.currency}</td>
-                      <td>{row.amount}</td>
-                      <td>{row.term}</td>
-                      <td>{row.expiry}</td>
-                      <td>
-                        <button
-                          className={styles.learnMoreBtn}
-                          onClick={() => navigate(`/view-loans/${row.id}`)}
-                        >
-                          Learn More
-                        </button>
+                  {sortedRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={columns.length + 1} style={{ textAlign: 'center', color: '#aaa', padding: '2rem' }}>
+                        No loan requests available at this time.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    sortedRows.map(row => (
+                      <tr key={row.id}>
+                        <td>{row.user}</td>
+                        <td>{row.currency}</td>
+                        <td>{row.amount}</td>
+                        <td>{row.term}</td>
+                        <td>{row.expiry}</td>
+                        <td>
+                          <button
+                            className={styles.learnMoreBtn}
+                            onClick={() => navigate(`/view-loans/${row.id}`)}
+                          >
+                            Learn More
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

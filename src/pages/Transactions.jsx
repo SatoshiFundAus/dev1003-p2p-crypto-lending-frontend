@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import styles from './AdminDashboard.module.css';
-import loadingStyles from './Loading.module.css';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/AdminDashboard.module.css';
+import loadingStyles from '../styles/Loading.module.css';
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 
 function maskName(name) {
   if (!name) return '';
@@ -156,14 +156,6 @@ return (
     <div className={styles.content}>
       <h1>Transactions</h1>
       
-      {outgoing.length === 0 && incoming.length === 0 && (
-        <div className={styles.tableContainer}>
-          <div style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.7)', margin: '2rem 0', fontSize: '1.2rem' }}>
-            User has no transactions.
-          </div>
-        </div>
-      )}
-
       <div className={styles.tableContainer}>
         <h2>Outgoing Transactions</h2>
         <div className={styles.tableWrapper}>

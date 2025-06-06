@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import styles from './InterestTerms.module.css';
-import DashboardHeader from './DashboardHeader';
-import Footer from './Footer';
+import styles from '../styles/InterestTerms.module.css';
+import DashboardHeader from '../components/DashboardHeader';
+import Footer from '../components/Footer';
 
-const Cryptocurrencies = () => {
-  const [cryptos, setCryptos] = useState(null);
+const InterestTerms = () => {
+  const [interestTerms, setInterestTerms] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userEmail, setUserEmail] = useState('');
@@ -17,7 +17,8 @@ const Cryptocurrencies = () => {
           const tokenData = JSON.parse(atob(token.split('.')[1]));
           setUserEmail(tokenData.email);
         }
-        const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
+
+        const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -27,16 +28,17 @@ const Cryptocurrencies = () => {
           mode: 'cors',
         });
         if (!response.ok) {
-          throw new Error('Failed to fetch cryptocurrencies');
+          throw new Error('Failed to fetch interest terms');
         }
         const data = await response.json();
-        setCryptos(data);
+        setInterestTerms(data);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
@@ -44,7 +46,7 @@ const Cryptocurrencies = () => {
     return (
       <div className={styles.container}>
         <DashboardHeader userEmail={userEmail} />
-        <div className={styles.loading}>Loading cryptocurrencies...</div>
+        <div className={styles.loading}>Loading interest terms...</div>
         <Footer />
       </div>
     );
@@ -65,28 +67,28 @@ const Cryptocurrencies = () => {
       <DashboardHeader userEmail={userEmail} />
       <main className={styles.main}>
         <div className={styles.content}>
-          <h1 className={styles.title}>Supported Cryptocurrencies</h1>
+          <h1 className={styles.title}>Loan Terms</h1>
           <div className={styles.termsContainer}>
             <div className={styles.tableContainer}>
               <table className={styles.termsTable}>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Symbol</th>
+                    <th>Term</th>
+                    <th>Interest Rate P.A.</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cryptos && cryptos.map((crypto, idx) => (
+                  {interestTerms && [...interestTerms].sort((a, b) => a.loan_length - b.loan_length).map((term, idx) => (
                     <tr key={idx}>
-                      <td>{crypto.name}</td>
-                      <td><span className={styles.cryptoSymbol}>{crypto.symbol}</span></td>
+                      <td>{term.loan_length} month{term.loan_length > 1 ? 's' : ''}</td>
+                      <td className={styles.interestRate}>{term.interest_rate.toFixed(1)}%</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             <div className={styles.note}>
-              💡 These cryptocurrencies are available for lending and borrowing on our platform.
+              All loans are subject to monthly interest repayments. Interest rates are calculated per annum.
             </div>
           </div>
         </div>
@@ -96,4 +98,4 @@ const Cryptocurrencies = () => {
   );
 };
 
-export default Cryptocurrencies; 
+export default InterestTerms; 

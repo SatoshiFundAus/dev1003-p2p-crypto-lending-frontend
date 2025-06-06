@@ -1,8 +1,8 @@
-import styles from './LandingPage.module.css';
-import Card from './Card';
-import Footer from './Footer';
+import styles from '../styles/LandingPage.module.css';
+import Card from '../components/Card';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
-import Header from './Header';
+import Header from '../components/Header';
 
 function LandingPage() {
     const navigate = useNavigate()

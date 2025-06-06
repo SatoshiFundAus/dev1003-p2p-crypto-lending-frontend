@@ -1,0 +1,620 @@
+.container {
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #13151a 0%, #1a1c23 100%);
+  color: white;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated background effect */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(247, 147, 26, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(28, 30, 38, 0.9) 0%, transparent 100%);
+  animation: gradientShift 25s ease infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 200px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 0;
+}
+
+.content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Back Button */
+.backButton {
+  background: rgba(28, 30, 38, 0.8);
+  border: 1px solid rgba(247, 147, 26, 0.3);
+  color: #f7931a;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+  align-self: flex-start;
+}
+
+.backButton:hover {
+  background: rgba(247, 147, 26, 0.1);
+  border-color: rgba(247, 147, 26, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+}
+
+/* Alert Cards */
+.alertCard, .successCard {
+  background: rgba(28, 30, 38, 0.9);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 71, 87, 0.3);
+  transition: all 0.3s ease;
+}
+
+.successCard {
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(46, 213, 115, 0.3);
+}
+
+.alertContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.alertCard i {
+  color: #ff4757;
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.successCard i {
+  color: #2ed573;
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.alertCard h4, .successCard h4 {
+  color: #fff;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.alertCard p, .successCard p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.walletButton {
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.walletButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(247, 147, 26, 0.3);
+}
+
+/* Header Card */
+.headerCard {
+  background: rgba(28, 30, 38, 0.8);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(247, 147, 26, 0.1);
+  transition: all 0.3s ease;
+}
+
+.headerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(247, 147, 26, 0.2);
+}
+
+.loanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  color: #f7931a;
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+}
+
+.title i {
+  font-size: 1.8rem;
+  opacity: 0.8;
+}
+
+.loanId {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: inline-block;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+}
+
+/* Details Grid */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.detailCard {
+  background: rgba(28, 30, 38, 0.7);
+  border-radius: 16px;
+  padding: 0;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(247, 147, 26, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.detailCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(247, 147, 26, 0.2);
+}
+
+.cardHeader {
+  background: linear-gradient(135deg, rgba(247, 147, 26, 0.2), rgba(247, 147, 26, 0.1));
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(247, 147, 26, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cardHeader h3 {
+  color: #f7931a;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cardHeader i {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 1rem;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.label i {
+  color: #f7931a;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.value {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Status Styling */
+.status, .statusIndicator {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+  display: inline-block;
+}
+
+.pending {
+  background: rgba(255, 171, 0, 0.15);
+  color: #ffab00;
+  border-color: rgba(255, 171, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 171, 0, 0.1);
+}
+
+.funded {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border-color: rgba(46, 213, 115, 0.3);
+  box-shadow: 0 0 15px rgba(46, 213, 115, 0.1);
+}
+
+.expired {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border-color: rgba(255, 71, 87, 0.3);
+  box-shadow: 0 0 15px rgba(255, 71, 87, 0.1);
+}
+
+.active {
+  background: rgba(0, 123, 255, 0.15);
+  color: #007bff;
+  border-color: rgba(0, 123, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.1);
+}
+
+.completed {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border-color: rgba(108, 117, 125, 0.3);
+  box-shadow: 0 0 15px rgba(108, 117, 125, 0.1);
+}
+
+.successText {
+  color: #2ed573 !important;
+  font-weight: 600;
+}
+
+.warningText {
+  color: #ffab00 !important;
+  font-weight: 600;
+}
+
+/* Action Section */
+.actionSection {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.primaryButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.primaryButton:not(:disabled):hover::before {
+  left: 100%;
+}
+
+.primaryButton:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(247, 147, 26, 0.4);
+}
+
+.secondaryButton {
+  background: rgba(28, 30, 38, 0.8);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(247, 147, 26, 0.3);
+  border-top: 3px solid #f7931a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Error and Not Found Cards */
+.errorCard, .notFoundCard {
+  background: rgba(28, 30, 38, 0.8);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 71, 87, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notFoundCard {
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 171, 0, 0.3);
+}
+
+.errorCard i, .notFoundCard i {
+  font-size: 2.5rem;
+  color: #ff4757;
+}
+
+.notFoundCard i {
+  color: #ffab00;
+}
+
+.errorCard h3, .notFoundCard h3 {
+  color: #ff4757;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.notFoundCard h3 {
+  color: #ffab00;
+}
+
+.errorCard p, .notFoundCard p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .content {
+    padding: 0 1.5rem;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .actionSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 767px) {
+  .content {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+  
+  .main {
+    padding: 1rem 0;
+  }
+  
+  .headerCard {
+    padding: 1.5rem;
+  }
+  
+  .loanHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+  }
+  
+  .cardHeader {
+    padding: 1rem 1.25rem;
+  }
+  
+  .cardContent {
+    padding: 1.25rem;
+  }
+  
+  .detailRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    text-align: left;
+  }
+  
+  .value {
+    text-align: left;
+  }
+  
+  .primaryButton, .secondaryButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .alertCard, .successCard {
+    padding: 1.25rem;
+  }
+  
+  .alertContent {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 575px) {
+  .content {
+    padding: 0 0.5rem;
+  }
+  
+  .headerCard {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.4rem;
+  }
+  
+  .cardHeader h3 {
+    font-size: 1rem;
+  }
+  
+  .label {
+    font-size: 0.85rem;
+  }
+  
+  .value {
+    font-size: 0.9rem;
+  }
+  
+  .alertCard, .successCard {
+    padding: 1rem;
+  }
+} 

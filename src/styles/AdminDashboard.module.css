@@ -190,6 +190,324 @@
     transform: translateY(-2px);
 }
 
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.modal {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0;
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e5e7eb;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.closeButton {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #6b7280;
+    font-size: 1.125rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.modalForm {
+    padding: 2rem;
+    background: #ffffff;
+}
+
+.inputGroup {
+    margin-bottom: 1.5rem;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.amountInput {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.amountInput:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    background-color: #ffffff;
+}
+
+.amountInput::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.balanceInfo {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #f0f9ff;
+    border: 1px solid #e0f2fe;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #0369a1;
+    font-weight: 500;
+}
+
+.usdEquivalent {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #059669;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modalActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.modalActions .actionButton {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.modalActions .actionButton.secondary {
+    background-color: #f9fafb;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.modalActions .actionButton.secondary:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.modalActions .actionButton.success {
+    background-color: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.modalActions .actionButton.success:hover:not(:disabled) {
+    background-color: #059669;
+    border-color: #059669;
+}
+
+.modalActions .actionButton.danger {
+    background-color: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+.modalActions .actionButton.danger:hover:not(:disabled) {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+.modalActions .actionButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Checkbox Styles */
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 2px solid #d1d5db;
+    border-radius: 6px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-top: 2px;
+    appearance: none;
+    position: relative;
+}
+
+.checkbox:checked {
+    background-color: #f7931a;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox:focus {
+    outline: none;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.checkboxText {
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.helpText {
+    color: #6b7280;
+    font-size: 0.825rem;
+    font-style: italic;
+    margin-top: 0.25rem;
+    margin-left: 0;
+    display: block;
+}
+
+/* Form Input Styles */
+.formInput {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: #f7931a;
+    box-shadow: 0 0 0 4px rgba(247, 147, 26, 0.1);
+}
+
+/* Primary Button Style for Update User */
+.modalActions .actionButton.primary {
+    background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+    color: white;
+    border: 2px solid #f7931a;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.2);
+}
+
+.modalActions .actionButton.primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e8831a 0%, #f7931a 100%);
+    border-color: #e8831a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(247, 147, 26, 0.3);
+}
+
+.modalActions .actionButton.primary:disabled {
+    background: #d1d5db;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Tablets (768px - 991px) */
 @media (max-width: 991px) and (min-width: 768px) {
     .content {

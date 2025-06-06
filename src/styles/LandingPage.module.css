@@ -27,7 +27,7 @@
 
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content:space-between;
     align-items: center;
     padding: 1rem 2rem;
     position: relative;
@@ -36,6 +36,26 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbarLeft,
+.navbarCenter,
+.navbarRight {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.navbarLeft {
+    justify-content: flex-start;
+}
+
+.navbarCenter {
+    justify-content: center;
+}
+
+.navbarRight {
+    justify-content: flex-end;
 }
 
 .logo {
