@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import DashboardHeader from "../components/DashboardHeader";
 import styles from '../styles/Wallet.module.css'
 import loadingStyles from '../styles/Loading.module.css';
@@ -36,8 +36,8 @@ function Wallet() {
     const hasShownWalletMessage = useRef(false);
 
 
-    // Creating a seperate authenticated helper function to keep the code DRY
-    const getAuthenticatedRequest = async () => {
+    // Creating a separate authenticated helper function to keep the code DRY
+    const getAuthenticatedRequest = useCallback(async () => {
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -77,10 +77,8 @@ function Wallet() {
             'Content-Type': 'application/json'
         };
 
-
         return { token, tokenData, headers, userId: extractedUserId };
-
-    }
+    }, [navigate, userEmail, userId]);
 
     // Get BTC Live price for working out portfolio balance
     const getBTCLivePrice = async () => {
@@ -289,8 +287,8 @@ function Wallet() {
                         }
 
                     } catch (err) {
-                        console.log("An error has occured fetching Collateral Data: ", err)
-                        toast.error("An error has occured fetching collateral data")
+                        console.log("An error has occurred fetching Collateral Data: ", err)
+                        toast.error("An error has occurred fetching collateral data")
                     } finally {
                         setTransactionsLoading(false)
                     }
@@ -305,10 +303,7 @@ function Wallet() {
 
         fetchWalletData();
         fetchOtherData();
-    }, [navigate]);
-
-
-
+    }, [navigate, getAuthenticatedRequest]);
 
     // Creating of a wallet through button click
     const handleCreateClick = async () => {
@@ -380,7 +375,6 @@ function Wallet() {
             })
 
             if (response.ok) {
-                const deleteWallet = await response.json();
                 console.log('Wallet deleted successfully');
                 toast.info('Wallet deleted successfully')
 
@@ -407,16 +401,15 @@ function Wallet() {
                     const errorData = await response.json();
                     errorMessage = errorData.error || errorMessage;
 
-                } catch (jsonError) {
-                    // Response is not JSON
+                } catch {
                     console.error('Server returned non-JSON response:', response.status);
                     errorMessage = `Server error (${response.status})`;
                 }
                 toast.error(errorMessage);
             }
 
-        } catch (err) {
-
+        } catch {
+            //
         }
     };
 
@@ -812,7 +805,7 @@ function Wallet() {
                                     const currentUserId = userId;
                                     const transactionType = getTransactionType(transaction, currentUserId);
                                     const otherParty = getOtherParty(transaction, currentUserId);
-                                    const { amount, isPositive, displayAmount } = getTransactionAmount(transaction, currentUserId);
+                                    const { isPositive, displayAmount } = getTransactionAmount(transaction, currentUserId);
                                     const direction = getTransactionDirection(transaction, currentUserId);
 
                                     return (
