@@ -15,6 +15,7 @@ import AdminDashboard from './components/AdminDashboard';
 import Transactions from './components/Transactions';
 import Users from './components/Users';
 import Wallet from './components/Wallet';
+import ViewDeals from './components/ViewDeals';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/view-deals" element={<ViewDeals />} />
       </Routes>
 
       {/* Toast Container for notifications */}

@@ -503,3 +503,225 @@
         font-size: 1rem;
     }
 }
+
+/* Deals Grid Styles */
+.dealsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.dealCard {
+    background: rgba(28, 30, 38, 0.8);
+    border-radius: 16px;
+    padding: 0;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(247, 147, 26, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.dealCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(247, 147, 26, 0.2);
+}
+
+.dealCard .cardHeader {
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.2), rgba(247, 147, 26, 0.1));
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(247, 147, 26, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dealInfo h3 {
+    color: #f7931a;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.amount {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.dealCard .cardContent {
+    padding: 1.5rem;
+}
+
+.detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail:last-child {
+    border-bottom: none;
+}
+
+.detail .label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail .label i {
+    color: #f7931a;
+    font-size: 0.8rem;
+}
+
+.detail .value {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.successText {
+    color: #2ed573 !important;
+}
+
+.pendingText {
+    color: #ffab00 !important;
+}
+
+.cardFooter {
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.viewButton {
+    width: 100%;
+    background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.viewButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.3);
+}
+
+.headerSection {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.errorCard {
+    background: rgba(28, 30, 38, 0.8);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 71, 87, 0.3);
+}
+
+.errorCard h2 {
+    color: #ff4757;
+    margin-bottom: 1rem;
+}
+
+.errorCard p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+}
+
+.retryButton, .primaryButton {
+    background: linear-gradient(135deg, #f7931a 0%, #ff9f43 100%);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.retryButton:hover, .primaryButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.3);
+}
+
+/* Responsive styles for deals grid */
+@media (max-width: 767px) {
+    .dealsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    
+    .dealCard .cardHeader {
+        padding: 1.25rem;
+    }
+    
+    .dealCard .cardContent {
+        padding: 1.25rem;
+    }
+    
+    .cardFooter {
+        padding: 1rem 1.25rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .dealsGrid {
+        gap: 0.75rem;
+    }
+    
+    .dealCard .cardHeader {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .dealCard .cardContent {
+        padding: 1rem;
+    }
+    
+    .cardFooter {
+        padding: 0.75rem 1rem;
+    }
+    
+    .detail {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}

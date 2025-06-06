@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import DashboardHeader from './DashboardHeader';
 import Footer from './Footer';
 import styles from './DealDetails.module.css'; // Use dedicated styles
+import { toast } from 'react-toastify';
 
 const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
@@ -13,6 +14,7 @@ const DealDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userEmail, setUserEmail] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -20,8 +22,10 @@ const DealDetails = () => {
             try {
                 const tokenData = JSON.parse(atob(token.split('.')[1]));
                 setUserEmail(tokenData.email);
+                setIsAdmin(localStorage.getItem('isAdmin') === 'true');
             } catch {
                 setUserEmail('');
+                setIsAdmin(false);
             }
         }
     }, []);
@@ -32,9 +36,9 @@ const DealDetails = () => {
             setError(null);
             try {
                 const token = localStorage.getItem('token');
-                const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-                if (!token || !isAdmin) {
+                if (!token) {
+                    toast.error('You are not authenticated. Please log in');
                     navigate('/login');
                     return;
                 }
@@ -68,7 +72,7 @@ const DealDetails = () => {
     if (loading) {
         return (
             <div className={styles.container}>
-                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <DashboardHeader userEmail={userEmail} isAdmin={isAdmin} />
                 <main className={styles.main}>
                     <div className={styles.content}>
                         <div className={styles.loadingContainer}>
@@ -85,15 +89,15 @@ const DealDetails = () => {
     if (error) {
         return (
             <div className={styles.container}>
-                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <DashboardHeader userEmail={userEmail} isAdmin={isAdmin} />
                 <main className={styles.main}>
                     <div className={styles.content}>
                         <button
-                            onClick={() => navigate('/admin-dashboard')}
+                            onClick={() => navigate(isAdmin ? '/admin-dashboard' : '/dashboard')}
                             className={styles.backButton}
                         >
                             <i className="fas fa-arrow-left"></i>
-                            Back to Admin Dashboard
+                            Back to {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
                         </button>
                         <div className={styles.errorCard}>
                             <i className="fas fa-exclamation-triangle"></i>
@@ -110,15 +114,15 @@ const DealDetails = () => {
     if (!deal) {
         return (
             <div className={styles.container}>
-                <DashboardHeader userEmail={userEmail} isAdmin={true} />
+                <DashboardHeader userEmail={userEmail} isAdmin={isAdmin} />
                 <main className={styles.main}>
                     <div className={styles.content}>
                         <button
-                            onClick={() => navigate('/admin-dashboard')}
+                            onClick={() => navigate(isAdmin ? '/admin-dashboard' : '/dashboard')}
                             className={styles.backButton}
                         >
                             <i className="fas fa-arrow-left"></i>
-                            Back to Admin Dashboard
+                            Back to {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
                         </button>
                         <div className={styles.notFoundCard}>
                             <i className="fas fa-search"></i>
@@ -134,15 +138,15 @@ const DealDetails = () => {
 
     return (
         <div className={styles.container}>
-            <DashboardHeader userEmail={userEmail} isAdmin={true} />
+            <DashboardHeader userEmail={userEmail} isAdmin={isAdmin} />
             <main className={styles.main}>
                 <div className={styles.content}>
                     <button
-                        onClick={() => navigate('/admin-dashboard')}
+                        onClick={() => navigate(isAdmin ? '/admin-dashboard' : '/dashboard')}
                         className={styles.backButton}
                     >
                         <i className="fas fa-arrow-left"></i>
-                        Back to Admin Dashboard
+                        Back to {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
                     </button>
                     
                     <div className={styles.headerCard}>
@@ -315,10 +319,10 @@ const DealDetails = () => {
                         </button>
                         <button
                             className={styles.secondaryButton}
-                            onClick={() => navigate('/admin-dashboard')}
+                            onClick={() => navigate(isAdmin ? '/admin-dashboard' : '/dashboard')}
                         >
                             <i className="fas fa-arrow-left"></i>
-                            Back to Dashboard
+                            Back to {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
                         </button>
                     </div>
                 </div>
