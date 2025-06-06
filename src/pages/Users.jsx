@@ -82,20 +82,7 @@ function Users() {
                         console.log('Processed users data', usersData)
                     } else {
                         console.log('User data not available at this time (Status:', usersRes.status, ')');
-                        usersData = [
-                            {
-                                id: 1,
-                                email: "bananamuffins@coder.com",
-                                isAdmin: false,
-                                isActive: true
-                            },
-                            {
-                                id: 2,
-                                email: "carrotcake@coder.com",
-                                isAdmin: true,
-                                isActive: true
-                            }
-                        ];
+                        toast.error('User data not available at this time')
                     }
 
                 } catch (err) {
