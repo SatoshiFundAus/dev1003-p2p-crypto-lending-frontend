@@ -74,11 +74,11 @@ const InterestTerms = () => {
                 <thead>
                   <tr>
                     <th>Term</th>
-                    <th>Interest Rate</th>
+                    <th>Interest Rate P.A.</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {interestTerms && interestTerms.map((term, idx) => (
+                  {interestTerms && [...interestTerms].sort((a, b) => a.loan_length - b.loan_length).map((term, idx) => (
                     <tr key={idx}>
                       <td>{term.loan_length} month{term.loan_length > 1 ? 's' : ''}</td>
                       <td className={styles.interestRate}>{term.interest_rate.toFixed(1)}%</td>
@@ -88,7 +88,7 @@ const InterestTerms = () => {
               </table>
             </div>
             <div className={styles.note}>
-              All loans are subject to monthly interest repayments.
+              All loans are subject to monthly interest repayments. Interest rates are calculated per annum.
             </div>
           </div>
         </div>
