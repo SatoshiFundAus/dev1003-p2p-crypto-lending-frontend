@@ -87,6 +87,14 @@ const DashboardHeader = ({ userEmail }) => {
                                 <span>View Loans</span>
                             </NavLink>
                             <NavLink 
+                                to="/view-deals" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-handshake"></i>
+                                <span>View Deals</span>
+                            </NavLink>
+                            <NavLink 
                                 to="/transactions" 
                                 className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
                                 onClick={() => setIsMenuOpen(false)}

@@ -42,7 +42,6 @@ function Users() {
 
                 // Get stored user data
                 const token = localStorage.getItem('token');
-                const userEmail = localStorage.getItem('userEmail');
                 const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
                 if (!token || !isAdmin) {

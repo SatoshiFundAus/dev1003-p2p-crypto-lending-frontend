@@ -16,6 +16,8 @@ import AdminDashboard from './pages/AdminDashboard'
 import Transactions from './pages/Transactions'
 import Users from './pages/Users'
 import Wallet from './pages/Wallet'
+import ViewDeals from './pages/ViewDeals'
+import DealDetails from './pages/DealDetails'
 
 function App() {
   return (
@@ -29,12 +31,14 @@ function App() {
         <Route path="/request-loan" element={<RequestLoan />} />
         <Route path="/view-loans" element={<ViewLoans />} />
         <Route path="/view-loans/:loanId" element={<LoanDetails />} />
+        <Route path="/deals/:dealId" element={<DealDetails />} />
         <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/suspicious-accounts" element={<AdminDashboard />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/view-deals" element={<ViewDeals />} />
       </Routes>
 
       {/* Toast Container for notifications */}
