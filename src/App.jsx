@@ -18,6 +18,7 @@ import Users from './pages/Users'
 import Wallet from './pages/Wallet'
 import ViewDeals from './pages/ViewDeals'
 import DealDetails from './pages/DealDetails'
+import InterestCalculator from './pages/InterestCalculator'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/view-loans/:loanId" element={<LoanDetails />} />
         <Route path="/deals/:dealId" element={<DealDetails />} />
         <Route path="/cryptocurrencies" element={<Cryptocurrencies />} />
+        <Route path="/interest-calculator" element={<InterestCalculator />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />

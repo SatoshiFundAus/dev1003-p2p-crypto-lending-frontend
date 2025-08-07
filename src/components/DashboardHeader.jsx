@@ -118,6 +118,14 @@ const DashboardHeader = ({ userEmail }) => {
                                 <i className="fas fa-percentage"></i>
                                 <span>Interest Terms</span>
                             </NavLink>
+                            <NavLink 
+                                to="/interest-calculator" 
+                                className={({ isActive }) => isActive ? styles.activeLink : styles.navLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <i className="fas fa-calculator"></i>
+                                <span>Interest Calculator</span>
+                            </NavLink>
                         </div>
                     </nav>
                 )}
