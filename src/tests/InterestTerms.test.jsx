@@ -1,7 +1,7 @@
 import { describe, test, expect, jest, beforeEach } from '@jest/globals'
 import { render, screen, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import InterestTerms from '../components/InterestTerms'
+import InterestTerms from '../pages/InterestTerms'
 
 // Test data constants
 const TEST_USER_EMAIL = 'test@example.com'
