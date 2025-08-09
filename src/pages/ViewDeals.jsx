@@ -5,8 +5,9 @@ import Footer from '../components/Footer';
 import styles from '../styles/ViewLoans.module.css';
 import loadingStyles from '../styles/Loading.module.css';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config';
 
-const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
+// Using centralized BACKEND_URL
 
 function maskEmail(email) {
     if (!email) return '';

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from '../styles/LoanDetails.module.css';
 import Footer from '../components/Footer';
 import DashboardHeader from '../components/DashboardHeader';
+import { BACKEND_URL } from '../config';
 
 function maskName(name) {
   if (!name) return '';
@@ -58,7 +59,7 @@ const LoanDetails = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests/${loanId}`, {
+        const res = await fetch(`${BACKEND_URL}/loan-requests/${loanId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -102,7 +103,7 @@ const LoanDetails = () => {
         loanDetails: loanId
       };
 
-      const res = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/deals', {
+      const res = await fetch(`${BACKEND_URL}/deals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

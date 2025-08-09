@@ -5,8 +5,7 @@ import loadingStyles from '../styles/Loading.module.css';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
-
-const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
+import { BACKEND_URL } from '../config';
 
 function Wallet() {
     const navigate = useNavigate();

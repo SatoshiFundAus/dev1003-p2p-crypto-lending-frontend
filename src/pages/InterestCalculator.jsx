@@ -3,8 +3,9 @@ import styles from '../styles/InterestCalculator.module.css';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config';
 
-const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
+// Using centralized BACKEND_URL
 
 const InterestCalculator = () => {
   const [interestTerms, setInterestTerms] = useState([]);
