@@ -1,7 +1,7 @@
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Dashboard from '../components/Dashboard';
+import Dashboard from '../pages/Dashboard';
 
 // Test data constants
 const TEST_WALLET_BALANCE = 0.05 // 0.05 BTC
