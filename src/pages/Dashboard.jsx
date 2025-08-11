@@ -5,6 +5,7 @@ import loadingStyles from '../styles/Loading.module.css';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config';
 
 function Dashboard() {
     const [userEmail, setUserEmail] = useState('')
@@ -56,7 +57,7 @@ function Dashboard() {
                 setUserEmail(tokenData.email);
 
                 // Fetch wallet balance
-                const balanceResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallet-balance', {
+                const balanceResponse = await fetch(`${BACKEND_URL}/wallet-balance`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -71,7 +72,7 @@ function Dashboard() {
                         setBalance(balanceData.walletBalance);
                     } else {
                         // Create wallet if none exists
-                        const createWalletResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/wallets', {
+                        const createWalletResponse = await fetch(`${BACKEND_URL}/wallets`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -94,7 +95,7 @@ function Dashboard() {
                 }
 
                 // Fetch user's collateral
-                const collateralResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/collateral', {
+                const collateralResponse = await fetch(`${BACKEND_URL}/collateral`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -121,7 +122,7 @@ function Dashboard() {
                 }
 
                 // Fetch loan data
-                const loansResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
+                const loansResponse = await fetch(`${BACKEND_URL}/loan-requests`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -159,7 +160,7 @@ function Dashboard() {
                 }
 
                 // Fetch loan requests where user is borrower and status is funded
-                const borrowerDealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/borrower-deals', {
+                const borrowerDealsResponse = await fetch(`${BACKEND_URL}/borrower-deals`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -201,7 +202,7 @@ function Dashboard() {
                                 }
 
                                 // Fetch interest term details
-                                const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${interestTermId}`, {
+                                const termResponse = await fetch(`${BACKEND_URL}/interest-terms/${interestTermId}`, {
                                     method: 'GET',
                                     headers: {
                                         'Authorization': `Bearer ${token}`,
@@ -233,7 +234,7 @@ function Dashboard() {
                     const nextPayment = await (async () => {
                         try {
                             // Fetch user's transactions
-                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
+                            const transactionsResponse = await fetch(`${BACKEND_URL}/transactions/user/${tokenData.id}`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
@@ -335,7 +336,7 @@ function Dashboard() {
                 }
 
                 // Fetch deals where user is lender
-                const dealsResponse = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/lender-deals', {
+                const dealsResponse = await fetch(`${BACKEND_URL}/lender-deals`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -386,7 +387,7 @@ function Dashboard() {
 
                         try {
                             // Fetch interest term details
-                            const termResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms/${deal.loanDetails.interest_term}`, {
+                            const termResponse = await fetch(`${BACKEND_URL}/interest-terms/${deal.loanDetails.interest_term}`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
@@ -402,7 +403,7 @@ function Dashboard() {
                             const totalInterest = principal * (interestRate / 100);
 
                             // Fetch user's transactions
-                            const transactionsResponse = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${tokenData.id}`, {
+                            const transactionsResponse = await fetch(`${BACKEND_URL}/transactions/user/${tokenData.id}`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `Bearer ${token}`,

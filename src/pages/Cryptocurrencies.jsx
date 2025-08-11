@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../styles/InterestTerms.module.css';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
+import { BACKEND_URL } from '../config';
 
 const Cryptocurrencies = () => {
   const [cryptos, setCryptos] = useState(null);
@@ -17,7 +18,7 @@ const Cryptocurrencies = () => {
           const tokenData = JSON.parse(atob(token.split('.')[1]));
           setUserEmail(tokenData.email);
         }
-        const response = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
+        const response = await fetch(`${BACKEND_URL}/crypto`, {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

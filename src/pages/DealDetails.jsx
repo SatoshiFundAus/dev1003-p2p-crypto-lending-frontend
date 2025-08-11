@@ -4,8 +4,9 @@ import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import styles from '../styles/DealDetails.module.css'; // Use dedicated styles
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../config';
 
-const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
+// Using centralized BACKEND_URL
 
 const DealDetails = () => {
     const { dealId } = useParams();

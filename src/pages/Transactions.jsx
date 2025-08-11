@@ -3,6 +3,7 @@ import styles from '../styles/AdminDashboard.module.css';
 import loadingStyles from '../styles/Loading.module.css';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
+import { BACKEND_URL } from '../config';
 
 function maskName(name) {
   if (!name) return '';
@@ -56,7 +57,7 @@ const Transactions = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`https://dev1003-p2p-crypto-lending-backend.onrender.com/transactions/user/${userId}`, {
+        const res = await fetch(`${BACKEND_URL}/transactions/user/${userId}`, {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
