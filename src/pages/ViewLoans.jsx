@@ -4,7 +4,6 @@ import loadingStyles from '../styles/Loading.module.css';
 import { default as DashboardHeader } from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
-import { BACKEND_URL } from '../config';
 
 const columns = [
   { key: 'user', label: 'User' },
@@ -62,7 +61,7 @@ const ViewLoans = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const loansRes = await fetch(`${BACKEND_URL}/loan-requests`, {
+        const loansRes = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

@@ -6,9 +6,8 @@ import styles from '../styles/AdminDashboard.module.css'
 import loadingStyles from '../styles/Loading.module.css'
 import DashboardHeader from '../components/DashboardHeader'
 import Footer from '../components/Footer'
-import { BACKEND_URL } from '../config'
 
-// Using centralized BACKEND_URL
+const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/AdminDashboard.module.css';
 import { toast } from 'react-toastify';
-import { BACKEND_URL } from '../config';
 
-// Using centralized BACKEND_URL
+const BACKEND_URL = 'https://dev1003-p2p-crypto-lending-backend.onrender.com';
 
 function Users() {
     const navigate = useNavigate();

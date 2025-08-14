@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from '../styles/LoginRegisterPage.module.css'
-import { BACKEND_URL } from '../config';
 
 // Tutorial Modal Component (Note: Capital T for TutorialModal)
 function TutorialModal({ isOpen, onClose, onComplete }) {
@@ -189,7 +188,7 @@ function Login(props) {
         };
 
         const isRegistration = props.name === "Register";
-        const endpoint = `${BACKEND_URL}/${isRegistration ? 'register' : 'login'}`;
+        const endpoint = `https://dev1003-p2p-crypto-lending-backend.onrender.com/${isRegistration ? 'register' : 'login'}`;
 
         try {
             console.log('Sending request with data:', { ...userData, password: '***' });

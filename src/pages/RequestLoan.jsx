@@ -4,7 +4,6 @@ import loadingStyles from '../styles/Loading.module.css';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
-import { BACKEND_URL } from '../config';
 
 const RequestLoan = () => {
   const [amount, setAmount] = useState('');
@@ -36,7 +35,7 @@ const RequestLoan = () => {
           console.log('Decoded JWT:', tokenData);
         }
         const [termsRes, cryptoRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/interest-terms`, {
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/interest-terms', {
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
@@ -45,7 +44,7 @@ const RequestLoan = () => {
             credentials: 'include',
             mode: 'cors',
           }),
-          fetch(`${BACKEND_URL}/crypto`, {
+          fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/crypto', {
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
@@ -107,7 +106,7 @@ const RequestLoan = () => {
         cryptocurrency_symbol: selectedCryptoSymbol
       };
       console.log('Submitting loan request payload:', payload);
-      const res = await fetch(`${BACKEND_URL}/loan-requests`, {
+      const res = await fetch('https://dev1003-p2p-crypto-lending-backend.onrender.com/loan-requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
